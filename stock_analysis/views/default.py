@@ -2,7 +2,7 @@
 from pyramid.view import view_config
 
 
-@view_config(route_name='home', renderer='stock_analysis:templates/mytemplate.jinja2')
+@view_config(route_name='home', renderer='stock_analysis:templates/home.jinja2')
 def home_view(request):
-    """View for listing journal entries."""
+    """Home view for stock analysis app."""
     return {}
