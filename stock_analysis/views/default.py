@@ -9,26 +9,26 @@ import datetime
 @view_config(route_name='home', renderer='stock_analysis:templates/home.jinja2')
 def home_view(request):
     """Home view for stock analysis app."""
+    if request.method == 'POST':
 
-    start = datetime.datetime(2015, 1, 1)
+        stock = request.POST['stock_ticker']
 
-    end = datetime.datetime(2015, 12, 31)
+        start = datetime.datetime(2016, 11, 1)
+        end = datetime.datetime(2017, 11, 1)
+        stock_data = web.DataReader(stock, 'yahoo', start, end)
+        dates = stock_data.index.values
+        prices = stock_data['Close'].values
 
-    stock_data = web.DataReader("FB", 'yahoo', start, end)
+        # output to static HTML file
+        output_file("lines.html")
 
-    dates = stock_data.index.values
-    prices = stock_data['Close'].values
+        # create a new plot with a title and axis labels
+        p = figure(title="Stock Analysis", x_axis_label='Time', y_axis_label='Price')
 
-    # output to static HTML file
-    output_file("lines.html")
+        # add a line renderer with legend and line thickness
+        p.line(dates, prices, legend="Temp.", line_width=2)
 
-    # create a new plot with a title and axis labels
-    p = figure(title="Stock Analysis", x_axis_label='x', y_axis_label='y')
-
-    # add a line renderer with legend and line thickness
-    p.line(dates, prices, legend="Temp.", line_width=2)
-
-    # show the results
-    show(p)
+        # show the results
+        show(p)
 
     return {}
