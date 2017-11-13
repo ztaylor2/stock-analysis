@@ -19,6 +19,7 @@ requires = [
     'numpy',
     'scikit-learn',
     'matplotlib',
+    'bokeh',
 ]
 
 tests_require = [
