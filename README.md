@@ -18,15 +18,15 @@ Utitlizing Python's strong suits to pair with Machine Learning, Stock Analysis w
     
 ## Design & Design Choices
 We started off with a basic wire frame of how we desired this application to look.
-![Wire Frame](https://github.com/ztaylor2/stock-analysis/blob/jake-template-design/stock_analysis/static/wire_frame.jpg)
+![Wire Frame](https://github.com/ztaylor2/stock-analysis/blob/jake-template-design/stock_analysis/static/wire_frames/wire_frame.jpg)
 
 From here after keeping discussion with front-end vs. back-end and how we want them to communicate together we refactored a more detailed view and came up with this:
-![Detailed Frame](https://github.com/ztaylor2/stock-analysis/blob/jake-template-design/stock_analysis/static/detailed_frame.jpg)
+![Detailed Frame](https://github.com/ztaylor2/stock-analysis/blob/jake-template-design/stock_analysis/static/wire_frames/detailed_frame.jpg)
 
 We finally have something we are happy with. How we want to mock this up is the next obstacle to tackle. We decided to template with Pyramid and Jinja, then to design the application we went with SCSS.
 
 Coming to a road block with rendering graphs and for User Experience/User Interface(UX/UI), we decided to condense two of our view into one. We got this :
-![Refactored Detail Frame]()
+![Refactored Detail Frame](https://github.com/ztaylor2/stock-analysis/blob/jake-template-design/stock_analysis/static/wire_frames/refactored_detail_frame.jpg)
 ## Influences and Attributions
 This project would not be possible without the inspiration from these individuals and the help of some awesome libraries.
 ### People
