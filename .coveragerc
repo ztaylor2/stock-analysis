@@ -1,0 +1,3 @@
+[run]
+source = stock_analysis
+omit = stock_analysis/test*
