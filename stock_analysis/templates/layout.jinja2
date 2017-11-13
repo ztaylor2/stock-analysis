@@ -3,18 +3,16 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-
-    <title>{{ title }}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="../static/src/style/main.scss">
+  <title>{{ title }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="../static/src/style/main.css">
 </head>
 
 <body>
-    <h1>Stock Analysis</h1>
-
-    <section id="content">
+  <header><h1>Stock Analysis</h1></header>
+      <section id="content">
         {% block body %}{% endblock %}
-    </section>
+      </section>
 
 </body>
 </html>
