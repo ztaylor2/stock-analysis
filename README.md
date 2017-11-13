@@ -2,19 +2,19 @@
 Utitlizing Python's strong suits to pair with Machine Learning, Stock Analysis will predict the possible life for a given stock.
 ## Getting Started
 - Clone project into local file system. 
-    - ```git clone https://github.com/ztaylor2/stock-analysis.git```
+    ```git clone https://github.com/ztaylor2/stock-analysis.git```
 - Change directory into your newly created project.
-    - ```cd stock_analysis```
+    ```cd stock_analysis```
 - Create a Python virtual environment.
-    - ```python3 -m venv ENV```
+    ```python3 -m venv ENV```
 - Install the project in editable mode with its testing requirements.
-    - ```pip install -e .[testing]```
+    ```pip install -e .[testing]```
 - Configure the database.
-    - ```initdb development.ini```
+    ```initdb development.ini```
 - Run your project's tests.
-    - ```pytest```
+    ```pytest```
 - Run your project.
-    - ```pserve development.ini```
+    ```pserve development.ini```
     
 ## License
 Stock Analysis is offered under the [MIT license](https://opensource.org/licenses/MIT) and shown in the LICENSE file.
