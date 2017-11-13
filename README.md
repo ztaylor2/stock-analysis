@@ -16,6 +16,25 @@ Utitlizing Python's strong suits to pair with Machine Learning, Stock Analysis w
 - Run your project.
     ```pserve development.ini```
     
+## Design & Design Choices
+---------------------------
+We started off with a basic wire frame of how we desired this application to look.
+
+## Influences and Attributions
+-------------------------------
+This project would not be possible without the inspiration from these individuals and the help of some awesome libraries.
+### People
+* [Siraj Reval](https://twitter.com/sirajraval)
+* []()
+* []()
+* []()
+
+### Libraries
+* [Pyramid](https://trypyramid.com/)
+* [Bokeh](https://bokeh.pydata.org/en/latest/)
+* []()
+* []()
+
 ## License
 Stock Analysis is offered under the [MIT license](https://opensource.org/licenses/MIT) and shown in the LICENSE file.
 ## Authors
