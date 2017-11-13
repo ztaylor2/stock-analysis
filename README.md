@@ -22,6 +22,8 @@ We started off with a basic wire frame of how we desired this application to loo
 
 From here after keeping discussion with front-end vs. back-end and how we want them to communicate together we refactored a more detailed view and came up with this:
 ![Detailed Frame](https://github.com/ztaylor2/stock-analysis/blob/jake-template-design/stock_analysis/static/detailed_frame.jpg)
+
+We finally have something we are happy with. How we want to mock this up is the next obstacle to tackle. We decided to template with Pyramid and Jinja, then to design it out with SCSS.
 ## Influences and Attributions
 This project would not be possible without the inspiration from these individuals and the help of some awesome libraries.
 ### People
@@ -31,10 +33,13 @@ This project would not be possible without the inspiration from these individual
 * []()
 
 ### Libraries
+#### Templating
 * [Pyramid](https://trypyramid.com/)
+* [Jinja](http://jinja.pocoo.org/)
+
+#### Design
 * [Bokeh](https://bokeh.pydata.org/en/latest/)
-* []()
-* []()
+* [SCSS](http://sass-lang.com/)
 
 ## License
 Stock Analysis is offered under the [MIT license](https://opensource.org/licenses/MIT) and shown in the LICENSE file.
