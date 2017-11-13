@@ -27,12 +27,14 @@ We finally have something we are happy with. How we want to mock this up is the 
 ## Influences and Attributions
 This project would not be possible without the inspiration from these individuals and the help of some awesome libraries.
 ### People
+-----------
 * [Siraj Reval](https://twitter.com/sirajraval)
 * []()
 * []()
 * []()
 
 ### Libraries
+--------------
 #### Templating
 * [Pyramid](https://trypyramid.com/)
 * [Jinja](http://jinja.pocoo.org/)
