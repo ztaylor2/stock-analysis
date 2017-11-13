@@ -2,7 +2,7 @@
 from pyramid.view import view_config
 from bokeh.plotting import figure, output_file, show
 import pandas_datareader.data as web
-
+from bokeh.embed import components
 import datetime
 
 
@@ -20,7 +20,7 @@ def home_view(request):
         prices = stock_data['Close'].values
 
         # output to static HTML file
-        output_file("lines.html")
+        # output_file("lines.html", mode="inline")
 
         # create a new plot with a title and axis labels
         p = figure(title="Stock Analysis", x_axis_label='Time', y_axis_label='Price')
@@ -28,7 +28,12 @@ def home_view(request):
         # add a line renderer with legend and line thickness
         p.line(dates, prices, legend="Temp.", line_width=2)
 
+        script, div = components(p)
         # show the results
-        show(p)
+        # show(p)
 
+        return {
+            "div": div,
+            "script": script,
+        }
     return {}
