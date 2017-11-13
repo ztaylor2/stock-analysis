@@ -20,7 +20,7 @@ Utitlizing Python's strong suits to pair with Machine Learning, Stock Analysis w
 We started off with a basic wire frame of how we desired this application to look.
 ![Wire Frame](https://github.com/ztaylor2/stock-analysis/blob/jake-template-design/stock_analysis/static/wire_frame.jpg)
 
-From here after keeping discussion with front-end vs. back-end and how we want them to communicate refactored a more detailed view and came up with this.
+From here after keeping discussion with front-end vs. back-end and how we want them to communicate together we refactored a more detailed view and came up with this.
 ![Detailed Frame](https://github.com/ztaylor2/stock-analysis/blob/jake-template-design/stock_analysis/static/detailed_frame.jpg)
 ## Influences and Attributions
 This project would not be possible without the inspiration from these individuals and the help of some awesome libraries.
