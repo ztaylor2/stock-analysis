@@ -1,1 +1,10 @@
-@import '../lib/vars'
+@import '../lib/vars';
+
+footer {
+    width: 100%;
+    height: 10vw;
+    opacity: .5;
+    color: $black;
+    box-sizing: border-box;
+    text-align: center;
+}

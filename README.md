@@ -43,8 +43,11 @@ This project would not be possible without the inspiration from these individual
 
 #### Design
 * [Bokeh](https://bokeh.pydata.org/en/latest/)
+    * ```Graph and Charting```
 * [SCSS](http://sass-lang.com/)
-
+    * ```Functional Designing```
+* [Icomoon](https://icomoon.io/)
+    * ```SVG and Icons```
 ## License
 Stock Analysis is offered under the [MIT license](https://opensource.org/licenses/MIT) and shown in the LICENSE file.
 ## Authors
