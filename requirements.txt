@@ -21,6 +21,7 @@ MarkupSafe==1.0
 matplotlib==2.1.0
 numpy==1.13.3
 pandas==0.21.0
+pandas-datareader==0.5.0
 parso==0.1.0
 PasteDeploy==1.5.2
 pexpect==4.3.0
@@ -44,11 +45,14 @@ pytz==2017.3
 PyYAML==3.12
 repoze.lru==0.7
 requests==2.18.4
+requests-file==1.4.2
+requests-ftp==0.3.1
 scikit-learn==0.19.1
+scipy==1.0.0
 simplegeneric==0.8.1
 six==1.11.0
 SQLAlchemy==1.1.15
--e git+https://github.com/ztaylor2/stock-analysis.git@b364700e80f143124fdb13a14db7c160aa6fc231#egg=Stock_Analysis
+-e git+https://github.com/ztaylor2/stock-analysis.git@d6a0449c8752de9b0089f80dff33d85c1c415c25#egg=Stock_Analysis
 tornado==4.5.2
 traitlets==4.3.2
 transaction==2.1.2
