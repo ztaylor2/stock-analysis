@@ -35,6 +35,8 @@ This project would not be possible without the inspiration from these individual
 
 ### Libraries
 --------------
+#### Data Management
+* [Pandas](https://pandas-datareader.readthedocs.io/en/latest/remote_data.html#yahoo-finance)
 #### Templating
 * [Pyramid](https://trypyramid.com/)
 * [Jinja](http://jinja.pocoo.org/)
