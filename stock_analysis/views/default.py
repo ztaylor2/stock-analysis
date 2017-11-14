@@ -11,6 +11,7 @@ from stock_analysis.models.mymodel import User
 import pandas as pd
 import numpy as np
 from sklearn.svm import SVR
+from sklearn import linear_model
 
 
 @view_config(route_name='home', renderer='stock_analysis:templates/home.jinja2', permission=NO_PERMISSION_REQUIRED)
@@ -52,43 +53,44 @@ def detail_view(request):
         end = datetime.datetime(2017, 11, 1)
         stock_data = web.DataReader(stock, 'yahoo', start, end)
         dates = stock_data.index.values
-
-        # dates_datetime = []
-
-        # i = 0
-        # for date in dates:
-        #     dates_datetime.append(i)
-        #     i += 1
-
         prices = stock_data['Close'].values
 
+        # convert numpy dates into python datetime objects
+        dates_python = []
+        for date in dates:
+            dates_python.append(datetime.datetime.utcfromtimestamp(date.tolist()/1e9))
+
+        # convert dates to list of days ago
+        last = dates_python[-1]
+        first = dates_python[0]
+        total_diff = last - first
+        days_from_beginning = []
+        for date in dates_python:
+            diff = last - date
+            days_from_beginning.append(total_diff.days - diff.days)
+
         # eight_percet_of_dates = dates[:(len(dates) - int(round(len(dates) * .2)))]
-
         # eighty_dates_reshape = np.reshape(eight_percet_of_dates, (len(eight_percet_of_dates), 1))
-        dates_reshape = np.reshape(dates, (len(dates), 1))
-        # svr_poly = SVR(kernel='poly', C=1e3, degree=2)
-        # svr_rbf = SVR(kernel='rbf', C=1e3, gamma=0.1)
-        # import pdb; pdb.set_trace()
+
+        dates_reshape = np.reshape(days_from_beginning, (len(days_from_beginning), 1))
+
+        # Linear Regression
+        lin_regr = linear_model.LinearRegression()
+        lin_regr.fit(dates_reshape, prices)
+        lin_regr_prediction = lin_regr.predict(dates_reshape)
 
 
-        # svr_poly.fit(dates_reshape, prices)
-        # svr_rbf.fit(dates_reshape, prices)
-
-        # works without using 80% of dates
-
-        dates_reshape = np.reshape(dates, (len(dates), 1))
+        # Support Vector Machine
         svr_rbf = SVR(kernel='rbf', C=1e3, gamma=0.1)
         svr_rbf.fit(dates_reshape, prices)
-
-        # svr_poly_prediction = svr_poly.predict(dates_reshape)
         svr_rbf_prediction = svr_rbf.predict(dates_reshape)
 
 
         # create a new plot with a title and axis labels
         p = figure(title="Stock Analysis", x_axis_label='Time', y_axis_label='Price')
-
-        p.multi_line([dates, dates], [prices, svr_rbf_prediction],
+        p.multi_line([dates, dates, dates], [prices, lin_regr_prediction, svr_rbf_prediction],
                      color=["firebrick", "navy"], legend="Temp.", alpha=[0.8, 0.3], line_width=2)
+
 
         # save script and div components to put in html
         script, div = components(p)
