@@ -3,11 +3,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-
-  <title>{{ title }}</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" type="text/css" href="{{ request.static_path('stock_analysis:static/src/style/main.css') }}">
-  <link rel="stylesheet" types="text/css" href="{{ request.static_path('stock_analysis:static/fonts/icomoon.css') }}">
+    <title>{{ title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ request.static_path('stock_analysis:static/src/style/main.css') }}">
+    <link rel="stylesheet" types="text/css" href="{{ request.static_path('stock_analysis:static/fonts/icomoon.css') }}">
 
     <!-- bokeh styling -->
     <link
@@ -19,21 +18,34 @@
     <link
         href="https://cdn.pydata.org/bokeh/release/bokeh-tables-0.12.9.min.css"
         rel="stylesheet" type="text/css">
-
 </head>
 
 <body>
   <header>
     <h1>Stock Analysis</h1>
-    <p class="icon-menu"></p>
+    <div class="icon-menu"></div>
   </header>
+    <div class="body-background">
+      <div class="inactive" class="toggle-menu">
+          <nav>
+            <ul>
+              <li><a href={{ request.route_url('home') }}>Home</a></li>
+              <li><a href={{ request.route_url('detail') }}>Detail</a></li>
+              <li><a href={{ request.route_url('profile') }}>My Portfolio</a></li>
+            </ul>
+          </nav>
+        </div>
+
       <section id="content">
         {% block body %}{% endblock %}
       </section>
+    </div>
   <footer>&copy Stock Analysis 2017</footer>
 
     <script src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.10.min.js"></script>
     <script src="https://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.10.min.js"></script>
     <script src="https://cdn.pydata.org/bokeh/release/bokeh-tables-0.12.10.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="../static/src/js/hamburger.js"></script>
 </body>
 </html>

@@ -104,6 +104,7 @@ def portfolio_view(request):
     """Portfolio view for stock analysis app."""
     return {}
 
+
 @view_config(route_name='logout')
 def logout(request):
     """Logout of stock account."""

@@ -9,3 +9,4 @@ def includeme(config):
     config.add_route('portfolio', '/portfolio')
     config.add_route('detail', '/detail')
     config.add_route('logout', '/logout')
+
