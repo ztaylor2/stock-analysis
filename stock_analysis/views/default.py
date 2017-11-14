@@ -101,7 +101,7 @@ def detail_view(request):
         }
 
 
-@view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2', permission='secret')
+@view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2')
 def portfolio_view(request):
     """Portfolio view for stock analysis app."""
     return {}
