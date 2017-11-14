@@ -23,27 +23,34 @@
 <body>
   <header>
     <h1>Stock Analysis</h1>
-    <p class="icon-menu">
-      <div class="bar">
-        <nav>
-          <ul>
-            <li><a href={{ request.route_url('home') }}>Home</a></li>
-            <li><a href={{ request.route_url('detail') }}>Detail</a></li>
-            <li><a href={{ request.route_url('profile') }}>My Portfolio</a></li>
-          </ul>
-        </nav>
-      </div>
-    </p>
+    
+    <div class="hamburger" id="hamburger-menu">
+      <span class="line"></span>
+      <span class="line"></span>
+      <span class="line"></span>
+    </div>
   </header>
+    <div class="body-background">
+      <div class="nav">
+          <nav>
+            <ul>
+              <li><a href={{ request.route_url('home') }}>Home</a></li>
+              <li><a href={{ request.route_url('detail') }}>Detail</a></li>
+              <li><a href={{ request.route_url('profile') }}>My Portfolio</a></li>
+            </ul>
+          </nav>
+        </div>
 
       <section id="content">
         {% block body %}{% endblock %}
       </section>
-
+    </div>
   <footer>&copy Stock Analysis 2017</footer>
 
     <script src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.10.min.js"></script>
     <script src="https://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.10.min.js"></script>
     <script src="https://cdn.pydata.org/bokeh/release/bokeh-tables-0.12.10.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src={{ request.static_path('stock_analysis:static/src/js_lib/hamburger_animation/hamburger_animation.js')}}
 </body>
 </html>

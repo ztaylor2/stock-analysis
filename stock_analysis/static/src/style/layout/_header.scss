@@ -17,15 +17,66 @@ header {
         
     }
 
-    p {
-        display: inline-block;
-        color: $white;
-        font-size: 5vw;
-        margin: 2vw 2vw;
+    // p {
+    //     display: inline-block;
+    //     color: $white;
+    //     font-size: 5vw;
+    //     margin: 2vw 2vw;
+    //     float: left;
+    // }
+
+    //.....HAMBURGER MENU.....\\
+    .hamburger {
         float: left;
+        margin: 2vw;
     }
 
-    // nav {
-    //     display: none;
-    // }
+    .hamburger .line {
+        width: 50px;
+        height: 5px;
+        background-color: $white;
+        display: block;
+        margin: 8px auto;
+        -webkit-transition: all 0.3s ease-in-out;
+        -o-transition: all 0.3s ease-in-out;
+        transition: all 0.3s ease-in-out;
+    }
+
+    #hamburger-menu.is-active{
+        -webkit-transition: all 0.3s ease-in-out;
+        -o-transition: all 0.3s ease-in-out;
+        transition: all 0.3s ease-in-out;
+        -webkit-transition-delay: 0.6s;
+        -o-transition-delay: 0.6s;
+        transition-delay: 0.6s;
+        -webkit-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        -o-transform: rotate(45deg);
+        transform: rotate(45deg);
+    }
+    
+    #hamburger-menu.is-active .line:nth-child(2){
+        width: 0px;
+    }
+    
+    #hamburger-menu.is-active .line:nth-child(1),
+    #hamburger-menu.is-active .line:nth-child(3){
+        -webkit-transition-delay: 0.3s;
+        -o-transition-delay: 0.3s;
+        transition-delay: 0.3s;
+    }
+    
+    #hamburger-menu.is-active .line:nth-child(1){
+        -webkit-transform: translateY(13px);
+        -ms-transform: translateY(13px);
+        -o-transform: translateY(13px);
+        transform: translateY(13px);
+    }
+    
+    #hamburger-menu.is-active .line:nth-child(3){
+        -webkit-transform: translateY(-13px) rotate(90deg);
+        -ms-transform: translateY(-13px) rotate(90deg);
+        -o-transform: translateY(-13px) rotate(90deg);
+        transform: translateY(-13px) rotate(90deg);
+    }
 }

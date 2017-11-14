@@ -3,7 +3,7 @@
 html, body, main {
     height: 100%;
     font-family: $brand-font;
-    color: $black;
+    font: $black;
     font-size: 3vw;
 }
 
@@ -21,4 +21,8 @@ button {
       background: $brand-primary;
       color: $white;
     }
+}
+
+.nav {
+    display: none;
 }
