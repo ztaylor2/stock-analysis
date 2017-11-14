@@ -54,10 +54,17 @@ header {
   box-sizing: border-box;
   position: relative; }
   header h1 {
+    display: inline-block;
     font-size: 5vw;
-    text-align: center; }
-  header span {
-    color: #1f1f1f; }
+    margin: 2vw 5vw;
+    text-align: center;
+    float: right; }
+  header p {
+    display: inline-block;
+    color: #fbfbfb;
+    font-size: 5vw;
+    margin: 2vw 2vw;
+    float: left; }
 
 footer {
   width: 100%;
