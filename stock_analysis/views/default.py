@@ -3,17 +3,40 @@ from pyramid.view import view_config
 from bokeh.plotting import figure
 import pandas_datareader.data as web
 from bokeh.embed import components
+from pyramid.httpexceptions import HTTPNotFound, HTTPFound
+from pyramid.security import remember, forget, NO_PERMISSION_REQUIRED
+from stock_analysis.security import is_authorized
 import datetime
-
+from stock_analysis.models.mymodel import User
 import pandas as pd
 import numpy as np
 from sklearn.svm import SVR
 
 
-@view_config(route_name='home', renderer='stock_analysis:templates/home.jinja2')
+@view_config(route_name='home', renderer='stock_analysis:templates/home.jinja2', permission=NO_PERMISSION_REQUIRED)
 def home_view(request):
     """Home view for stock analysis app."""
-    return {}
+    if request.method == 'GET':
+        return {}
+    if request.method == 'POST':
+        #  ALSO CHECK THAT IT'S A LOGIN POST REQUEST
+        username = request.POST['username']
+        password = request.POST['password']
+        if is_authorized(request, username, password):
+            headers = remember(request, username)
+            return HTTPFound(request.route_url('portfolio'), headers=headers)
+        return {
+            'error': 'Username/password combination invalid.'
+        }
+    if request.method == 'POST':
+        #  ALSO CHECK THAT IT'S A REGISTER ACCOUNT POST REQUEST
+        new_username = request.POST['username']
+        new_password = request.POST['password']
+        new_account = User(
+            username=new_username,
+            password=new_password
+        )
+        request.dbsession.add(new_account)
 
 
 @view_config(route_name='detail', renderer='stock_analysis:templates/detail.jinja2')
@@ -76,13 +99,19 @@ def detail_view(request):
         }
 
 
-@view_config(route_name='profile', renderer='stock_analysis:templates/profile.jinja2')
-def profile_view(request):
-    """Home view for stock analysis app."""
+@view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2', permission='secret')
+def portfolio_view(request):
+    """Portfolio view for stock analysis app."""
     return {}
 
+@view_config(route_name='logout')
+def logout(request):
+    """Logout of stock account."""
+    headers = forget(request)
+    return HTTPFound(request.route_url('home'), headers=headers)
 
 @view_config(route_name='process_symbol')
 def process_symbol(request):
     """Home view for stock analysis app."""
     print('in process')
+
