@@ -51,8 +51,7 @@ header {
   height: 10vw;
   background: #00B25E;
   color: #fbfbfb;
-  box-sizing: border-box;
-  position: relative; }
+  box-sizing: border-box; }
   header h1 {
     display: inline-block;
     font-size: 5vw;
@@ -71,7 +70,6 @@ footer {
   height: 10vw;
   opacity: .5;
   color: #1f1f1f;
-  text-align: center;
-  margin-bottom: -10vw; }
+  text-align: center; }
 
 /*# sourceMappingURL=main.css.map */
