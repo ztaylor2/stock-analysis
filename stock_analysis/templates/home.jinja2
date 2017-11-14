@@ -2,4 +2,20 @@
 
 {% block body %}
   <h1>This is from another view file.</h1>
+
+  <form method="POST">
+    <div class="form-group">
+      <label>Enter Stock Ticker:</label>
+      <textarea name="stock_ticker" rows="1" required></textarea>
+    </div>
+    <div class="form-group">
+      <div class="submit-button">
+        <input type="submit"></input>
+      </div>
+    </div>
+  </form>
+
+  {{ div|safe }}
+  {{ script|safe }}
+
 {% endblock body %}
