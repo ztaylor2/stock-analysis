@@ -38,6 +38,7 @@ def home_view(request):
             password=new_password
         )
         request.dbsession.add(new_account)
+        return HTTPFound(request.route_url('portfolio'), headers=headers)
 
 
 @view_config(route_name='detail', renderer='stock_analysis:templates/detail.jinja2')
@@ -113,8 +114,8 @@ def logout(request):
     headers = forget(request)
     return HTTPFound(request.route_url('home'), headers=headers)
 
+
 @view_config(route_name='process_symbol')
 def process_symbol(request):
     """Home view for stock analysis app."""
     print('in process')
-
