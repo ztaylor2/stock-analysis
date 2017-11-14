@@ -17,11 +17,17 @@ header {
         
     }
 
-    p {
+    div {
         display: inline-block;
         color: $white;
         font-size: 5vw;
         margin: 2vw 2vw;
         float: left;
+        
+        &:hover {
+            cursor: pointer;
+            background-color: $black;
+            border-radius: 2px;
+        }
     }
 }
