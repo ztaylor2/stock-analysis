@@ -3,10 +3,9 @@
 {% block body %}
 
 {# The stuff below should probably go into layout.jinja2, once it has a working hamburger menu. These options should probably only pop up once the user is authenticated. (AKA, "if request.authenticated_userid.") #}
-
 {% if request.authenticated_userid %}
 <a href="{{ request.route_url('detail') }}">View Stock Analytics</a>
-<a href="{{ request.route_url('profile') }}">My Portfolio</a>
+<a href="{{ request.route_url('portfolio') }}">View Portfolio</a>
 <a href="{{ request.route_url('logout') }}">Logout</a>
 {% endif %}
 
@@ -43,5 +42,6 @@
     <br><br>
     <input type="submit" name="Create Account">
 </form>
+
 
 {% endblock body %}

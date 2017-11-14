@@ -52,6 +52,7 @@ def detail_view(request):
         end = datetime.datetime(2017, 11, 1)
         stock_data = web.DataReader(stock, 'yahoo', start, end)
         dates = stock_data.index.values
+
         # dates_datetime = []
 
         # i = 0
@@ -103,9 +104,14 @@ def portfolio_view(request):
     """Portfolio view for stock analysis app."""
     return {}
 
-
 @view_config(route_name='logout')
 def logout(request):
     """Logout of stock account."""
     headers = forget(request)
     return HTTPFound(request.route_url('home'), headers=headers)
+
+@view_config(route_name='process_symbol')
+def process_symbol(request):
+    """Home view for stock analysis app."""
+    print('in process')
+
