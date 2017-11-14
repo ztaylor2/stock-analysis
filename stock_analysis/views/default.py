@@ -25,12 +25,7 @@ def home_view(request):
         dates = stock_data.index.values
         prices = stock_data['Close'].values
 
-
-
-
         eight_percet_of_dates = dates[:(len(dates) - int(round(len(dates) * .2)))]
-
-
 
         eighty_dates_reshape = np.reshape(eight_percet_of_dates, (len(eight_percet_of_dates), 1))
         dates_reshape = np.reshape(dates, (len(dates), 1))
@@ -57,8 +52,6 @@ def home_view(request):
         # create a new plot with a title and axis labels
         p = figure(title="Stock Analysis", x_axis_label='Time', y_axis_label='Price')
 
-
-
         p.multi_line([dates, dates], [prices, svr_rbf_prediction],
                      color=["firebrick", "navy"], legend="Temp.", alpha=[0.8, 0.3], line_width=2)
 
@@ -70,3 +63,9 @@ def home_view(request):
             "script": script,
         }
     return {}
+
+
+@view_config(route_name='process_symbol')
+def process_symbol(request):
+    """Home view for stock analysis app."""
+    print('in process')

@@ -7,6 +7,9 @@
 
 
 
+  <a href="{{ request.route_url('process_symbol') }}">symbol</a> # process ticker
+
+
     <h1>Your Personal Portfolio.</h1>
     <h3>Input a stock symbol into the field below and click the + button to add it to your stock portfolio.</h3>
 
@@ -18,12 +21,12 @@
         <td class="c4"><SPAN>{{ stock.growth }}</SPAN></td>
         <td class="c5"><SPAN>{{ stock.percent }}</SPAN></td>
     </tr>
-    <form>
-        <div class="form-group">
-            <input type="text" name="fname" placeholder="Enter Stock Symbol Here"><br>
-{#             <button id="add-button" type="submit">+</button>
- #}        </div>
-    </form>
+<form>
+    <div class="form-group">
+        <input type="text" name="fname" placeholder="Enter Stock Symbol Here"><br>
+        <button id="add-button" type="submit">+</button>
+    </div>
+</form>
     
 
 # I want to create a blank table to which new elements can be added by user.
@@ -50,10 +53,10 @@ for i in range(1:):
 # more code goes here.
 
 template.render(stocks=stocks)
-
+ #}
 
  $("#mySelectList option:selected").text();
         $("#addButton").click(function () {           
         var selectedVal = $('select').val();
         $('ul').append('<li>'+selectedVal+'</li>')
-        });  #}
+        }); 
