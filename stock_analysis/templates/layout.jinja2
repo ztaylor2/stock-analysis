@@ -5,11 +5,15 @@
   <meta charset="utf-8">
   <title>{{ title }}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" type="text/css" href="../static/src/style/main.css">
+  <link rel="stylesheet" type="text/css" href="{{ request.static_path('stock_analysis:static/src/style/main.css') }}">
+  <link rel="stylesheet" types="text/css" href="{{ request.static_path('stock_analysis:static/fonts/icomoon.css') }}">
 </head>
 
 <body>
-  <header><h1>Stock Analysis</h1></header>
+  <header>
+    <h1>Stock Analysis</h1>
+    <span class="icon-menu"></span>
+  </header>
       <section id="content">
         {% block body %}{% endblock %}
       </section>

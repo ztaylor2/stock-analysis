@@ -56,6 +56,8 @@ header {
   header h1 {
     font-size: 5vw;
     text-align: center; }
+  header span {
+    color: #1f1f1f; }
 
 footer {
   width: 100%;
