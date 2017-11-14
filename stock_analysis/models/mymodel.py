@@ -10,7 +10,7 @@ from sqlalchemy import (
 from .meta import Base
 
 
-class UserModel(Base):
+class User(Base):
     """Model of user/pass info in DB."""
 
     __tablename__ = 'users'
@@ -23,4 +23,4 @@ class UserModel(Base):
         return '<{}, {}>'.format(self.username, self.password)
 
 
-Index('my_index', UserModel.name, unique=True, mysql_length=255)
+Index('my_index', User.username, unique=True, mysql_length=255)
