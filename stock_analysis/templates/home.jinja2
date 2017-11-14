@@ -2,9 +2,46 @@
 
 {% block body %}
 
-  <h1>Put home view stuff here.</h1>
+{# The stuff below should probably go into layout.jinja2, once it has a working hamburger menu. These options should probably only pop up once the user is authenticated. (AKA, "if request.authenticated_userid.") #}
+{% if request.authenticated_userid %}
+<a href="{{ request.route_url('detail') }}">View Stock Analytics</a>
+<a href="{{ request.route_url('portfolio') }}">View Portfolio</a>
+<a href="{{ request.route_url('logout') }}">Logout</a>
+{% endif %}
 
-  <a href="{{ request.route_url('detail') }}">View Stock Analytics</a>
-  <a href="{{ request.route_url('profile') }}">View Profile</a>
+
+{% if error %}
+    <p style="color: red">{{ error }}</p>
+{% endif %}
+
+{# 
+-- When you click to "home", there are just 3 buttons
+-- When you click "Login", the first form appears.
+-- When you click "Sign up", the second form appears.
+-- They should send some indication of their difference to default.py in the request. 
+    --(For example, form name which I added, or something different. I need to be able to differentiate a login POST request from a signup POST request in the home_view.) #}
+
+<button name="button" type="button">Get Started Without Account</button>
+<button name="button" type="button">Login</button>
+<button name="button" type="button">Sign Up</button>
+
+<form name="login" method="POST">
+    <p>Username:</p>
+    <input type="text" name="username" required>
+    <p>Password:</p>
+    <input type="password" name="password" required>
+    <br><br>
+    <input type="submit" name="Login">
+</form>
+
+<form name="signup" method="POST">
+    <p>Username:</p>
+    <input type="text" name="username" required>
+    <p>Password:</p>
+    <input type="password" name="password" required>
+    <br><br>
+    <input type="submit" name="Create Account">
+</form>
+
 
 {% endblock body %}

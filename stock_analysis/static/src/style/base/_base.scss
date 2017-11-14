@@ -1,9 +1,17 @@
 @import '../lib/vars';
 
+.active {
+    display: block;
+}
+
+.inactive {
+    display: none;
+}
+
 html, body, main {
     height: 100%;
     font-family: $brand-font;
-    color: $black;
+    font: $black;
     font-size: 3vw;
 }
 

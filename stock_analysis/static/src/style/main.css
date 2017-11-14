@@ -46,10 +46,16 @@ table {
   border-collapse: collapse;
   border-spacing: 0; }
 
+.active {
+  display: block; }
+
+.inactive {
+  display: none; }
+
 html, body, main {
   height: 100%;
   font-family: "Ubuntu", sans-serif;
-  color: #1f1f1f;
+  font: #1f1f1f;
   font-size: 3vw; }
 
 button {
@@ -78,12 +84,16 @@ header {
     margin: 2vw 5vw;
     text-align: center;
     float: right; }
-  header p {
+  header div {
     display: inline-block;
     color: #fbfbfb;
     font-size: 5vw;
     margin: 2vw 2vw;
     float: left; }
+    header div:hover {
+      cursor: pointer;
+      background-color: #1f1f1f;
+      border-radius: 2px; }
 
 footer {
   font-family: "Ubuntu", sans-serif;
