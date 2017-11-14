@@ -7,7 +7,7 @@ from pyramid.httpexceptions import HTTPNotFound, HTTPFound
 from pyramid.security import remember, forget, NO_PERMISSION_REQUIRED
 from stock_analysis.security import is_authorized
 import datetime
-
+from stock_analysis.models.mymodel import User
 import pandas as pd
 import numpy as np
 from sklearn.svm import SVR
@@ -19,6 +19,7 @@ def home_view(request):
     if request.method == 'GET':
         return {}
     if request.method == 'POST':
+        #  ALSO CHECK THAT IT'S A LOGIN POST REQUEST
         username = request.POST['username']
         password = request.POST['password']
         if is_authorized(request, username, password):
@@ -27,9 +28,17 @@ def home_view(request):
         return {
             'error': 'Username/password combination invalid.'
         }
-    #  Check within POST request to see if it's login or register
-    #  pass request, username, pass
-
+    if request.method == 'POST':
+        #  ALSO CHECK THAT IT'S A REGISTER ACCOUNT POST REQUEST
+        new_username = request.POST['username']
+        new_password = request.POST['password']
+        new_account = User(
+            username=new_username,
+            password=new_password
+        )
+        request.dbsession.add(new_account)
+        dbsession.commit()
+        
 
 @view_config(route_name='detail', renderer='stock_analysis:templates/detail.jinja2')
 def detail_view(request):
