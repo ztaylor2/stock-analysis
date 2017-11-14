@@ -8,8 +8,4 @@ def includeme(config):
     config.add_route('process_symbol', '/symbol')
     config.add_route('portfolio', '/portfolio')
     config.add_route('detail', '/detail')
-<<<<<<< chelsea-tues-login-real
-    config.add_route('portfolio', '/portfolio')
     config.add_route('logout', '/logout')
-=======
->>>>>>> production
