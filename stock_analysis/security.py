@@ -5,13 +5,13 @@ from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.security import Everyone, Authenticated
 from pyramid.security import Allow
-from models import (
+from .models import (
     get_engine,
     get_session_factory,
     get_tm_session,
 )
 
-from models.mymodel import User
+from stock_analysis.models.mymodel import User
 
 
 def includeme(config):
@@ -44,6 +44,6 @@ class SecRoot(object):
 def check_user_pass(username, password):
     """Check user-provided credentials compared to users stored in the database."""
     is_authenticated = False
-    if session.query(User).filter_by(username=username, password=password):
+    if request.dbsession.query(User).filter_by(username=username, password=password):
         is_authenticated = True
     return is_authenticated
