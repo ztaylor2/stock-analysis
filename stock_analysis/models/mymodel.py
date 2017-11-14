@@ -1,3 +1,5 @@
+"""Model for database of users and passwords."""
+
 from sqlalchemy import (
     Column,
     Index,
@@ -8,11 +10,17 @@ from sqlalchemy import (
 from .meta import Base
 
 
-class MyModel(Base):
-    __tablename__ = 'models'
+class UserModel(Base):
+    """Model of user/pass info in DB."""
+
+    __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
-    name = Column(Text)
-    value = Column(Integer)
+    username = Column(Text)
+    password = Column(Text)
+
+    def __repr__(self):
+        """Return LJ id."""
+        return '<{}, {}>'.format(self.username, self.password)
 
 
-Index('my_index', MyModel.name, unique=True, mysql_length=255)
+Index('my_index', UserModel.name, unique=True, mysql_length=255)
