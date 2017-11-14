@@ -12,6 +12,10 @@ import pandas as pd
 import numpy as np
 from sklearn.svm import SVR
 from sklearn import linear_model
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.pipeline import Pipeline
+import requests
 
 
 @view_config(route_name='home', renderer='stock_analysis:templates/home.jinja2', permission=NO_PERMISSION_REQUIRED)
@@ -49,6 +53,15 @@ def detail_view(request):
 
         stock = request.POST['stock_ticker'].upper()
 
+        def get_symbol(symbol):
+            """Get company name from stock ticker for graph title."""
+            url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(symbol)
+            result = requests.get(url).json()
+            for x in result['ResultSet']['Result']:
+                if x['symbol'] == symbol:
+                    return x['name'], x['exchDisp']
+        company, exchange = get_symbol(stock)
+
         start = datetime.datetime(2016, 11, 1)
         end = datetime.datetime(2017, 11, 1)
         stock_data = web.DataReader(stock, 'yahoo', start, end)
@@ -79,18 +92,30 @@ def detail_view(request):
         lin_regr.fit(dates_reshape, prices)
         lin_regr_prediction = lin_regr.predict(dates_reshape)
 
+        # Polynomial Regression
+        model = Pipeline([('poly', PolynomialFeatures(degree=3)),
+                          ('linear', LinearRegression(fit_intercept=False))])
+        model = model.fit(dates_reshape, prices)
+        poly_prediction = model.predict(dates_reshape)
 
         # Support Vector Machine
         svr_rbf = SVR(kernel='rbf', C=1e3, gamma=0.1)
         svr_rbf.fit(dates_reshape, prices)
         svr_rbf_prediction = svr_rbf.predict(dates_reshape)
 
-
         # create a new plot with a title and axis labels
-        p = figure(title="Stock Analysis", x_axis_label='Time', y_axis_label='Price')
-        p.multi_line([dates, dates, dates], [prices, lin_regr_prediction, svr_rbf_prediction],
-                     color=["firebrick", "navy"], legend="Temp.", alpha=[0.8, 0.3], line_width=2)
-
+        p = figure(title="{}  -  {}: {}".format(company, exchange, stock), x_axis_label='Date',
+                   y_axis_label='Price', width=800, height=350,
+                   x_axis_type="datetime", sizing_mode='scale_width')
+        p.circle(dates, prices, legend="Historical Data", line_color="black", fill_color="white", size=6)
+        p.line(dates, lin_regr_prediction, legend="Linear Regression",
+               line_color="orange", line_width=2)
+        p.line(dates, poly_prediction, legend="Polynomial Regression",
+               line_color="green", line_width=2)
+        p.line(dates, svr_rbf_prediction, legend="Support Vector Machine",
+               line_color="blue", line_width=2)
+        p.legend.location = "top_left"
+        p.title.text_font_size = "1em"
 
         # save script and div components to put in html
         script, div = components(p)
