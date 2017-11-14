@@ -41,7 +41,7 @@ class SecRoot(object):
     ]
 
 
-def check_user_pass(username, password):
+def is_authorized(request, username, password):
     """Check user-provided credentials compared to users stored in the database."""
     is_authenticated = False
     if request.dbsession.query(User).filter_by(username=username, password=password):

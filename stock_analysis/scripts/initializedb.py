@@ -32,6 +32,7 @@ def main(argv=sys.argv):
     options = parse_vars(argv[2:])
     setup_logging(config_uri)
     settings = get_appsettings(config_uri, options=options)
+    settings['sqlalchemy.url'] = os.environ.get('DATABASE_URL', '')
 
     engine = get_engine(settings)
     Base.metadata.create_all(engine)

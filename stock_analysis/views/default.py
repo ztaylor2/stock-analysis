@@ -3,6 +3,9 @@ from pyramid.view import view_config
 from bokeh.plotting import figure
 import pandas_datareader.data as web
 from bokeh.embed import components
+from pyramid.httpexceptions import HTTPNotFound, HTTPFound
+from pyramid.security import remember, forget, NO_PERMISSION_REQUIRED
+from stock_analysis.security import is_authorized
 import datetime
 
 import pandas as pd
@@ -13,7 +16,19 @@ from sklearn.svm import SVR
 @view_config(route_name='home', renderer='stock_analysis:templates/home.jinja2')
 def home_view(request):
     """Home view for stock analysis app."""
-    return {}
+    if request.method == 'GET':
+        return {}
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        if is_authorized(request, username, password):
+            headers = remember(request, username)
+            return HTTPFound(request.route_url('portfolio'), headers=headers)
+        return {
+            'error': 'Username/password combination invalid.'
+        }
+    #  Check within POST request to see if it's login or register
+    #  pass request, username, pass
 
 
 @view_config(route_name='detail', renderer='stock_analysis:templates/detail.jinja2')
@@ -76,6 +91,13 @@ def detail_view(request):
 
 
 @view_config(route_name='profile', renderer='stock_analysis:templates/profile.jinja2')
-def profile_view(request):
-    """Home view for stock analysis app."""
+def portfolio_view(request):
+    """Portfolio view for stock analysis app."""
     return {}
+
+
+@view_config(route_name='logout')
+def logout(request):
+    """Logout of stock account."""
+    headers = forget(request)
+    return HTTPFound(request.route_url('home'), headers=headers)

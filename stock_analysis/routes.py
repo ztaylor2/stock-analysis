@@ -6,4 +6,4 @@ def includeme(config):
     config.add_static_view('static', 'stock_analysis:static')
     config.add_route('home', '/')
     config.add_route('detail', '/detail')
-    config.add_route('profile', '/profile')
+    config.add_route('portfolio', '/portfolio')
