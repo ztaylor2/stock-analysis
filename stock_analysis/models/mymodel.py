@@ -14,8 +14,8 @@ class User(Base):
     """Model of user/pass info in DB."""
 
     __tablename__ = 'users'
-    id = Column(Integer, primary_key=True)
-    username = Column(Text)
+    id = Column(Integer)
+    username = Column(Text, primary_key=True)
     password = Column(Text)
 
     def __repr__(self):

@@ -13,7 +13,7 @@ import numpy as np
 from sklearn.svm import SVR
 
 
-@view_config(route_name='home', renderer='stock_analysis:templates/home.jinja2')
+@view_config(route_name='home', renderer='stock_analysis:templates/home.jinja2', permission=NO_PERMISSION_REQUIRED)
 def home_view(request):
     """Home view for stock analysis app."""
     if request.method == 'GET':
@@ -37,8 +37,7 @@ def home_view(request):
             password=new_password
         )
         request.dbsession.add(new_account)
-        dbsession.commit()
-        
+
 
 @view_config(route_name='detail', renderer='stock_analysis:templates/detail.jinja2')
 def detail_view(request):
@@ -99,7 +98,7 @@ def detail_view(request):
         }
 
 
-@view_config(route_name='profile', renderer='stock_analysis:templates/profile.jinja2')
+@view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2', permission='secret')
 def portfolio_view(request):
     """Portfolio view for stock analysis app."""
     return {}
