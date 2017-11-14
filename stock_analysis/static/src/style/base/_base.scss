@@ -1,5 +1,13 @@
 @import '../lib/vars';
 
+.active {
+    display: block;
+}
+
+.inactive {
+    display: none;
+}
+
 html, body, main {
     height: 100%;
     font-family: $brand-font;
@@ -21,8 +29,4 @@ button {
       background: $brand-primary;
       color: $white;
     }
-}
-
-.nav {
-    display: none;
 }

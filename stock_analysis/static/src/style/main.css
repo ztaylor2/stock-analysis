@@ -46,6 +46,12 @@ table {
   border-collapse: collapse;
   border-spacing: 0; }
 
+.active {
+  display: block; }
+
+.inactive {
+  display: none; }
+
 html, body, main {
   height: 100%;
   font-family: "Ubuntu", sans-serif;
@@ -64,9 +70,6 @@ button {
   button:hover {
     background: #00B25E;
     color: #fbfbfb; }
-
-.nav {
-  display: none; }
 
 header {
   width: 100%;
@@ -88,7 +91,9 @@ header {
     margin: 2vw 2vw;
     float: left; }
     header div:hover {
-      cursor: pointer; }
+      cursor: pointer;
+      background-color: #1f1f1f;
+      border-radius: 2px; }
 
 footer {
   font-family: "Ubuntu", sans-serif;
