@@ -70,3 +70,15 @@ def home_view(request):
             "script": script,
         }
     return {}
+
+
+@view_config(route_name='detail', renderer='stock_analysis:templates/profile.jinja2')
+def detail_view(request):
+    """Shows stock information and graphs."""
+    return {}
+
+
+@view_config(route_name='profile', renderer='stock_analysis:templates/profile.jinja2')
+def profile_view(request):
+    """Displays the portfolio."""
+    return {}
