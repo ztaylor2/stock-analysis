@@ -29,6 +29,7 @@ def detail_view(request):
         end = datetime.datetime(2017, 11, 1)
         stock_data = web.DataReader(stock, 'yahoo', start, end)
         dates = stock_data.index.values
+
         # dates_datetime = []
 
         # i = 0
@@ -79,3 +80,9 @@ def detail_view(request):
 def profile_view(request):
     """Home view for stock analysis app."""
     return {}
+
+
+@view_config(route_name='process_symbol')
+def process_symbol(request):
+    """Home view for stock analysis app."""
+    print('in process')
