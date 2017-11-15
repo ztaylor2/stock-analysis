@@ -12,6 +12,8 @@ import pandas as pd
 import numpy as np
 from sklearn.svm import SVR
 from sklearn import linear_model
+import os
+import pdb 
 
 
 @view_config(route_name='home', renderer='stock_analysis:templates/home.jinja2', permission=NO_PERMISSION_REQUIRED)
@@ -20,24 +22,24 @@ def home_view(request):
     if request.method == 'GET':
         return {}
     if request.method == 'POST':
-        #  ALSO CHECK THAT IT'S A LOGIN POST REQUEST
         username = request.POST['username']
         password = request.POST['password']
-        if is_authorized(request, username, password):
-            headers = remember(request, username)
-            return HTTPFound(request.route_url('portfolio'), headers=headers)
-        return {
-            'error': 'Username/password combination invalid.'
-        }
-    if request.method == 'POST':
-        #  ALSO CHECK THAT IT'S A REGISTER ACCOUNT POST REQUEST
-        new_username = request.POST['username']
-        new_password = request.POST['password']
+        # if 'login' in request.POST:
+        #     if is_authorized(request, username, password):
+        #         headers = remember(request, username)
+        #         return HTTPFound(request.route_url('portfolio'), headers=headers)
+        #     return {
+        #         'error': 'Username/password combination invalid.'
+            # }
+        # elif 'register' in request.POST:
         new_account = User(
-            username=new_username,
-            password=new_password
+            username=username,
+            password=password
         )
         request.dbsession.add(new_account)
+        headers = remember(request, username)
+        return HTTPFound(request.route_url('portfolio'), headers=headers)
+        return {}
 
 
 @view_config(route_name='detail', renderer='stock_analysis:templates/detail.jinja2')
@@ -104,6 +106,11 @@ def detail_view(request):
 @view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2')
 def portfolio_view(request):
     """Portfolio view for stock analysis app."""
+    from alpha_vantage.timeseries import TimeSeries
+    ts = TimeSeries(key=(os.environ.get('AV_API_KEY')))
+    # Get json object with the intraday data and another with the call's metadata
+    data, meta_data = ts.get_intraday('GOOGL')
+    pdb.set_trace()
     return {}
 
 
@@ -112,6 +119,7 @@ def logout(request):
     """Logout of stock account."""
     headers = forget(request)
     return HTTPFound(request.route_url('home'), headers=headers)
+
 
 @view_config(route_name='process_symbol')
 def process_symbol(request):
@@ -127,3 +135,4 @@ def login_view(request):
 def register_view(request):
     """Register view for stock analysis app."""
     return {}
+ 
