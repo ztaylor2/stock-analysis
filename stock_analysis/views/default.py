@@ -3,12 +3,13 @@ from pyramid.view import view_config
 from bokeh.plotting import figure
 import pandas_datareader.data as web
 from bokeh.embed import components
-from pyramid.httpexceptions import HTTPNotFound, HTTPFound
+from pyramid.httpexceptions import HTTPFound
 from pyramid.security import remember, forget, NO_PERMISSION_REQUIRED
+from pandas_datareader._utils import RemoteDataError
+from alpha_vantage.timeseries import TimeSeries
 from stock_analysis.security import is_authorized
 import datetime
 from stock_analysis.models.mymodel import User
-import pandas as pd
 import numpy as np
 from sklearn.svm import SVR
 from sklearn import linear_model
@@ -16,7 +17,7 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import Pipeline
 import requests
-import os
+
 
 @view_config(route_name='home', renderer='stock_analysis:templates/home.jinja2', permission=NO_PERMISSION_REQUIRED)
 def home_view(request):
@@ -46,7 +47,7 @@ def home_view(request):
 
 @view_config(route_name='detail', renderer='stock_analysis:templates/detail.jinja2')
 def detail_view(request):
-    """Home view for stock analysis app."""
+    """Detail stock view for stock analysis app."""
     if request.method == 'GET':
         return {}
     if request.method == 'POST':
@@ -83,7 +84,7 @@ def detail_view(request):
         # convert numpy dates into python datetime objects
         dates_python = []
         for date in dates:
-            dates_python.append(datetime.datetime.utcfromtimestamp(date.tolist()/1e9))
+            dates_python.append(datetime.datetime.utcfromtimestamp(date.tolist()))
 
         # convert dates to list of days ago
         last = dates_python[-1]
@@ -141,12 +142,13 @@ def detail_view(request):
             "script": script,
         }
 
-stock = "AMZN GOOG MSFT FB F"
+stockstr = "AMZN GOOG MSFT FB F"
+
 
 @view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2')
-def portfolio_view(request, stock):
-    """."""
-    stock_list = stock.split()
+def portfolio_view(request):
+    """View for logged in portfolio."""
+    stock_list = stockstr.split()
     stock_detail = {}
 
     def get_symbol(symbol):
@@ -159,12 +161,17 @@ def portfolio_view(request, stock):
 
     for stock in stock_list:
         company, exchange = get_symbol(stock)
-        stock_data = web.get_quote_yahoo(stock)
-        last = str(stock_data['last'].values)
-        pct = str(stock_data['change_pct'].values)
-        pe = str(stock_data['PE'].values)
-        stock_detail[stock] = {'last': last, 'pct': pct, 'pe': pe, 'ticker': stock}
+        ts = TimeSeries(key='FVBLNTQMS4063FIN')
+        data, meta_data = ts.get_intraday(stock)
+        data = data[max(data)]
+        open_price = data['1. open']
+        high = data['2. high']
+        low = data['3. low']
+        current = data['4. close']
+        volume = data['5. volume']
+        stock_detail[stock] = {'company': company, 'exchange': exchange, 'volume': volume, 'open': open_price, 'high': high, 'low': low, 'ticker': stock, 'current': current}
     return stock_detail
+
 
 @view_config(route_name='logout')
 def logout(request):
@@ -175,13 +182,15 @@ def logout(request):
 
 @view_config(route_name='process_symbol')
 def process_symbol(request):
-    """Home view for stock analysis app."""
+    """Processing and loading symbol."""
     print('in process')
+
 
 @view_config(route_name='login', renderer='stock_analysis:templates/login.jinja2')
 def login_view(request):
     """Login view for stock analysis app."""
     return {}
+
 
 @view_config(route_name='register', renderer='stock_analysis:templates/register.jinja2')
 def register_view(request):
