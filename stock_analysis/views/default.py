@@ -118,3 +118,12 @@ def process_symbol(request):
     """Home view for stock analysis app."""
     print('in process')
 
+@view_config(route_name='login', renderer='stock_analysis:templates/login.jinja2')
+def login_view(request):
+    """Login view for stock analysis app."""
+    return {}
+
+@view_config(route_name='register', renderer='stock_analysis:templates/register.jinja2')
+def register_view(request):
+    """Register view for stock analysis app."""
+    return {}
