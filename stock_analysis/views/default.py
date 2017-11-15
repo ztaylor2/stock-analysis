@@ -164,13 +164,14 @@ def portfolio_view(request):
         ts = TimeSeries(key='FVBLNTQMS4063FIN')
         data, meta_data = ts.get_intraday(stock)
         data = data[max(data)]
-        open_price = data['1. open']
-        high = data['2. high']
-        low = data['3. low']
-        current = data['4. close']
-        volume = data['5. volume']
-        stock_detail[stock] = {'company': company, 'exchange': exchange, 'volume': volume, 'open': open_price, 'high': high, 'low': low, 'ticker': stock, 'current': current}
-    return stock_detail
+        open_price = round(float(data['1. open']), 2)
+        high = round(float(data['2. high']), 2)
+        low = round(float(data['3. low']), 2)
+        current = round(float(data['4. close']), 2)
+        volume = data['5. volume'], 2
+        growth = round(float(data['4. close']) - float(data['1. open']), 2)
+        stock_detail[stock] = {'growth': growth, 'company': company, 'exchange': exchange, 'volume': volume, 'open': open_price, 'high': high, 'low': low, 'ticker': stock, 'current': current}
+    return {'stock_detail': stock_detail}
 
 
 @view_config(route_name='logout')

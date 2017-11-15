@@ -2,21 +2,25 @@
 
 {% block body %}
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+{#     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+ #} 
     <a href="{{ request.route_url('detail') }}">View Stock Analytics</a>
     <a href="{{ request.route_url('home') }}">Home</a>
     <a href="{{ request.route_url('process_symbol') }}">symbol</a>  {# # To process the symbol request #}
 
-    <h1>Your Personal Portfolio.</h1>
+    <h1>Stock Portfolio</h1>
 
 <table style="width: 80%">
     {% for ticker in stock_detail %}
     <tr class='clickable-row'>
-        <td class="c1"><SPAN>{{ ticker.name }}</SPAN></td>
-        <td class="c2"><SPAN>{{ ticker.ticker }}</SPAN></td>
-        <td class="c3"><SPAN>{{ ticker.last }}</SPAN></td>
-        <td class="c4"><SPAN>{{ ticker.pe }}</SPAN></td>
-        <td class="c5"><SPAN>{{ ticker.pct }}</SPAN></td>
+        <div>{{ ticker }}</div>
+        <td class="c1"><SPAN>{{ stock_detail[ticker].company }}</SPAN></td>
+        <td class="c2"><SPAN>{{ stock_detail[ticker].exchange }}:  {{ stock_detail[ticker].ticker }}</SPAN></td>
+        <td class="c3"><SPAN>${{ stock_detail[ticker].current }}</SPAN></td>
+        <td class="c4"><SPAN>{{ stock_detail[ticker].growth }}</SPAN></td>
+        <td class="c5"><SPAN>{{ stock_detail[ticker].open }}</SPAN></td>
+        <td class="c5"><SPAN>{{ stock_detail[ticker].high }}</SPAN></td>
+        <td class="c5"><SPAN>{{ stock_detail[ticker].low }}</SPAN></td>
     </tr>
     {% endfor %}
 </table>
@@ -29,35 +33,3 @@
 
     
 {% endblock body %}
-{# 
-
-# I want to create a blank table to which new elements can be added by user.
-# A new blank input field is at the bottom of the table.
-# They should enter the stock ticker, click the 'add' button and that stock should be added to table.
-# When the row is clicked, it takes the user to the detail view.
- #}
-
-
-{# 
-pass items to template.render as a keyword argument - it should be a list 
-
-stocks = []
-for i in range(1:):
-    i = str(i)
-
-    # dict == {}
-    # you just don't have to quote the keys
-    stock = dict(i, id=i, position="here", status="waiting")
-    stocks.append(stock)
-
-# more code goes here.
-
-template.render(stocks=stocks)
- #}{# 
-
- $("#mySelectList option:selected").text();
-        $("#addButton").click(function () {           
-        var selectedVal = $('select').val();
-        $('ul').append('<li>'+selectedVal+'</li>')
-        }); 
- #}
