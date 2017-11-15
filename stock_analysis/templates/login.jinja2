@@ -1,11 +1,15 @@
 {% extends "layout.jinja2" %}
 
 {% block body %}
-<div class="login">
-    <form name="login" method="POST">
-        <input name="username" type="text" class="form-input" placeholder="User Name" required>
-        <input name="password" type="text" class="form-input" placeholder="Password" required>
-        <input name="login" type="submit" value="LOGIN">
-    </form>
+<div class="form-header">
+    <h1 class="form-title">Stock Analysis</h1>
+
+    <div class="login">
+        <form name="login" method="POST">
+            <input name="username" type="text" class="form-input" placeholder="User Name" required>
+            <input name="password" type="text" class="form-input" placeholder="Password" required>
+            <input name="login" type="submit" value="LOGIN">
+        </form>
+    </div>
 </div>
 {% endblock %}
