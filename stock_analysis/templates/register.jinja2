@@ -1,0 +1,15 @@
+{% extends "layout.jinja2" %}
+
+{% block body %}
+<div class="form-header">
+    <h1 class="form-title">Stock Analysis</h1>
+
+    <div class="sign-up">
+        <form name="signup" method="POST">
+            <input name="user-name" type="text" class="form-input" placeholder="User Name" required>
+            <input name="password" type="text" class="form-input" placeholder="Password" required>
+            <input name="register" type="submit" value="SIGN UP">
+        </form>
+    </div>
+</div>
+{% endblock %}

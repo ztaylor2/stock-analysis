@@ -1,42 +1,45 @@
 {% extends "layout.jinja2" %}
 
 {% block body %}
+<header>
+    <h1>Stock Analysis</h1>
+    <div class="icon-menu"></div>
+</header>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <a href="{{ request.route_url('detail') }}">View Stock Analytics</a>
     <a href="{{ request.route_url('home') }}">Home</a>
-
-
-
-  <a href="{{ request.route_url('process_symbol') }}">symbol</a> # process ticker
-
+    <a href="{{ request.route_url('process_symbol') }}">symbol</a>  {# # To process the symbol request #}
 
     <h1>Your Personal Portfolio.</h1>
-    <h3>Input a stock symbol into the field below and click the + button to add it to your stock portfolio.</h3>
 
 <table style="width: 80%">
-    <tr class='clickable-row' data-href="{{ url_for('portfolio') }}" method = POST>
-        <td class="c1"><SPAN>{{ stock.name }}</SPAN></td>
-        <td class="c2"><SPAN>{{ stock.symbol }}</SPAN></td>
-        <td class="c3"><SPAN>{{ stock.price }}</SPAN></td>
-        <td class="c4"><SPAN>{{ stock.growth }}</SPAN></td>
-        <td class="c5"><SPAN>{{ stock.percent }}</SPAN></td>
+    {% for ticker in stock_detail %}
+    <tr class='clickable-row'>
+        <td class="c1"><SPAN>{{ ticker.name }}</SPAN></td>
+        <td class="c2"><SPAN>{{ ticker.ticker }}</SPAN></td>
+        <td class="c3"><SPAN>{{ ticker.last }}</SPAN></td>
+        <td class="c4"><SPAN>{{ ticker.pe }}</SPAN></td>
+        <td class="c5"><SPAN>{{ ticker.pct }}</SPAN></td>
     </tr>
+    {% endfor %}
+</table>
 <form>
     <div class="form-group">
         <input type="text" name="fname" placeholder="Enter Stock Symbol Here"><br>
         <button id="add-button" type="submit">+</button>
     </div>
 </form>
+
     
+{% endblock body %}
+{# 
 
 # I want to create a blank table to which new elements can be added by user.
-# They should enter the stock ticker, click the 'add' button and that stock should be added to table.
 # A new blank input field is at the bottom of the table.
-
-
-{% endblock body %}
-
+# They should enter the stock ticker, click the 'add' button and that stock should be added to table.
+# When the row is clicked, it takes the user to the detail view.
+ #}
 
 
 {# 
@@ -54,11 +57,11 @@ for i in range(1:):
 # more code goes here.
 
 template.render(stocks=stocks)
- #}
+ #}{# 
 
  $("#mySelectList option:selected").text();
         $("#addButton").click(function () {           
         var selectedVal = $('select').val();
         $('ul').append('<li>'+selectedVal+'</li>')
         }); 
-
+ #}

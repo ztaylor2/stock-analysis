@@ -4,10 +4,11 @@
     display: block;
 }
 
-.inactive {
+.hidden {
     display: none;
 }
 
+//.....MAIN LAYOUT.....\\
 html, body, main {
     height: 100%;
     font-family: $brand-font;
@@ -15,6 +16,22 @@ html, body, main {
     font-size: 3vw;
 }
 
+//.....HEADERS.....\\
+h1, h2, h3 {
+    font-family: $brand-header;
+}
+
+//.....PARAGRAPHS.....\\
+p {
+    font-family: $brand-font;
+}
+
+//.....BACKGROUND COLOUR.....\\
+.body-background {
+    color: $egg;
+}
+
+ //.....BUTTONS.....\\
 button {
     border: $brand-primary solid 2px;
     border-radius: $border-radius;
@@ -23,10 +40,21 @@ button {
     color: $brand-primary;
     outline: none;
     margin: $gutter-sm;
-    font-size: 3vw;
+    font-weight: 500;
+    font-size: 18px;
+    border-radius: 3px;
+    line-height: 22px;
+    padding: 15px;
+    margin: 15px 0px;
+    width: 80%;
+    box-sizing: border-box;
+    outline: 0;
+    max-width: 420px;
+    text-align: center;
 
     &:hover {
       background: $brand-primary;
       color: $white;
+      transition: all 1s;
     }
 }

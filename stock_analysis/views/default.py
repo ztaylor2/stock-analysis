@@ -12,7 +12,11 @@ import pandas as pd
 import numpy as np
 from sklearn.svm import SVR
 from sklearn import linear_model
-
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.pipeline import Pipeline
+import requests
+import os
 
 @view_config(route_name='home', renderer='stock_analysis:templates/home.jinja2', permission=NO_PERMISSION_REQUIRED)
 def home_view(request):
@@ -20,24 +24,24 @@ def home_view(request):
     if request.method == 'GET':
         return {}
     if request.method == 'POST':
-        #  ALSO CHECK THAT IT'S A LOGIN POST REQUEST
         username = request.POST['username']
         password = request.POST['password']
-        if is_authorized(request, username, password):
+        if 'login' in request.POST:
+            if is_authorized(request, username, password):
+                headers = remember(request, username)
+                return HTTPFound(request.route_url('portfolio'), headers=headers)
+            return {
+                'error': 'Username/password combination invalid.'
+            }
+        elif 'register' in request.POST:
+            new_account = User(
+                username=username,
+                password=password
+            )
+            request.dbsession.add(new_account)
             headers = remember(request, username)
             return HTTPFound(request.route_url('portfolio'), headers=headers)
-        return {
-            'error': 'Username/password combination invalid.'
-        }
-    if request.method == 'POST':
-        #  ALSO CHECK THAT IT'S A REGISTER ACCOUNT POST REQUEST
-        new_username = request.POST['username']
-        new_password = request.POST['password']
-        new_account = User(
-            username=new_username,
-            password=new_password
-        )
-        request.dbsession.add(new_account)
+        return {}
 
 
 @view_config(route_name='detail', renderer='stock_analysis:templates/detail.jinja2')
@@ -49,9 +53,30 @@ def detail_view(request):
 
         stock = request.POST['stock_ticker'].upper()
 
-        start = datetime.datetime(2016, 11, 1)
+        def get_symbol(symbol):
+            """Get company name from stock ticker for graph title."""
+            url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(symbol)
+            result = requests.get(url).json()
+            for x in result['ResultSet']['Result']:
+                if x['symbol'] == symbol:
+                    return x['name'], x['exchDisp']
+
+        try:
+            company, exchange = get_symbol(stock)
+        except TypeError:
+            return {
+                "error": "No data on {}".format(stock)
+            }
+
+        start = datetime.datetime(2015, 8, 1)
         end = datetime.datetime(2017, 11, 1)
-        stock_data = web.DataReader(stock, 'yahoo', start, end)
+        try:
+            stock_data = web.DataReader(stock, 'yahoo', start, end)
+        except RemoteDataError:
+            return {
+                "error": "Error retrieving {} data, try again.".format(stock)
+            }
+
         dates = stock_data.index.values
         prices = stock_data['Close'].values
 
@@ -69,28 +94,44 @@ def detail_view(request):
             diff = last - date
             days_from_beginning.append(total_diff.days - diff.days)
 
-        # eight_percet_of_dates = dates[:(len(dates) - int(round(len(dates) * .2)))]
-        # eighty_dates_reshape = np.reshape(eight_percet_of_dates, (len(eight_percet_of_dates), 1))
+        eighty_percent_of_dates = days_from_beginning[:(len(days_from_beginning) - int(round(len(days_from_beginning) * .2)))]
+        eighty_dates_reshape = np.reshape(eighty_percent_of_dates, (len(eighty_percent_of_dates), 1))
 
         dates_reshape = np.reshape(days_from_beginning, (len(days_from_beginning), 1))
 
         # Linear Regression
         lin_regr = linear_model.LinearRegression()
-        lin_regr.fit(dates_reshape, prices)
+        lin_regr.fit(eighty_dates_reshape, prices[:len(eighty_dates_reshape)])
         lin_regr_prediction = lin_regr.predict(dates_reshape)
 
+        # Polynomial Regression
+        model = Pipeline([('poly', PolynomialFeatures(degree=3)),
+                          ('linear', LinearRegression(fit_intercept=False))])
+        model = model.fit(eighty_dates_reshape, prices[:len(eighty_dates_reshape)])
+        poly_prediction = model.predict(dates_reshape)
 
         # Support Vector Machine
-        svr_rbf = SVR(kernel='rbf', C=1e3, gamma=0.1)
-        svr_rbf.fit(dates_reshape, prices)
+        svr_rbf = SVR(kernel='rbf', C=1, gamma=1E-3)
+        svr_rbf.fit(eighty_dates_reshape, prices[:len(eighty_dates_reshape)])
         svr_rbf_prediction = svr_rbf.predict(dates_reshape)
 
+        mean_p = np.mean([lin_regr_prediction, poly_prediction, svr_rbf_prediction], axis=0)
 
         # create a new plot with a title and axis labels
-        p = figure(title="Stock Analysis", x_axis_label='Time', y_axis_label='Price')
-        p.multi_line([dates, dates, dates], [prices, lin_regr_prediction, svr_rbf_prediction],
-                     color=["firebrick", "navy"], legend="Temp.", alpha=[0.8, 0.3], line_width=2)
-
+        p = figure(title="{}  -  {}: {}".format(company, exchange, stock), x_axis_label='Date',
+                   y_axis_label='Price', width=800, height=350,
+                   x_axis_type="datetime", sizing_mode='scale_width')
+        p.circle(dates, prices, legend="Historical Data", line_color="black", fill_color="white", size=6)
+        p.line(dates, lin_regr_prediction, legend="Linear Regression",
+               line_color="orange", line_width=2)
+        p.line(dates, poly_prediction, legend="Polynomial Regression",
+               line_color="green", line_width=2)
+        p.line(dates, svr_rbf_prediction, legend="Support Vector Machine",
+               line_color="blue", line_width=2)
+        p.line(dates, mean_p, legend="Mean(L, P, SVM)",
+               line_color="gray", line_width=2)
+        p.legend.location = "top_left"
+        p.title.text_font_size = "1em"
 
         # save script and div components to put in html
         script, div = components(p)
@@ -100,12 +141,30 @@ def detail_view(request):
             "script": script,
         }
 
+stock = "AMZN GOOG MSFT FB F"
 
 @view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2')
-def portfolio_view(request):
-    """Portfolio view for stock analysis app."""
-    return {}
+def portfolio_view(request, stock):
+    """."""
+    stock_list = stock.split()
+    stock_detail = {}
 
+    def get_symbol(symbol):
+        """Get company name from stock ticker for graph title."""
+        url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(symbol)
+        result = requests.get(url).json()
+        for x in result['ResultSet']['Result']:
+            if x['symbol'] == symbol:
+                return x['name'], x['exchDisp']
+
+    for stock in stock_list:
+        company, exchange = get_symbol(stock)
+        stock_data = web.get_quote_yahoo(stock)
+        last = str(stock_data['last'].values)
+        pct = str(stock_data['change_pct'].values)
+        pe = str(stock_data['PE'].values)
+        stock_detail[stock] = {'last': last, 'pct': pct, 'pe': pe, 'ticker': stock}
+    return stock_detail
 
 @view_config(route_name='logout')
 def logout(request):
@@ -113,8 +172,18 @@ def logout(request):
     headers = forget(request)
     return HTTPFound(request.route_url('home'), headers=headers)
 
+
 @view_config(route_name='process_symbol')
 def process_symbol(request):
     """Home view for stock analysis app."""
     print('in process')
 
+@view_config(route_name='login', renderer='stock_analysis:templates/login.jinja2')
+def login_view(request):
+    """Login view for stock analysis app."""
+    return {}
+
+@view_config(route_name='register', renderer='stock_analysis:templates/register.jinja2')
+def register_view(request):
+    """Register view for stock analysis app."""
+    return {}

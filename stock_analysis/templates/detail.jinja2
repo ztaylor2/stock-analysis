@@ -1,15 +1,28 @@
 {% extends "layout.jinja2" %}
 
 {% block body %}
-
+<header>
+    <h1>Stock Analysis</h1>
+    <div class="icon-menu"></div>
+</header>
   <a href="{{ request.route_url('home') }}">Home</a>
   <a href="{{ request.route_url('portfolio') }}">View Portfolio</a>
 
   <form method="POST">
     <div class="form-group">
       <label>Enter Stock Ticker:</label>
-      <textarea name="stock_ticker" rows="1" required></textarea>
+      <input name="stock_ticker" required></input>
     </div>
+
+    {% if error %} 
+
+      <div class="no_ticker_popup">
+        <p> {{ error }} </p>
+      </div>
+
+    {% endif %} 
+
+
     <div class="form-group">
       <div class="submit-button">
         <input type="submit"></input>

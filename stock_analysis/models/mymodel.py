@@ -5,6 +5,7 @@ from sqlalchemy import (
     Index,
     Integer,
     Text,
+    Unicode
 )
 
 from .meta import Base
@@ -24,3 +25,11 @@ class User(Base):
 
 
 Index('my_index', User.username, unique=True, mysql_length=255)
+
+
+class Portfolio(Base):
+    """Create DB for unique user stock portfolio."""
+
+    __tablename__ = 'portfolio'
+    username = Column(Text, primary_key=True)
+    symbol_list = Column(Unicode)
