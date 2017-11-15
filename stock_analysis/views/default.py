@@ -60,11 +60,24 @@ def detail_view(request):
             for x in result['ResultSet']['Result']:
                 if x['symbol'] == symbol:
                     return x['name'], x['exchDisp']
-        company, exchange = get_symbol(stock)
+
+        try:
+            company, exchange = get_symbol(stock)
+        except TypeError:
+            return {
+                "error": "No data on {}".format(stock)
+            }
+
 
         start = datetime.datetime(2015, 8, 1)
         end = datetime.datetime(2017, 11, 1)
-        stock_data = web.DataReader(stock, 'yahoo', start, end)
+        try:
+            stock_data = web.DataReader(stock, 'yahoo', start, end)
+        except RemoteDataError:
+            return {
+                "error": "Error retrieving {} data, try again.".format(stock)
+            }
+
         dates = stock_data.index.values
         prices = stock_data['Close'].values
 
