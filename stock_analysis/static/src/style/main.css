@@ -66,8 +66,17 @@ button {
   color: #00B25E;
   outline: none;
   margin: 2.5vw;
-  font-size: 3vw;
-  width: 80%; }
+  font-weight: 500;
+  font-size: 18px;
+  border-radius: 3px;
+  line-height: 22px;
+  padding: 15px;
+  margin: 15px 0px;
+  width: 80%;
+  box-sizing: border-box;
+  outline: 0;
+  max-width: 420px;
+  text-align: center; }
   button:hover {
     background: #00B25E;
     color: #fbfbfb;
@@ -128,7 +137,8 @@ form {
   margin-bottom: 15px;
   width: 80%;
   box-sizing: border-box;
-  outline: 0; }
+  outline: 0;
+  border: 2px solid #00B25E; }
 
 ::placeholder {
   color: #00B25E; }

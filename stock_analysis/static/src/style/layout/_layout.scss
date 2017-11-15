@@ -27,6 +27,7 @@ form {
     width: 80%;
     box-sizing: border-box;
     outline: 0;
+    border: 2px solid $brand-primary;
   }
 
 ::placeholder {

@@ -21,11 +21,11 @@
 -- They should send some indication of their difference to default.py in the request. 
     --(For example, form name which I added, or something different. I need to be able to differentiate a login POST request from a signup POST request in the home_view.) #}
 
-<div classname>
+<form>
     <button name="button" type="button">Get Started Without Account</button>
     <button name="button" type="button">Login</button>
     <button name="button" type="button">Sign Up</button>
-</div>
+</form>
 
 <div>
     <form name="login" method="POST">
@@ -39,7 +39,7 @@
     <form name="signup" method="POST">
         <input name="user-name" type="text" class="form-input" placeholder="User Name" required>
         <input name="password" type="text" class="form-input" placeholder="Password" required>
-        <input name="register" type="submit" value="REGISTER">
+        <input name="register" type="submit" value="SIGN UP">
     </form>
 </div>
 
