@@ -13,16 +13,6 @@ import numpy as np
 from sklearn.svm import SVR
 from sklearn import linear_model
 import os
-import pdb
-
-
-stock_dict = {'Book_Value_per_Share': '10.051',
-              'name': 'Yahoo',
-              'symbol': 'YHOO',
-              'price': '14.96',
-              'growth': '2.48',
-              'percent': '1.47%'}
-
 
 @view_config(route_name='home', renderer='stock_analysis:templates/home.jinja2', permission=NO_PERMISSION_REQUIRED)
 def home_view(request):
@@ -109,7 +99,6 @@ def detail_view(request):
 
 stock = "AMZN GOOG MSFT FB F"
 
-
 @view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2')
 def portfolio_view(request, stock):
     """."""
@@ -132,7 +121,6 @@ def portfolio_view(request, stock):
         pe = str(stock_data['PE'].values)
         stock_detail[stock] = {'last': last, 'pct': pct, 'pe': pe, 'ticker': stock}
     return stock_detail
-
 
 @view_config(route_name='logout')
 def logout(request):
