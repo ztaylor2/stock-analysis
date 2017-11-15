@@ -21,27 +21,11 @@
 -- They should send some indication of their difference to default.py in the request. 
     --(For example, form name which I added, or something different. I need to be able to differentiate a login POST request from a signup POST request in the home_view.) #}
 
-<button name="button" type="button">Get Started Without Account</button>
-<button name="button" type="button">Login</button>
-<button name="button" type="button">Sign Up</button>
+<div class="landing-page">
+    <form>
+        <a href={{ request.route_url('detail') }}><button class="get-started" type="button">Get Started Without Account</button></a>
+        <a href={{ request.route_url('login') }}><button class="login-button" type="button">Login</button></a>
+        <a href={{ request.route_url('register') }}><button class="sign-up-button" type="button">Sign Up</button></a>
+    </form>
+</div>
 
-<form name="login" method="POST">
-    <p>Username:</p>
-    <input type="text" name="username" required>
-    <p>Password:</p>
-    <input type="password" name="password" required>
-    <br><br>
-    <input type="submit" name="Login">
-</form>
-
-<form name="signup" method="POST">
-    <p>Username:</p>
-    <input type="text" name="username" required>
-    <p>Password:</p>
-    <input type="password" name="password" required>
-    <br><br>
-    <input type="submit" name="Create Account">
-</form>
-
-
-{% endblock body %}
