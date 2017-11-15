@@ -10,13 +10,15 @@
     <h1>Your Personal Portfolio.</h1>
 
 <table style="width: 80%">
-    <tr class='clickable-row' data-href="{{ ('portfolio') }}" method = POST>
-        <td class="c1"><SPAN>{{ name }}</SPAN></td>
-        <td class="c2"><SPAN>{{ symbol }}</SPAN></td>
-        <td class="c3"><SPAN>{{ price }}</SPAN></td>
-        <td class="c4"><SPAN>{{ growth }}</SPAN></td>
-        <td class="c5"><SPAN>{{ percent }}</SPAN></td>
+    {% for ticker in stock_detail %}
+    <tr class='clickable-row'>
+        <td class="c1"><SPAN>{{ ticker.name }}</SPAN></td>
+        <td class="c2"><SPAN>{{ ticker.ticker }}</SPAN></td>
+        <td class="c3"><SPAN>{{ ticker.last }}</SPAN></td>
+        <td class="c4"><SPAN>{{ ticker.pe }}</SPAN></td>
+        <td class="c5"><SPAN>{{ ticker.pct }}</SPAN></td>
     </tr>
+    {% endfor %}
 </table>
 <form>
     <div class="form-group">
