@@ -68,7 +68,6 @@ def detail_view(request):
                 "error": "No data on {}".format(stock)
             }
 
-
         start = datetime.datetime(2015, 8, 1)
         end = datetime.datetime(2017, 11, 1)
         try:
@@ -98,10 +97,6 @@ def detail_view(request):
         eighty_percent_of_dates = days_from_beginning[:(len(days_from_beginning) - int(round(len(days_from_beginning) * .2)))]
         eighty_dates_reshape = np.reshape(eighty_percent_of_dates, (len(eighty_percent_of_dates), 1))
 
-        twenty_percent_of_dates = days_from_beginning[(len(days_from_beginning) - int(round(len(days_from_beginning) * .2))):]
-        twenty_dates_reshape = np.reshape(eighty_percent_of_dates, (len(eighty_percent_of_dates), 1))
-
-
         dates_reshape = np.reshape(days_from_beginning, (len(days_from_beginning), 1))
 
         # Linear Regression
@@ -117,19 +112,10 @@ def detail_view(request):
 
         # Support Vector Machine
         svr_rbf = SVR(kernel='rbf', C=1, gamma=1E-3)
-        # svr_rbf = SVR(kernel='rbf', C=1e3, gamma=1E-4, degree=5)
         svr_rbf.fit(eighty_dates_reshape, prices[:len(eighty_dates_reshape)])
         svr_rbf_prediction = svr_rbf.predict(dates_reshape)
 
-
         mean_p = np.mean([lin_regr_prediction, poly_prediction, svr_rbf_prediction], axis=0)
-
-        # svr_rbf_prediction_test = []
-
-        # for date in dates_reshape:
-        #     svr_rbf_prediction_test.append(svr_rbf.predict(date)[0])
-
-        # import pdb; pdb.set_trace()
 
         # create a new plot with a title and axis labels
         p = figure(title="{}  -  {}: {}".format(company, exchange, stock), x_axis_label='Date',
@@ -172,4 +158,3 @@ def logout(request):
 def process_symbol(request):
     """Home view for stock analysis app."""
     print('in process')
-
