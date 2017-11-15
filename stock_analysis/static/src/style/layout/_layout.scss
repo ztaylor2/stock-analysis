@@ -6,8 +6,11 @@
 }
 
 //.....FORMS.....\\
+.landing-page-form, .login, .sign-up {
+    margin: 25% 0%;
+}
+
 form {
-    max-width: 420px;
     margin: 0 auto;
     text-align: center;
     background: transparent;
