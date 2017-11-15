@@ -14,7 +14,6 @@ from sklearn.svm import SVR
 from sklearn import linear_model
 import os
 
-
 @view_config(route_name='home', renderer='stock_analysis:templates/home.jinja2', permission=NO_PERMISSION_REQUIRED)
 def home_view(request):
     """Home view for stock analysis app."""
@@ -80,18 +79,15 @@ def detail_view(request):
         lin_regr.fit(dates_reshape, prices)
         lin_regr_prediction = lin_regr.predict(dates_reshape)
 
-
         # Support Vector Machine
         svr_rbf = SVR(kernel='rbf', C=1e3, gamma=0.1)
         svr_rbf.fit(dates_reshape, prices)
         svr_rbf_prediction = svr_rbf.predict(dates_reshape)
 
-
         # create a new plot with a title and axis labels
         p = figure(title="Stock Analysis", x_axis_label='Time', y_axis_label='Price')
         p.multi_line([dates, dates, dates], [prices, lin_regr_prediction, svr_rbf_prediction],
                      color=["firebrick", "navy"], legend="Temp.", alpha=[0.8, 0.3], line_width=2)
-
 
         # save script and div components to put in html
         script, div = components(p)
@@ -101,16 +97,30 @@ def detail_view(request):
             "script": script,
         }
 
+stock = "AMZN GOOG MSFT FB F"
 
 @view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2')
-def portfolio_view(request):
-    """Portfolio view for stock analysis app."""
-    from alpha_vantage.timeseries import TimeSeries
-    ts = TimeSeries(key=(os.environ.get('AV_API_KEY')))
-    # Get json object with the intraday data and another with the call's metadata
-    data, meta_data = ts.get_intraday('GOOGL')
-    return {}
+def portfolio_view(request, stock):
+    """."""
+    stock_list = stock.split()
+    stock_detail = {}
 
+    def get_symbol(symbol):
+        """Get company name from stock ticker for graph title."""
+        url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(symbol)
+        result = requests.get(url).json()
+        for x in result['ResultSet']['Result']:
+            if x['symbol'] == symbol:
+                return x['name'], x['exchDisp']
+
+    for stock in stock_list:
+        company, exchange = get_symbol(stock)
+        stock_data = web.get_quote_yahoo(stock)
+        last = str(stock_data['last'].values)
+        pct = str(stock_data['change_pct'].values)
+        pe = str(stock_data['PE'].values)
+        stock_detail[stock] = {'last': last, 'pct': pct, 'pe': pe, 'ticker': stock}
+    return stock_detail
 
 @view_config(route_name='logout')
 def logout(request):
@@ -123,3 +133,14 @@ def logout(request):
 def process_symbol(request):
     """Home view for stock analysis app."""
     print('in process')
+
+@view_config(route_name='login', renderer='stock_analysis:templates/login.jinja2')
+def login_view(request):
+    """Login view for stock analysis app."""
+    return {}
+
+@view_config(route_name='register', renderer='stock_analysis:templates/register.jinja2')
+def register_view(request):
+    """Register view for stock analysis app."""
+    return {}
+ 
