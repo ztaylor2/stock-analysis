@@ -11,9 +11,17 @@
     <h1>Stock Portfolio</h1>
 
 <table style="width: 80%">
+    <thead>
+        <td>Company</td>
+        <td>Exchange/Ticker</td>
+        <td>Current Price</td>
+        <td>Growth</td>
+        <td>Open</td>
+        <td>High</td>
+        <td>Low</td>
+    </thead>
     {% for ticker in stock_detail %}
     <tr class='clickable-row'>
-        <div>{{ ticker }}</div>
         <td class="c1"><SPAN>{{ stock_detail[ticker].company }}</SPAN></td>
         <td class="c2"><SPAN>{{ stock_detail[ticker].exchange }}:  {{ stock_detail[ticker].ticker }}</SPAN></td>
         <td class="c3"><SPAN>${{ stock_detail[ticker].current }}</SPAN></td>
