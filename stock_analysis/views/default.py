@@ -22,21 +22,21 @@ def home_view(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        # if 'login' in request.POST:
-        #     if is_authorized(request, username, password):
-        #         headers = remember(request, username)
-        #         return HTTPFound(request.route_url('portfolio'), headers=headers)
-        #     return {
-        #         'error': 'Username/password combination invalid.'
-            # }
-        # elif 'register' in request.POST:
-        new_account = User(
-            username=username,
-            password=password
-        )
-        request.dbsession.add(new_account)
-        headers = remember(request, username)
-        return HTTPFound(request.route_url('portfolio'), headers=headers)
+        if 'login' in request.POST:
+            if is_authorized(request, username, password):
+                headers = remember(request, username)
+                return HTTPFound(request.route_url('portfolio'), headers=headers)
+            return {
+                'error': 'Username/password combination invalid.'
+            }
+        elif 'register' in request.POST:
+            new_account = User(
+                username=username,
+                password=password
+            )
+            request.dbsession.add(new_account)
+            headers = remember(request, username)
+            return HTTPFound(request.route_url('portfolio'), headers=headers)
         return {}
 
 
