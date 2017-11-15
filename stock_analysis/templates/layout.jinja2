@@ -26,11 +26,11 @@
     <div class="icon-menu"></div>
   </header>
     <div class="body-background">
-      <div class="inactive" class="toggle-menu">
+      <div class="inactive">
           <nav>
             <ul>
               <li><a href={{ request.route_url('home') }}>Home</a></li>
-              <li><a href={{ request.route_url('detail') }}>Detail</a></li>
+              <li><a href={{ request.route_url('detail') }}>View Stock Analytics</a></li>
               <li><a href={{ request.route_url('portfolio') }}>My Portfolio</a></li>
             </ul>
           </nav>
@@ -45,7 +45,5 @@
     <script src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.10.min.js"></script>
     <script src="https://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.10.min.js"></script>
     <script src="https://cdn.pydata.org/bokeh/release/bokeh-tables-0.12.10.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="../static/src/js/hamburger.js"></script>
 </body>
 </html>
