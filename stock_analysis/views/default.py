@@ -20,25 +20,24 @@ def home_view(request):
     if request.method == 'GET':
         return {}
     if request.method == 'POST':
-        #  ALSO CHECK THAT IT'S A LOGIN POST REQUEST
         username = request.POST['username']
         password = request.POST['password']
-        if is_authorized(request, username, password):
-            headers = remember(request, username)
-            return HTTPFound(request.route_url('portfolio'), headers=headers)
-        return {
-            'error': 'Username/password combination invalid.'
-        }
-    if request.method == 'POST':
-        #  ALSO CHECK THAT IT'S A REGISTER ACCOUNT POST REQUEST
-        new_username = request.POST['username']
-        new_password = request.POST['password']
+        # if 'login' in request.POST:
+        #     if is_authorized(request, username, password):
+        #         headers = remember(request, username)
+        #         return HTTPFound(request.route_url('portfolio'), headers=headers)
+        #     return {
+        #         'error': 'Username/password combination invalid.'
+            # }
+        # elif 'register' in request.POST:
         new_account = User(
-            username=new_username,
-            password=new_password
+            username=username,
+            password=password
         )
         request.dbsession.add(new_account)
+        headers = remember(request, username)
         return HTTPFound(request.route_url('portfolio'), headers=headers)
+        return {}
 
 
 @view_config(route_name='detail', renderer='stock_analysis:templates/detail.jinja2')
