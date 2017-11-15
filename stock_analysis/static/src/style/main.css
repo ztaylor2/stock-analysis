@@ -118,6 +118,9 @@ footer {
 .body-background {
   color: #f0ead6; }
 
+.landing-page-form, .login, .sign-up {
+  margin: 25% 0%; }
+
 form {
   margin: 0 auto;
   text-align: center;
