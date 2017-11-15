@@ -62,7 +62,7 @@ def detail_view(request):
                     return x['name'], x['exchDisp']
         company, exchange = get_symbol(stock)
 
-        start = datetime.datetime(2016, 11, 1)
+        start = datetime.datetime(2015, 8, 1)
         end = datetime.datetime(2017, 11, 1)
         stock_data = web.DataReader(stock, 'yahoo', start, end)
         dates = stock_data.index.values
@@ -82,26 +82,41 @@ def detail_view(request):
             diff = last - date
             days_from_beginning.append(total_diff.days - diff.days)
 
-        # eight_percet_of_dates = dates[:(len(dates) - int(round(len(dates) * .2)))]
-        # eighty_dates_reshape = np.reshape(eight_percet_of_dates, (len(eight_percet_of_dates), 1))
+        eighty_percent_of_dates = days_from_beginning[:(len(days_from_beginning) - int(round(len(days_from_beginning) * .2)))]
+        eighty_dates_reshape = np.reshape(eighty_percent_of_dates, (len(eighty_percent_of_dates), 1))
+
+        twenty_percent_of_dates = days_from_beginning[(len(days_from_beginning) - int(round(len(days_from_beginning) * .2))):]
+        twenty_dates_reshape = np.reshape(eighty_percent_of_dates, (len(eighty_percent_of_dates), 1))
+
 
         dates_reshape = np.reshape(days_from_beginning, (len(days_from_beginning), 1))
 
         # Linear Regression
         lin_regr = linear_model.LinearRegression()
-        lin_regr.fit(dates_reshape, prices)
+        lin_regr.fit(eighty_dates_reshape, prices[:len(eighty_dates_reshape)])
         lin_regr_prediction = lin_regr.predict(dates_reshape)
 
         # Polynomial Regression
         model = Pipeline([('poly', PolynomialFeatures(degree=3)),
                           ('linear', LinearRegression(fit_intercept=False))])
-        model = model.fit(dates_reshape, prices)
+        model = model.fit(eighty_dates_reshape, prices[:len(eighty_dates_reshape)])
         poly_prediction = model.predict(dates_reshape)
 
         # Support Vector Machine
-        svr_rbf = SVR(kernel='rbf', C=1e3, gamma=0.1)
-        svr_rbf.fit(dates_reshape, prices)
+        svr_rbf = SVR(kernel='rbf', C=1, gamma=1E-3)
+        # svr_rbf = SVR(kernel='rbf', C=1e3, gamma=1E-4, degree=5)
+        svr_rbf.fit(eighty_dates_reshape, prices[:len(eighty_dates_reshape)])
         svr_rbf_prediction = svr_rbf.predict(dates_reshape)
+
+
+        mean_p = np.mean([lin_regr_prediction, poly_prediction, svr_rbf_prediction], axis=0)
+
+        # svr_rbf_prediction_test = []
+
+        # for date in dates_reshape:
+        #     svr_rbf_prediction_test.append(svr_rbf.predict(date)[0])
+
+        # import pdb; pdb.set_trace()
 
         # create a new plot with a title and axis labels
         p = figure(title="{}  -  {}: {}".format(company, exchange, stock), x_axis_label='Date',
@@ -114,6 +129,8 @@ def detail_view(request):
                line_color="green", line_width=2)
         p.line(dates, svr_rbf_prediction, legend="Support Vector Machine",
                line_color="blue", line_width=2)
+        p.line(dates, mean_p, legend="Mean(L, P, SVM)",
+               line_color="gray", line_width=2)
         p.legend.location = "top_left"
         p.title.text_font_size = "1em"
 
