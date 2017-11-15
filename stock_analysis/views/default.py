@@ -22,27 +22,7 @@ import requests
 @view_config(route_name='home', renderer='stock_analysis:templates/home.jinja2', permission=NO_PERMISSION_REQUIRED)
 def home_view(request):
     """Home view for stock analysis app."""
-    if request.method == 'GET':
-        return {}
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        if 'login' in request.POST:
-            if is_authorized(request, username, password):
-                headers = remember(request, username)
-                return HTTPFound(request.route_url('portfolio'), headers=headers)
-            return {
-                'error': 'Username/password combination invalid.'
-            }
-        elif 'register' in request.POST:
-            new_account = User(
-                username=username,
-                password=password
-            )
-            request.dbsession.add(new_account)
-            headers = remember(request, username)
-            return HTTPFound(request.route_url('portfolio'), headers=headers)
-        return {}
+    return {}
 
 
 @view_config(route_name='detail', renderer='stock_analysis:templates/detail.jinja2')
@@ -190,10 +170,32 @@ def process_symbol(request):
 @view_config(route_name='login', renderer='stock_analysis:templates/login.jinja2')
 def login_view(request):
     """Login view for stock analysis app."""
-    return {}
+    if request.method == 'GET':
+        return {}
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        if is_authorized(request, username, password):
+            headers = remember(request, username)
+            return HTTPFound(request.route_url('portfolio'), headers=headers)
+        return {
+            'error': 'Username/password combination invalid.'
+        }
 
 
 @view_config(route_name='register', renderer='stock_analysis:templates/register.jinja2')
 def register_view(request):
     """Register view for stock analysis app."""
+    if request.method == 'GET':
+        return {}
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        new_account = User(
+            username=username,
+            password=password
+        )
+        request.dbsession.add(new_account)
+        headers = remember(request, username)
+        return HTTPFound(request.route_url('portfolio'), headers=headers)
     return {}
