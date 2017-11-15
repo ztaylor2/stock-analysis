@@ -16,6 +16,14 @@ import os
 import pdb 
 
 
+stock_dict = {'Book_Value_per_Share': '10.051',
+              'name': 'Yahoo',
+              'symbol': 'YHOO',
+              'price': '14.96',
+              'growth': '2.48',
+              'percent': '1.47%'}
+
+
 @view_config(route_name='home', renderer='stock_analysis:templates/home.jinja2', permission=NO_PERMISSION_REQUIRED)
 def home_view(request):
     """Home view for stock analysis app."""
@@ -24,21 +32,21 @@ def home_view(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        # if 'login' in request.POST:
-        #     if is_authorized(request, username, password):
-        #         headers = remember(request, username)
-        #         return HTTPFound(request.route_url('portfolio'), headers=headers)
-        #     return {
-        #         'error': 'Username/password combination invalid.'
-            # }
-        # elif 'register' in request.POST:
-        new_account = User(
-            username=username,
-            password=password
-        )
-        request.dbsession.add(new_account)
-        headers = remember(request, username)
-        return HTTPFound(request.route_url('portfolio'), headers=headers)
+        if 'login' in request.POST:
+            if is_authorized(request, username, password):
+                headers = remember(request, username)
+                return HTTPFound(request.route_url('portfolio'), headers=headers)
+            return {
+                'error': 'Username/password combination invalid.'
+            }
+        elif 'register' in request.POST:
+            new_account = User(
+                username=username,
+                password=password
+            )
+            request.dbsession.add(new_account)
+            headers = remember(request, username)
+            return HTTPFound(request.route_url('portfolio'), headers=headers)
         return {}
 
 
@@ -106,12 +114,11 @@ def detail_view(request):
 @view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2')
 def portfolio_view(request):
     """Portfolio view for stock analysis app."""
-    from alpha_vantage.timeseries import TimeSeries
-    ts = TimeSeries(key=(os.environ.get('AV_API_KEY')))
+    # from alpha_vantage.timeseries import TimeSeries
+    # ts = TimeSeries(key=(os.environ.get('AV_API_KEY')))
     # Get json object with the intraday data and another with the call's metadata
-    data, meta_data = ts.get_intraday('GOOGL')
-    pdb.set_trace()
-    return {}
+    # data, meta_data = ts.get_intraday('GOOGL')
+    return stock_dict
 
 
 @view_config(route_name='logout')
