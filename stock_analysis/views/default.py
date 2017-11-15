@@ -13,7 +13,6 @@ import numpy as np
 from sklearn.svm import SVR
 from sklearn import linear_model
 import os
-import pdb 
 
 
 @view_config(route_name='home', renderer='stock_analysis:templates/home.jinja2', permission=NO_PERMISSION_REQUIRED)
@@ -110,7 +109,6 @@ def portfolio_view(request):
     ts = TimeSeries(key=(os.environ.get('AV_API_KEY')))
     # Get json object with the intraday data and another with the call's metadata
     data, meta_data = ts.get_intraday('GOOGL')
-    pdb.set_trace()
     return {}
 
 
