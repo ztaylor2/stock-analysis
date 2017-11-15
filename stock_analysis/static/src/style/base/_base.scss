@@ -24,9 +24,11 @@ button {
     outline: none;
     margin: $gutter-sm;
     font-size: 3vw;
+    width: 80%;
 
     &:hover {
       background: $brand-primary;
       color: $white;
+      transition: all 1s;
     }
 }
