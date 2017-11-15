@@ -31,7 +31,7 @@ Coming to a road block with rendering graphs and for User Experience/User Interf
 This project would not be possible without the inspiration from these individuals and the help of some awesome libraries.
 ### People
 -----------
-* [Siraj Reval](https://twitter.com/sirajraval)
+* [Siraj Reval](https://twitter.com/sirajraval) (https://github.com/llSourcell)
 * []()
 * []()
 * []()
@@ -43,6 +43,7 @@ This project would not be possible without the inspiration from these individual
 #### Templating
 * [Pyramid](https://trypyramid.com/)
 * [Jinja](http://jinja.pocoo.org/)
+* [Yahoo Finance API]
 
 #### Design
 * [Bokeh](https://bokeh.pydata.org/en/latest/)
