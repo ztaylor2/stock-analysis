@@ -173,6 +173,9 @@ def portfolio_view(request):
         response = requests.get(url).json()
         if response['ResultSet']['Result'] == []:
             return {"error": "Stock ticker invalid"}
+        port_stocks = request.dbsession.query(Portfolio).get(username)
+        if new_ticker in port_stocks.split():
+            return {"error": "Stock ticker already in your portfolio"}
         else:
             portfolio_stocks = request.dbsession.query(Portfolio).get(username)
             if portfolio_stocks.stocks:
