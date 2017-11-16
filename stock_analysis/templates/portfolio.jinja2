@@ -42,7 +42,9 @@
     </tr>
     {% endfor %}
 </table>
-
+    {% if error %}
+    <p style="color: red">{{ error }}</p>
+    {% endif %}
      <div class="form-group">
         <form name="portfolio-form" method="POST">
             <input name="new_ticker" type="text" class="form-input" placeholder="Stock Ticker" required>

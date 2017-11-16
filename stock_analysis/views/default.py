@@ -158,21 +158,24 @@ def portfolio_view(request):
                 if growth > 0:
                     growth = '+' + "{:.2%}".format(growth)
                 else:
-                    "{:.1%}".format(growth)
+                    growth = "{:.1%}".format(growth)
                 stock_detail[stock] = {'growth': growth, 'company': company, 'volume': volume, 'open': open_price, 'high': high, 'low': low, 'ticker': stock, 'current': current}
             return {'stock_detail': stock_detail}
         return {}
 
     if request.method == 'POST':
-        username = request.authenticated_userid
-        new_ticker = request.POST['new_ticker']
-        portfolio_stocks = request.dbsession.query(Portfolio).get(username)
-        if portfolio_stocks.stocks:
-            portfolio_stocks.stocks += (' ' + new_ticker)
-        else:
-            portfolio_stocks.stocks = new_ticker
-        request.dbsession.flush()
-        return HTTPFound(request.route_url('portfolio'))
+        try:
+            username = request.authenticated_userid
+            new_ticker = request.POST['new_ticker']
+            portfolio_stocks = request.dbsession.query(Portfolio).get(username)
+            if portfolio_stocks.stocks:
+                portfolio_stocks.stocks += (' ' + new_ticker)
+            else:
+                portfolio_stocks.stocks = new_ticker
+            request.dbsession.flush()
+            return HTTPFound(request.route_url('portfolio'))
+        except TypeError:
+            return {"error": "Your ticker entry was invalid"}
     return {}
 
 
