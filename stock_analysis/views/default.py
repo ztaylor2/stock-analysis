@@ -171,16 +171,16 @@ def portfolio_view(request):
         if response['ResultSet']['Result'] == []:
             return {"error": "Stock ticker invalid"}
         port_stocks = request.dbsession.query(Portfolio).get(username)
-        if new_ticker.upper() in port_stocks.split():
-            return {"error": "Stock ticker already in your portfolio"}
+        # if new_ticker.upper() in port_stocks.split():
+        #     return {"error": "Stock ticker already in your portfolio"}
+        # else:
+        portfolio_stocks = request.dbsession.query(Portfolio).get(username)
+        if portfolio_stocks.stocks:
+            portfolio_stocks.stocks += (' ' + new_ticker)
         else:
-            portfolio_stocks = request.dbsession.query(Portfolio).get(username)
-            if portfolio_stocks.stocks:
-                portfolio_stocks.stocks += (' ' + new_ticker)
-            else:
-                portfolio_stocks.stocks = new_ticker
-            request.dbsession.flush()
-            return HTTPFound(request.route_url('portfolio'))
+            portfolio_stocks.stocks = new_ticker
+        request.dbsession.flush()
+        return HTTPFound(request.route_url('portfolio'))
     return {}
 
 
