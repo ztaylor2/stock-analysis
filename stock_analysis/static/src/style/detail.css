@@ -1,0 +1,44 @@
+.stock-ticker-input {
+    display: block;
+    margin: 1em;
+}
+
+.detail-input-form {
+    display: block;
+    margin: 3em;
+}
+
+.hamberger-links {
+    float: right;
+}
+
+.form-actions {
+    display: block;
+    margin: 1em;
+    background-color: transparent;
+    text-align: center;
+}
+
+.alert-warning {
+    width: 90%;
+    margin: auto;
+    display: block;
+    text-align: center;
+}
+
+.container {
+    margin-top: 2em;
+}
+
+@media screen and (max-width: 480px) {
+    .detail-input-form {
+        display: block;
+        margin: 1em;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .hamberger-links {
+        float: none;
+    }
+}

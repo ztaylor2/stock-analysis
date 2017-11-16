@@ -36,6 +36,10 @@ def detail_view(request):
     if request.method == 'POST':
 
         stock = request.POST['stock_ticker'].upper()
+        start = datetime.datetime.strptime(request.POST['start_date'], "%Y-%m-%d")
+        end = datetime.datetime.strptime(request.POST['end_date'], "%Y-%m-%d")
+
+        # import pdb; pdb.set_trace()
 
         def _get_symbol(symbol):
             """Get company name from stock ticker for graph title."""
@@ -52,8 +56,8 @@ def detail_view(request):
                 "error": "No data on {}".format(stock)
             }
 
-        start = datetime.datetime(2015, 8, 1)
-        end = datetime.datetime(2017, 11, 1)
+        # start = datetime.datetime(2015, 8, 1)
+        # end = datetime.datetime(2017, 11, 1)
         try:
             stock_data = web.DataReader(stock, 'yahoo', start, end)
         except RemoteDataError:
@@ -129,6 +133,9 @@ def detail_view(request):
         return {
             "div": div,
             "script": script,
+            "start": request.POST['start_date'],
+            "end": request.POST['end_date'],
+            "stock": request.POST['stock_ticker'].upper(),
         }
 
 
@@ -186,7 +193,6 @@ def portfolio_view(request):
         request.dbsession.flush()
         return HTTPFound(request.route_url('portfolio'))
     return {}
-
 
 @view_config(route_name='logout')
 def logout(request):
