@@ -8,6 +8,8 @@
     
     {% block head %}{% endblock head %}
 
+    <link href="{{ request.static_path('stock_analysis:static/src/style/detail.css') }}" rel="stylesheet" />
+
     <!-- bokeh styling -->
     <link
         href="https://cdn.pydata.org/bokeh/release/bokeh-0.12.9.min.css"
@@ -21,21 +23,6 @@
 </head>
 
 <body>
-  <div class="body-background">
-    <div >
-      <nav>
-        <ul>
-          <li><a href={{ request.route_url('home') }}>Home</a></li>
-          <li><a href={{ request.route_url('detail') }}>Stock Analytics</a></li>
-          {% if request.authenticated_userid %}
-          <li><a href={{ request.route_url('portfolio') }}>My Portfolio</a></li>
-          <li><a href={{ request.route_url('logout') }}>Logout</a></li>
-          {% else %}
-          <li><a href={{ request.route_url('login') }}>Login</a></li>
-          {% endif %}
-        </ul>
-      </nav>
-  </div>
 
     <section id="content">
       {% block body %}{% endblock %}
@@ -43,8 +30,18 @@
   </div>
   <footer>&copy Stock Analysis 2017</footer>
 
-    <script src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.10.min.js"></script>
-    <script src="https://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.10.min.js"></script>
-    <script src="https://cdn.pydata.org/bokeh/release/bokeh-tables-0.12.10.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" 
+          integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" 
+          crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" 
+          integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" 
+          crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" 
+          integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" 
+          crossorigin="anonymous"></script>
+
+  <script src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.10.min.js"></script>
+  <script src="https://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.10.min.js"></script>
+  <script src="https://cdn.pydata.org/bokeh/release/bokeh-tables-0.12.10.min.js"></script>
 </body>
 </html>

@@ -6,7 +6,7 @@
 
 {% block body %}
 <div class="form-header">
-    <h1 class="form-title">Stock Analysis</h1>
+    <h1 class="form-title"><a href={{ request.route_url('home') }}>Stock Analysis</a></h1>
 
     {% if error %}
     <p style="color: red">{{ error }}</p>
