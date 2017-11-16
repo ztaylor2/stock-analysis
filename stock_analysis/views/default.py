@@ -123,14 +123,16 @@ def detail_view(request):
             "script": script,
         }
 
+stockstr = "AMZN GOOG MSFT FB F"
 
+# Problem: somehow I broke the sign in again WHEN you log in --> my stocks. when you're not signed in, it works just fine.
 @view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2')
 def portfolio_view(request):
     """View for logged in portfolio."""
     if request.method == 'GET':
         username = request.authenticated_userid
         stock_str = request.dbsession.query(Portfolio).get(username)
-        if stock_str.stocks:
+        if stock_str.stocks is not '':
             stock_list = stock_str.stocks.split()
             stock_detail = {}
 
@@ -153,7 +155,6 @@ def portfolio_view(request):
                 current = round(float(data['4. close']), 2)
                 volume = data['5. volume'], 2
                 growth = (float(data['4. close']) - float(data['1. open'])) / float(data['1. open'])
-                print('growth:', growth)
                 if growth > 0:
                     growth = '+' + "{:.2%}".format(growth)
                 else:
@@ -162,20 +163,14 @@ def portfolio_view(request):
             return {'stock_detail': stock_detail}
         return {}
 
-    if request.method == "POST":
+    if request.method == 'POST':
         username = request.authenticated_userid
+        new_ticker = request.POST['new_ticker']
         portfolio_stocks = request.dbsession.query(Portfolio).get(username)
-        if "delete" in request.POST:
-            target = request.POST['name']  # target whichever delete was clicked
-            stock_lst = [tick for tick in portfolio_stocks.stocks.split() if tick is not target]
-            portfolio_stocks.stocks = ' '.join(stock_lst)
+        if portfolio_stocks.stocks:
+            portfolio_stocks.stocks += (' ' + new_ticker)
         else:
-            new_ticker = request.POST['new_ticker']
-            if portfolio_stocks.stocks:
-                portfolio_stocks.stocks += (' ' + new_ticker)
-            else:
-                portfolio_stocks.stocks = new_ticker
-                request.dbsession.flush()
+            portfolio_stocks.stocks = new_ticker
         request.dbsession.flush()
         return HTTPFound(request.route_url('portfolio'))
     return {}
@@ -231,3 +226,22 @@ def register_view(request):
         headers = remember(request, username)
         return HTTPFound(request.route_url('portfolio'), headers=headers)
     return {}
+
+
+# @view_config(route_name='delete_stock')
+# def delete_stock(request):
+#     """Delete stock from portfolio."""
+#     username = request.authenticated_userid
+#     portfolio_stocks = request.dbsession.query(Portfolio).get(username)
+#     import pdb; pdb.set_trace()
+#     target = request.POST['name']
+#     # portfolio_stocks.stocks = [ tick for tick in portfolio_stocks.stocks.split() if tick is not target]
+#     username = request.authenticated_userid
+#     new_ticker = request.POST['new_ticker']
+#     portfolio_stocks = request.dbsession.query(Portfolio).get(username)
+#     if portfolio_stocks.stocks:
+#         portfolio_stocks.stocks += (' ' + new_ticker)
+#     else:
+#         portfolio_stocks.stocks = new_ticker
+#     request.dbsession.flush()
+#     return HTTPFound(request.route_url('portfolio'))
