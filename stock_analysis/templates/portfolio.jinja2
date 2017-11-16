@@ -26,12 +26,13 @@
             <th scope="col">Price Change</th>
             <th scope="col">Open</th>
             <th scope="col">P/E</th>
+            <th></th>
         </tr>
     </thead>
     {% for ticker in stock_detail %}
     <tbody>
         <tr class='clickable-row'>
-            <th{{ stock_detail[ticker].company }}</td>
+            <td>{{ stock_detail[ticker].company }}</td>
             <td>{{ stock_detail[ticker].ticker }}</td>
             <td>${{ stock_detail[ticker].price }}</td>
             <td>{{ stock_detail[ticker].dollar_change }} {{ stock_detail[ticker].pct_change }}</td>
