@@ -1,15 +1,19 @@
-{% extends "layout.jinja2" %}
+{% extends "user_layout.jinja2" %}
 
-{% block body %}
-<header>
-    <h1>Stock Analysis</h1>
-    <div class="icon-menu"></div>
-</header>
-  <form method="POST">
-    <div class="form-group">
-      <label>Enter Stock Ticker:</label>
-      <input name="stock_ticker" required></input>
-    </div>
+
+{% block detail %}
+<form class="search-form" method="POST">
+
+  <div class="col-10">
+    <input class="form-control" id="example-text-input" name="stock_ticker" type="text" class="form-input" placeholder="Enter a stock:" required>
+  </div>
+
+<!--   <div class="btn-group" role="group" aria-label="...">
+    <button type="button" name="1_month" class="btn btn-default">1 Month</button>
+    <button type="button" name="3_months" class="btn btn-default">3 Months</button>
+    <button type="button" name="1_year" class="btn btn-default">1 Year</button>
+    <button type="button" name="5_years" class="btn btn-default">5 Years</button>
+  </div> -->
 
   {% if error %} 
     <div class="no_ticker_popup">
@@ -17,10 +21,14 @@
     </div>
   {% endif %} 
 
-  <input name="search-button" type="submit" value="Search">
+  <input class="btn btn-default btn-lg" name="search-button" type="submit" value="Search">
 </form>
 
-{{ div|safe }}
-{{ script|safe }}
+<div>
+  {{ div|safe }}
+  {{ script|safe }}
+</div>
 
-{% endblock body %}
+
+
+{% endblock %}
