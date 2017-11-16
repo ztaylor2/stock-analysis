@@ -21,7 +21,9 @@ requires = [
     'matplotlib',
     'bokeh',
     'scipy',
-    'passlib'
+    'passlib',
+    'psycopg2',
+    'alpha_vantage',
 ]
 
 tests_require = [
