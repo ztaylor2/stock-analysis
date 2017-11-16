@@ -143,6 +143,7 @@ def detail_view(request):
 
 stock = "AMZN GOOG MSFT FB F"
 
+
 @view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2')
 def portfolio_view(request, stock):
     """."""
@@ -166,6 +167,7 @@ def portfolio_view(request, stock):
         stock_detail[stock] = {'last': last, 'pct': pct, 'pe': pe, 'ticker': stock}
     return stock_detail
 
+
 @view_config(route_name='logout')
 def logout(request):
     """Logout of stock account."""
@@ -178,10 +180,12 @@ def process_symbol(request):
     """Home view for stock analysis app."""
     print('in process')
 
+
 @view_config(route_name='login', renderer='stock_analysis:templates/login.jinja2')
 def login_view(request):
     """Login view for stock analysis app."""
     return {}
+
 
 @view_config(route_name='register', renderer='stock_analysis:templates/register.jinja2')
 def register_view(request):
