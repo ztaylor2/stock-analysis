@@ -23,22 +23,20 @@
             <th scope="col">Company</th>
             <th scope="col">Ticker</th>
             <th scope="col">Current Price</th>
-            <th scope="col">Change</th>
+            <th scope="col">Price Change</th>
             <th scope="col">Open</th>
-            <th scope="col">High</th>
-            <th scope="col">Low</th>
+            <th scope="col">P/E</th>
         </tr>
     </thead>
     {% for ticker in stock_detail %}
-    <tbody></tbody>
+    <tbody>
         <tr class='clickable-row'>
             <th{{ stock_detail[ticker].company }}</td>
             <td>{{ stock_detail[ticker].ticker }}</td>
-            <td>${{ stock_detail[ticker].current }}</td>
-            <td>{{ stock_detail[ticker].growth }}</td>
-            <td>{{ stock_detail[ticker].open }}</td>
-            <td>{{ stock_detail[ticker].high }}</td>
-            <td>{{ stock_detail[ticker].low }}</td>
+            <td>${{ stock_detail[ticker].price }}</td>
+            <td>{{ stock_detail[ticker].dollar_change }} {{ stock_detail[ticker].pct_change }}</td>
+            <td>{{ stock_detail[ticker].open_price }}</td>
+            <td>{{ stock_detail[ticker].pe }}</td>
             <td>
                 <form name="portfolio-form" method="POST">
                     <input name="{{ stock_detail[ticker].ticker }}" type="submit" value="delete">

@@ -7,7 +7,6 @@ from bokeh.embed import components
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import remember, forget, NO_PERMISSION_REQUIRED
 from pandas_datareader._utils import RemoteDataError
-from alpha_vantage.timeseries import TimeSeries
 from stock_analysis.security import is_authorized
 import datetime
 from stock_analysis.models.mymodel import User, Portfolio
@@ -18,10 +17,9 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import Pipeline
 from treeinterpreter import treeinterpreter as ti
-from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import classification_report,confusion_matrix
 import requests
+from bs4 import BeautifulSoup as Soup
 
 
 @view_config(route_name='home', renderer='stock_analysis:templates/home.jinja2', permission=NO_PERMISSION_REQUIRED)
@@ -69,7 +67,7 @@ def detail_view(request):
         # convert numpy dates into python datetime objects
         dates_python = []
         for date in dates:
-            dates_python.append(datetime.datetime.utcfromtimestamp(date.tolist()/1e9))
+            dates_python.append(datetime.datetime.utcfromtimestamp(date.tolist() / 1e9))
 
         # convert dates to list of days ago
         last = dates_python[-1]
@@ -133,6 +131,7 @@ def detail_view(request):
             "script": script,
         }
 
+
 @view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2', permission='secret')
 def portfolio_view(request):
     """View for logged in portfolio."""
@@ -151,34 +150,32 @@ def portfolio_view(request):
                     if x['symbol'] == symbol:
                         return x['name'], x['exchDisp']
 
-            for stock in stock_list:
-                company, exchange = get_symbol(stock)
-                ts = TimeSeries(key='FVBLNTQMS4063FIN')
-                data, meta_data = ts.get_intraday(stock)
-                data = data[max(data)]
-                open_price = round(float(data['1. open']), 2)
-                high = round(float(data['2. high']), 2)
-                low = round(float(data['3. low']), 2)
-                current = round(float(data['4. close']), 2)
-                volume = data['5. volume'], 2
-                growth = (float(data['4. close']) - float(data['1. open'])) / float(data['1. open'])
-                if growth > 0:
-                    growth = '+' + "{:.2%}".format(growth)
-                else:
-                    growth = "{:.1%}".format(growth)
-                stock_detail[stock] = {'growth': growth, 'company': company, 'volume': volume, 'open': open_price, 'high': high, 'low': low, 'ticker': stock, 'current': current}
+            def scrape_stock_data(symbol):
+                company, exchange = get_symbol(symbol)
+                r = requests.get('https://finance.google.com/finance?q={}:{}'.format(exchange, symbol))
+                parsed = Soup(r.text, 'html.parser')
+                price = parsed.find('div', {'id': 'price-panel'}).find_all('span')[1].text
+                dollar_change = parsed.find('div', {'id': 'price-panel'}).find_all('span')[3].text
+                pct_change = parsed.find('div', {'id': 'price-panel'}).find_all('span')[4].text
+                open_price = parsed.find('table', {'class': 'snap-data'}).find_all('td')[5].text  # regex \n
+                pe = parsed.find('table', {'class': 'snap-data'}).find_all('td')[11].text  # regex \n
+                return {'company': company, 'ticker': symbol, 'price': price, 'dollar_change': dollar_change, 'pct_change': pct_change, 'open_price': open_price, 'pe': pe}
+
+            for tick in stock_list:
+                stock_detail[tick] = scrape_stock_data(tick)
+
             return {'stock_detail': stock_detail}
         return {}
 
     if request.method == 'POST':
         username = request.authenticated_userid
-        new_ticker = request.POST['new_ticker']
+        new_ticker = request.POST['new_ticker'].upper()
         url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(new_ticker)
         response = requests.get(url).json()
         if response['ResultSet']['Result'] == []:
             return {"error": "Stock ticker invalid"}
         port_stocks = request.dbsession.query(Portfolio).get(username)
-        # if new_ticker.upper() in port_stocks.split():
+        # if new_ticker in port_stocks.split():
         #     return {"error": "Stock ticker already in your portfolio"}
         # else:
         portfolio_stocks = request.dbsession.query(Portfolio).get(username)
@@ -190,7 +187,7 @@ def portfolio_view(request):
         return HTTPFound(request.route_url('portfolio'))
     return {}
 
-  
+
 @view_config(route_name='logout')
 def logout(request):
     """Logout of stock account."""
@@ -218,7 +215,6 @@ def login_view(request):
         return {
             'error': 'Username/password combination invalid.'
         }
-
 
 
 @view_config(route_name='register', renderer='stock_analysis:templates/register.jinja2')
