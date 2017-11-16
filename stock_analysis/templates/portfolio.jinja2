@@ -23,7 +23,7 @@
         <td>Company</td>
         <td>Exchange/Ticker</td>
         <td>Current Price</td>
-        <td>Growth</td>
+        <td>Change</td>
         <td>Open</td>
         <td>High</td>
         <td>Low</td>
@@ -31,7 +31,7 @@
     {% for ticker in stock_detail %}
     <tr class='clickable-row'>
         <td>{{ stock_detail[ticker].company }}</td>
-        <td>{{ stock_detail[ticker].exchange }}:  {{ stock_detail[ticker].ticker }}</td>
+        <td>{{ stock_detail[ticker].ticker }}</td>
         <td>${{ stock_detail[ticker].current }}</td>
         <td>{{ stock_detail[ticker].growth }}</td>
         <td>{{ stock_detail[ticker].open }}</td>

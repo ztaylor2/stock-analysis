@@ -1,4 +1,5 @@
 """Views for the Stock Analysis app."""
+from __future__ import division
 from pyramid.view import view_config
 from bokeh.plotting import figure
 import pandas_datareader.data as web
@@ -153,8 +154,13 @@ def portfolio_view(request):
                 low = round(float(data['3. low']), 2)
                 current = round(float(data['4. close']), 2)
                 volume = data['5. volume'], 2
-                growth = round(float(data['4. close']) - float(data['1. open']), 2)
-                stock_detail[stock] = {'growth': growth, 'company': company, 'exchange': exchange, 'volume': volume, 'open': open_price, 'high': high, 'low': low, 'ticker': stock, 'current': current}
+                growth = (float(data['4. close']) - float(data['1. open'])) / float(data['1. open'])
+                print('growth:', growth)
+                if growth > 0:
+                    growth = '+' + "{:.2%}".format(growth)
+                else:
+                    "{:.1%}".format(growth)
+                stock_detail[stock] = {'growth': growth, 'company': company, 'volume': volume, 'open': open_price, 'high': high, 'low': low, 'ticker': stock, 'current': current}
             return {'stock_detail': stock_detail}
         return {}
 
@@ -166,12 +172,6 @@ def portfolio_view(request):
             portfolio_stocks.stocks += (' ' + new_ticker)
         else:
             portfolio_stocks.stocks = new_ticker
-        # updated_tickers = old_account_tickers + ' ' + new_ticker
-        # updated_account = Portfolio(
-        #     username=username,
-        #     stocks=updated_tickers
-        # )
-        # request.dbsession.add(updated_account)
         request.dbsession.flush()
         return HTTPFound(request.route_url('portfolio'))
     return {}
