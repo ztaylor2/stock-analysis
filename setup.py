@@ -26,6 +26,7 @@ requires = [
     'passlib',
     'psycopg2',
     'alpha_vantage',
+    'treeinterpreter',
     'pytest',
 ]
 
