@@ -32,4 +32,4 @@ class Portfolio(Base):
 
     __tablename__ = 'portfolio'
     username = Column(Text, primary_key=True)
-    symbol_list = Column(Unicode)
+    stocks = Column(Unicode)

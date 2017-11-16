@@ -23,7 +23,10 @@ requires = [
     'bokeh',
     'scipy',
     'pandas-datareader',
-    'psycopg2'
+    'passlib',
+    'psycopg2',
+    'alpha_vantage',
+    'pytest',
 ]
 
 tests_require = [
