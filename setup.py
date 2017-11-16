@@ -24,6 +24,7 @@ requires = [
     'passlib',
     'psycopg2',
     'alpha_vantage',
+    'pytest',
 ]
 
 tests_require = [
