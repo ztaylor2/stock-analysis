@@ -39,7 +39,7 @@
         <td>{{ stock_detail[ticker].low }}</td>
         <td>
             <form name="portfolio-form" method="POST">
-                <input name="{{ stock_detail[ticker].ticker }}"" type="submit" value="Delete">
+                <a href="{{ request.route_url('delete_stock') }}"><input name="{{ stock_detail[ticker].ticker }}" type="submit" value="Delete"></a>
             </form>
         </td>
     </tr>
