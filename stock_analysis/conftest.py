@@ -71,7 +71,7 @@ def add_stock(dummy_request, test_stock):  # FORMERLY add_entry
 
 
 @pytest.fixture
-def test_stocks(dummy_request, test_stock):  # FORMERLY add_entries
+def add_stocks(dummy_request, test_stock):  # FORMERLY add_entries
     """Add a Stock to an existing table in the database."""
     dummy_request.dbsession.add_all(test_stocks)
     return test_stocks

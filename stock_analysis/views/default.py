@@ -53,7 +53,7 @@ def detail_view(request):
 
         stock = request.POST['stock_ticker'].upper()
 
-        def get_symbol(symbol):
+        def _get_symbol(symbol):
             """Get company name from stock ticker for graph title."""
             url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(symbol)
             result = requests.get(url).json()
@@ -62,7 +62,7 @@ def detail_view(request):
                     return x['name'], x['exchDisp']
 
         try:
-            company, exchange = get_symbol(stock)
+            company, exchange = _get_symbol(stock)
         except TypeError:
             return {
                 "error": "No data on {}".format(stock)
@@ -149,7 +149,7 @@ def portfolio_view(request, stock):
     stock_list = stock.split()
     stock_detail = {}
 
-    def get_symbol(symbol):
+    def _get_symbol(symbol):
         """Get company name from stock ticker for graph title."""
         url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(symbol)
         result = requests.get(url).json()
@@ -158,7 +158,7 @@ def portfolio_view(request, stock):
                 return x['name'], x['exchDisp']
 
     for stock in stock_list:
-        company, exchange = get_symbol(stock)
+        company, exchange = _get_symbol(stock)
         stock_data = web.get_quote_yahoo(stock)
         last = str(stock_data['last'].values)
         pct = str(stock_data['change_pct'].values)
