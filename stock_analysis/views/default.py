@@ -132,7 +132,6 @@ def portfolio_view(request):
     if request.method == 'GET':
         username = request.authenticated_userid
         stock_str = request.dbsession.query(Portfolio).get(username)
-        # import pdb; pdb.set_trace()
         if stock_str.stocks != '':
             stock_list = stock_str.stocks.split()
             stock_detail = {}
@@ -147,7 +146,6 @@ def portfolio_view(request):
 
             for stock in stock_list:
                 company, exchange = get_symbol(stock)
-                # import pdb; pdb.set_trace()
                 ts = TimeSeries(key='FVBLNTQMS4063FIN')
                 data, meta_data = ts.get_intraday(stock)
                 data = data[max(data)]
@@ -166,7 +164,6 @@ def portfolio_view(request):
         return {}
 
     if request.method == 'POST':
-        # import pdb; pdb.set_trace()
         username = request.authenticated_userid
         new_ticker = request.POST['new_ticker']
         url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(new_ticker)
@@ -183,7 +180,6 @@ def portfolio_view(request):
             else:
                 portfolio_stocks.stocks = new_ticker
             request.dbsession.flush()
-            # import pdb; pdb.set_trace()
             return HTTPFound(request.route_url('portfolio'))
     return {}
 
