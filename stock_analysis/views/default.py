@@ -126,7 +126,7 @@ def detail_view(request):
 stockstr = "AMZN GOOG MSFT FB F"
 
 # Problem: somehow I broke the sign in again WHEN you log in --> my stocks. when you're not signed in, it works just fine.
-@view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2')
+@view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2', permission='secret')
 def portfolio_view(request):
     """View for logged in portfolio."""
     if request.method == 'GET':
@@ -171,7 +171,7 @@ def portfolio_view(request):
         if response['ResultSet']['Result'] == []:
             return {"error": "Stock ticker invalid"}
         port_stocks = request.dbsession.query(Portfolio).get(username)
-        if new_ticker in port_stocks.split():
+        if new_ticker.upper() in port_stocks.split():
             return {"error": "Stock ticker already in your portfolio"}
         else:
             portfolio_stocks = request.dbsession.query(Portfolio).get(username)
@@ -197,7 +197,7 @@ def process_symbol(request):
     print('in process')
 
 
-@view_config(route_name='login', renderer='stock_analysis:templates/login.jinja2')
+@view_config(route_name='login', renderer='stock_analysis:templates/login.jinja2', permission=NO_PERMISSION_REQUIRED)
 def login_view(request):
     """Login view for stock analysis app."""
     if request.method == 'GET':
@@ -219,27 +219,27 @@ def register_view(request):
     if request.method == 'GET':
         return {}
     if request.method == 'POST':
-        try:
-            username = request.POST['username']
-            password = request.POST['password']
-            new_account = User(
-                username=username,
-                password=password
-            )
-            new_portfolio = Portfolio(
-                username=username,
-                stocks=''
-            )
-            request.dbsession.add(new_portfolio)
-            request.dbsession.add(new_account)
-            headers = remember(request, username)
-            return HTTPFound(request.route_url('portfolio'), headers=headers)
-        except IntegrityError:
-            return {"error": "This username/password combo already exists. Choose another option"}
+        username = request.POST['username']
+        password = request.POST['password']
+        # if username in request.dbsession(User).all():
+        #     return {"error": "This username/password combo already exists. Choose another option"}
+
+        new_account = User(
+            username=username,
+            password=password
+        )
+        new_portfolio = Portfolio(
+            username=username,
+            stocks=''
+        )
+        request.dbsession.add(new_portfolio)
+        request.dbsession.add(new_account)
+        headers = remember(request, username)
+        return HTTPFound(request.route_url('portfolio'), headers=headers)
     return {}
 
 
-# @view_config(route_name='delete_stock')
+# @view_config(route_name='delete_stock', permission='secret')
 # def delete_stock(request):
 #     """Delete stock from portfolio."""
 #     username = request.authenticated_userid

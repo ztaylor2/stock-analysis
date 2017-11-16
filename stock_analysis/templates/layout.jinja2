@@ -23,12 +23,17 @@
 <body>
   
     <div class="body-background">
-      <div class="hidden">
+      <div >
           <nav>
             <ul>
               <li><a href={{ request.route_url('home') }}>Home</a></li>
-              <li><a href={{ request.route_url('detail') }}>View Stock Analytics</a></li>
+              <li><a href={{ request.route_url('detail') }}>Stock Analytics</a></li>
+              {% if request.authenticated_userid %}
               <li><a href={{ request.route_url('portfolio') }}>My Portfolio</a></li>
+              <li><a href={{ request.route_url('logout') }}>Logout</a></li>
+              {% else %}
+              <li><a href={{ request.route_url('login') }}>Login</a></li>
+              {% endif %}
             </ul>
           </nav>
       </div>
