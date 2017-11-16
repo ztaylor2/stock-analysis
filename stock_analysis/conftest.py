@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from pyramid import testing
 from stock_analysis.models.meta import Base
-from stock_analysis.models import Entry, get_tm_session
+from stock_analysis.models import Portfolio, get_tm_session
 from passlib.apps import custom_app_context as pwd_context
 import transaction
 import os
