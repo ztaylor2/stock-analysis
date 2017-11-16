@@ -69,7 +69,7 @@ def detail_view(request):
         # convert numpy dates into python datetime objects
         dates_python = []
         for date in dates:
-            dates_python.append(datetime.datetime.utcfromtimestamp(date.tolist()))
+            dates_python.append(datetime.datetime.utcfromtimestamp(date.tolist()/1e9))
 
         # convert dates to list of days ago
         last = dates_python[-1]
