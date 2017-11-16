@@ -9,6 +9,13 @@
 <form class="search-form" method="POST">
   <input name="stock_ticker" type="text" class="form-input" placeholder="Enter a stock:" required>
 
+<!--   <div class="btn-group" role="group" aria-label="...">
+    <button type="button" name="1_month" class="btn btn-default">1 Month</button>
+    <button type="button" name="3_months" class="btn btn-default">3 Months</button>
+    <button type="button" name="1_year" class="btn btn-default">1 Year</button>
+    <button type="button" name="5_years" class="btn btn-default">5 Years</button>
+  </div> -->
+
   {% if error %} 
     <div class="no_ticker_popup">
       <p> {{ error }} </p>
@@ -18,8 +25,8 @@
   <input name="search-button" type="submit" value="Search">
 </form>
 
-
-{{ div|safe }}
-{{ script|safe }}
-
+<div>
+  {{ div|safe }}
+  {{ script|safe }}
+</div>
 {% endblock body %}
