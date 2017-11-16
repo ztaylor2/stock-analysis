@@ -52,6 +52,9 @@ table {
 .hidden {
   display: none; }
 
+.clearfix {
+  clear: both; }
+
 html, body, main {
   height: 100%;
   font-family: "Ubuntu", sans-serif;
@@ -144,6 +147,10 @@ form {
   font-size: 40px;
   font-weight: 500;
   color: #1f1f1f; }
+
+.search-form {
+  margin-top: 5%;
+  width: 80%; }
 
 header {
   width: 100%;
