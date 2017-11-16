@@ -123,8 +123,6 @@ def detail_view(request):
             "script": script,
         }
 
-stockstr = "AMZN GOOG MSFT FB F"
-
 
 @view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2')
 def portfolio_view(request):
