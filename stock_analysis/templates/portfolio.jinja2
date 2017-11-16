@@ -38,8 +38,12 @@
         <td>{{ stock_detail[ticker].high }}</td>
         <td>{{ stock_detail[ticker].low }}</td>
         <td>
+
+{#             Problem: default.py is looking for an actual name, not the tag "name" (line 171ish)
+ #}            
             <form name="portfolio-form" method="POST">
-                <a href="{{ request.route_url('delete_stock') }}"><input name="{{ stock_detail[ticker].ticker }}" type="submit" value="Delete"></a>
+                <input name="{{ stock_detail[ticker].ticker }}" type="submit" value="delete">
+                <input type="hidden" name="delete">
             </form>
         </td>
     </tr>

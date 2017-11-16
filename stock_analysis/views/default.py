@@ -164,14 +164,20 @@ def portfolio_view(request):
             return {'stock_detail': stock_detail}
         return {}
 
-    if request.method == 'POST':
+    if request.method == "POST":
         username = request.authenticated_userid
-        new_ticker = request.POST['new_ticker']
         portfolio_stocks = request.dbsession.query(Portfolio).get(username)
-        if portfolio_stocks.stocks:
-            portfolio_stocks.stocks += (' ' + new_ticker)
+        if "delete" in request.POST:
+            target = request.POST['name']  # target whichever delete was clicked
+            stock_lst = [tick for tick in portfolio_stocks.stocks.split() if tick is not target]
+            portfolio_stocks.stocks = ' '.join(stock_lst)
         else:
-            portfolio_stocks.stocks = new_ticker
+            new_ticker = request.POST['new_ticker']
+            if portfolio_stocks.stocks:
+                portfolio_stocks.stocks += (' ' + new_ticker)
+            else:
+                portfolio_stocks.stocks = new_ticker
+                request.dbsession.flush()
         request.dbsession.flush()
         return HTTPFound(request.route_url('portfolio'))
     return {}
@@ -227,22 +233,3 @@ def register_view(request):
         headers = remember(request, username)
         return HTTPFound(request.route_url('portfolio'), headers=headers)
     return {}
-
-
-# @view_config(route_name='delete_stock')
-# def delete_stock(request):
-#     """Delete stock from portfolio."""
-#     username = request.authenticated_userid
-#     portfolio_stocks = request.dbsession.query(Portfolio).get(username)
-#     import pdb; pdb.set_trace()
-#     target = request.POST['name']
-#     # portfolio_stocks.stocks = [ tick for tick in portfolio_stocks.stocks.split() if tick is not target]
-#     username = request.authenticated_userid
-#     new_ticker = request.POST['new_ticker']
-#     portfolio_stocks = request.dbsession.query(Portfolio).get(username)
-#     if portfolio_stocks.stocks:
-#         portfolio_stocks.stocks += (' ' + new_ticker)
-#     else:
-#         portfolio_stocks.stocks = new_ticker
-#     request.dbsession.flush()
-#     return HTTPFound(request.route_url('portfolio'))
