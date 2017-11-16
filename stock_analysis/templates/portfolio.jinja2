@@ -21,7 +21,7 @@
 <table style="width: 80%">
     <thead>
         <td>Company</td>
-        <td>Exchange/Ticker</td>
+        <td>Ticker</td>
         <td>Current Price</td>
         <td>Change</td>
         <td>Open</td>
@@ -37,6 +37,11 @@
         <td>{{ stock_detail[ticker].open }}</td>
         <td>{{ stock_detail[ticker].high }}</td>
         <td>{{ stock_detail[ticker].low }}</td>
+        <td>
+            <form name="portfolio-form" method="POST">
+                <input name="{{ stock_detail[ticker].ticker }}"" type="submit" value="Delete">
+            </form>
+        </td>
     </tr>
     {% endfor %}
 </table>
