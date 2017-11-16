@@ -6,13 +6,18 @@
     <div class="icon-menu"></div>
 </header>
 
-{#     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
- #} 
-    <a href="{{ request.route_url('detail') }}">View Stock Analytics</a>
     <a href="{{ request.route_url('home') }}">Home</a>
+    <a href="{{ request.route_url('detail') }}">View Stock Analytics</a>
     <a href="{{ request.route_url('process_symbol') }}">symbol</a>  {# # To process the symbol request #}
 
     <h1>Stock Portfolio</h1>
+
+    <div>
+        <form name="portfolio-form" method="POST">
+            <input name="new_ticker" type="text" class="form-input" placeholder="Stock Ticker" required>
+            <input name="addtoportfolio" type="submit" value="Add To My Portfolio">
+        </form>
+    </div>
 
 <table style="width: 80%">
     <thead>

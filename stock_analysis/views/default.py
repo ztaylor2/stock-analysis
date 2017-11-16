@@ -9,7 +9,7 @@ from pandas_datareader._utils import RemoteDataError
 from alpha_vantage.timeseries import TimeSeries
 from stock_analysis.security import is_authorized
 import datetime
-from stock_analysis.models.mymodel import User
+from stock_analysis.models.mymodel import User, Portfolio
 import numpy as np
 from sklearn.svm import SVR
 from sklearn import linear_model
@@ -128,30 +128,53 @@ stockstr = "AMZN GOOG MSFT FB F"
 @view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2')
 def portfolio_view(request):
     """View for logged in portfolio."""
-    stock_list = stockstr.split()
-    stock_detail = {}
+    if request.method == 'GET':
+        username = request.authenticated_userid
+        stock_str = request.dbsession.query(Portfolio).get(username)
+        if stock_str.stocks:
+            stock_list = stock_str.stocks.split()
+            stock_detail = {}
 
-    def get_symbol(symbol):
-        """Get company name from stock ticker for graph title."""
-        url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(symbol)
-        result = requests.get(url).json()
-        for x in result['ResultSet']['Result']:
-            if x['symbol'] == symbol:
-                return x['name'], x['exchDisp']
+            def get_symbol(symbol):
+                """Get company name from stock ticker for graph title."""
+                url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(symbol)
+                result = requests.get(url).json()
+                for x in result['ResultSet']['Result']:
+                    if x['symbol'] == symbol:
+                        return x['name'], x['exchDisp']
 
-    for stock in stock_list:
-        company, exchange = get_symbol(stock)
-        ts = TimeSeries(key='FVBLNTQMS4063FIN')
-        data, meta_data = ts.get_intraday(stock)
-        data = data[max(data)]
-        open_price = round(float(data['1. open']), 2)
-        high = round(float(data['2. high']), 2)
-        low = round(float(data['3. low']), 2)
-        current = round(float(data['4. close']), 2)
-        volume = data['5. volume'], 2
-        growth = round(float(data['4. close']) - float(data['1. open']), 2)
-        stock_detail[stock] = {'growth': growth, 'company': company, 'exchange': exchange, 'volume': volume, 'open': open_price, 'high': high, 'low': low, 'ticker': stock, 'current': current}
-    return {'stock_detail': stock_detail}
+            for stock in stock_list:
+                company, exchange = get_symbol(stock)
+                ts = TimeSeries(key='FVBLNTQMS4063FIN')
+                data, meta_data = ts.get_intraday(stock)
+                data = data[max(data)]
+                open_price = round(float(data['1. open']), 2)
+                high = round(float(data['2. high']), 2)
+                low = round(float(data['3. low']), 2)
+                current = round(float(data['4. close']), 2)
+                volume = data['5. volume'], 2
+                growth = round(float(data['4. close']) - float(data['1. open']), 2)
+                stock_detail[stock] = {'growth': growth, 'company': company, 'exchange': exchange, 'volume': volume, 'open': open_price, 'high': high, 'low': low, 'ticker': stock, 'current': current}
+            return {'stock_detail': stock_detail}
+        return {}
+
+    if request.method == 'POST':
+        username = request.authenticated_userid
+        new_ticker = request.POST['new_ticker']
+        portfolio_stocks = request.dbsession.query(Portfolio).get(username)
+        if portfolio_stocks.stocks:
+            portfolio_stocks.stocks += (' ' + new_ticker)
+        else:
+            portfolio_stocks.stocks = new_ticker
+        # updated_tickers = old_account_tickers + ' ' + new_ticker
+        # updated_account = Portfolio(
+        #     username=username,
+        #     stocks=updated_tickers
+        # )
+        # request.dbsession.add(updated_account)
+        request.dbsession.flush()
+        return HTTPFound(request.route_url('portfolio'))
+    return {}
 
 
 @view_config(route_name='logout')
@@ -195,6 +218,11 @@ def register_view(request):
             username=username,
             password=password
         )
+        new_portfolio = Portfolio(
+            username=username,
+            stocks=''
+        )
+        request.dbsession.add(new_portfolio)
         request.dbsession.add(new_account)
         headers = remember(request, username)
         return HTTPFound(request.route_url('portfolio'), headers=headers)
