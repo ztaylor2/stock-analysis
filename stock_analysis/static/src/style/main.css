@@ -165,16 +165,6 @@ header {
     margin: 2vw 5vw;
     text-align: center;
     float: right; }
-  header div {
-    display: inline-block;
-    color: #fbfbfb;
-    font-size: 5vw;
-    margin: 2vw 2vw;
-    float: left; }
-    header div:hover {
-      cursor: pointer;
-      background-color: #1f1f1f;
-      border-radius: 2px; }
 
 footer {
   font-family: "Ubuntu", sans-serif;
