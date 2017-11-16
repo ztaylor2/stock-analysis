@@ -1,11 +1,16 @@
 @import '../lib/vars';
 
+//.....INTERACTIVE CLASSES.....\\
 .active {
     display: block;
 }
 
 .hidden {
     display: none;
+}
+
+.clearfix {
+    clear: both
 }
 
 //.....MAIN LAYOUT.....\\
