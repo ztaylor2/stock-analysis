@@ -5,8 +5,8 @@
   <meta charset="utf-8">
     <title>{{ title }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{{ request.static_path('stock_analysis:static/src/style/main.css') }}">
-    <link rel="stylesheet" types="text/css" href="{{ request.static_path('stock_analysis:static/fonts/icomoon.css') }}">
+    
+    {% block head %}{% endblock head %}
 
     <!-- bokeh styling -->
     <link
@@ -21,27 +21,26 @@
 </head>
 
 <body>
-  
-    <div class="body-background">
-      <div >
-          <nav>
-            <ul>
-              <li><a href={{ request.route_url('home') }}>Home</a></li>
-              <li><a href={{ request.route_url('detail') }}>Stock Analytics</a></li>
-              {% if request.authenticated_userid %}
-              <li><a href={{ request.route_url('portfolio') }}>My Portfolio</a></li>
-              <li><a href={{ request.route_url('logout') }}>Logout</a></li>
-              {% else %}
-              <li><a href={{ request.route_url('login') }}>Login</a></li>
-              {% endif %}
-            </ul>
-          </nav>
-      </div>
+  <div class="body-background">
+    <div >
+      <nav>
+        <ul>
+          <li><a href={{ request.route_url('home') }}>Home</a></li>
+          <li><a href={{ request.route_url('detail') }}>Stock Analytics</a></li>
+          {% if request.authenticated_userid %}
+          <li><a href={{ request.route_url('portfolio') }}>My Portfolio</a></li>
+          <li><a href={{ request.route_url('logout') }}>Logout</a></li>
+          {% else %}
+          <li><a href={{ request.route_url('login') }}>Login</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+  </div>
 
-      <section id="content">
-        {% block body %}{% endblock %}
-      </section>
-    </div>
+    <section id="content">
+      {% block body %}{% endblock %}
+    </section>
+  </div>
   <footer>&copy Stock Analysis 2017</footer>
 
     <script src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.10.min.js"></script>

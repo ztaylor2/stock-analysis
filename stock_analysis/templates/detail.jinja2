@@ -11,23 +11,16 @@
       <input name="stock_ticker" required></input>
     </div>
 
-    {% if error %} 
-
-      <div class="no_ticker_popup">
-        <p> {{ error }} </p>
-      </div>
-
-    {% endif %} 
-
-
-    <div class="form-group">
-      <div class="submit-button">
-        <input type="submit"></input>
-      </div>
+  {% if error %} 
+    <div class="no_ticker_popup">
+      <p> {{ error }} </p>
     </div>
-  </form>
+  {% endif %} 
 
-  {{ div|safe }}
-  {{ script|safe }}
+  <input name="search-button" type="submit" value="Search">
+</form>
+
+{{ div|safe }}
+{{ script|safe }}
 
 {% endblock body %}

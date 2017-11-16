@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from pyramid import testing
 from stock_analysis.models.meta import Base
-# from stock_analysis.models import User, get_tm_session
+from stock_analysis.models import Portfolio, User, get_tm_session
 from passlib.apps import custom_app_context as pwd_context
 import transaction
 import os
@@ -71,7 +71,7 @@ def add_stock(dummy_request, test_stock):  # FORMERLY add_entry
 
 
 @pytest.fixture
-def test_stocks(dummy_request, test_stock):  # FORMERLY add_entries
+def add_stocks(dummy_request, test_stock):  # FORMERLY add_entries
     """Add a Stock to an existing table in the database."""
     dummy_request.dbsession.add_all(test_stocks)
     return test_stocks

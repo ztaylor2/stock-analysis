@@ -17,11 +17,16 @@ requires = [
     'ipython',
     'pandas',
     'numpy',
+    'passlib',
     'scikit-learn',
     'matplotlib',
     'bokeh',
     'scipy',
-    'passlib'
+    'pandas-datareader',
+    'passlib',
+    'psycopg2',
+    'alpha_vantage',
+    'pytest',
 ]
 
 tests_require = [

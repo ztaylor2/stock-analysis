@@ -17,6 +17,10 @@ from sklearn import linear_model
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import Pipeline
+from treeinterpreter import treeinterpreter as ti
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import classification_report,confusion_matrix
 import requests
 
 
@@ -35,7 +39,7 @@ def detail_view(request):
 
         stock = request.POST['stock_ticker'].upper()
 
-        def get_symbol(symbol):
+        def _get_symbol(symbol):
             """Get company name from stock ticker for graph title."""
             url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(symbol)
             result = requests.get(url).json()
@@ -44,7 +48,7 @@ def detail_view(request):
                     return x['name'], x['exchDisp']
 
         try:
-            company, exchange = get_symbol(stock)
+            company, exchange = _get_symbol(stock)
         except TypeError:
             return {
                 "error": "No data on {}".format(stock)
@@ -65,7 +69,7 @@ def detail_view(request):
         # convert numpy dates into python datetime objects
         dates_python = []
         for date in dates:
-            dates_python.append(datetime.datetime.utcfromtimestamp(date.tolist()))
+            dates_python.append(datetime.datetime.utcfromtimestamp(date.tolist()/1e9))
 
         # convert dates to list of days ago
         last = dates_python[-1]
@@ -99,6 +103,10 @@ def detail_view(request):
 
         mean_p = np.mean([lin_regr_prediction, poly_prediction, svr_rbf_prediction], axis=0)
 
+        rf = RandomForestRegressor()
+        rf.fit(eighty_dates_reshape, prices[:len(eighty_dates_reshape)])
+        rf_prediction, bias, contributions = ti.predict(rf, dates_reshape)
+
         # create a new plot with a title and axis labels
         p = figure(title="{}  -  {}: {}".format(company, exchange, stock), x_axis_label='Date',
                    y_axis_label='Price', width=800, height=350,
@@ -112,6 +120,8 @@ def detail_view(request):
                line_color="blue", line_width=2)
         p.line(dates, mean_p, legend="Mean(L, P, SVM)",
                line_color="gray", line_width=2)
+        p.line(dates, rf_prediction, legend="Random Forest Regression",
+               line_color="black", line_width=2)
         p.legend.location = "top_left"
         p.title.text_font_size = "1em"
 
@@ -123,9 +133,6 @@ def detail_view(request):
             "script": script,
         }
 
-stockstr = "AMZN GOOG MSFT FB F"
-
-# Problem: somehow I broke the sign in again WHEN you log in --> my stocks. when you're not signed in, it works just fine.
 @view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2', permission='secret')
 def portfolio_view(request):
     """View for logged in portfolio."""
@@ -183,7 +190,7 @@ def portfolio_view(request):
         return HTTPFound(request.route_url('portfolio'))
     return {}
 
-
+  
 @view_config(route_name='logout')
 def logout(request):
     """Logout of stock account."""
@@ -211,6 +218,7 @@ def login_view(request):
         return {
             'error': 'Username/password combination invalid.'
         }
+
 
 
 @view_config(route_name='register', renderer='stock_analysis:templates/register.jinja2')
