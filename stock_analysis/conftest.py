@@ -3,26 +3,26 @@
 from __future__ import unicode_literals
 from pyramid import testing
 from stock_analysis.models.meta import Base
-from stock_analysis.models import Entry, get_tm_session
+# from stock_analysis.models import User, get_tm_session
 from passlib.apps import custom_app_context as pwd_context
 import transaction
 import os
 import pytest
 
 
-@pytest.fixture
-def test_entry():
-    """Create a new Entry."""
-    return Sample_stock(  # FORMERLY == Entry
-        company='Yahoo',
-        exchange='NYSE',
-        ticker='YHOO',
-        current='18.55',
-        growth='.50',
-        open='18.05',
-        high='18.95',
-        low='18.05'
-    )
+# @pytest.fixture
+# def test_entry():
+#     """Create a new Entry."""
+#     return Sample_stock(  # FORMERLY == Entry
+#         company='Yahoo',
+#         exchange='NYSE',
+#         ticker='YHOO',
+#         current='18.55',
+#         growth='.50',
+#         open='18.05',
+#         high='18.95',
+#         low='18.05'
+#     )
 
 
 @pytest.fixture(scope='session')
