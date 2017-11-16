@@ -132,7 +132,8 @@ def portfolio_view(request):
     if request.method == 'GET':
         username = request.authenticated_userid
         stock_str = request.dbsession.query(Portfolio).get(username)
-        if stock_str.stocks is not '':
+        # import pdb; pdb.set_trace()
+        if stock_str.stocks != '':
             stock_list = stock_str.stocks.split()
             stock_detail = {}
 
@@ -146,6 +147,7 @@ def portfolio_view(request):
 
             for stock in stock_list:
                 company, exchange = get_symbol(stock)
+                # import pdb; pdb.set_trace()
                 ts = TimeSeries(key='FVBLNTQMS4063FIN')
                 data, meta_data = ts.get_intraday(stock)
                 data = data[max(data)]
@@ -164,20 +166,22 @@ def portfolio_view(request):
         return {}
 
     if request.method == 'POST':
+        # import pdb; pdb.set_trace()
         username = request.authenticated_userid
         new_ticker = request.POST['new_ticker']
         url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(new_ticker)
         response = requests.get(url).json()
         if response['ResultSet']['Result'] == []:
             return {"error": "Stock ticker invalid"}
-        print('ADDED TO DATABASE')
-        portfolio_stocks = request.dbsession.query(Portfolio).get(username)
-        if portfolio_stocks.stocks:
-            portfolio_stocks.stocks += (' ' + new_ticker)
         else:
-            portfolio_stocks.stocks = new_ticker
-        request.dbsession.flush()
-        return HTTPFound(request.route_url('portfolio'))
+            portfolio_stocks = request.dbsession.query(Portfolio).get(username)
+            if portfolio_stocks.stocks:
+                portfolio_stocks.stocks += (' ' + new_ticker)
+            else:
+                portfolio_stocks.stocks = new_ticker
+            request.dbsession.flush()
+            # import pdb; pdb.set_trace()
+            return HTTPFound(request.route_url('portfolio'))
     return {}
 
 
@@ -216,20 +220,23 @@ def register_view(request):
     if request.method == 'GET':
         return {}
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        new_account = User(
-            username=username,
-            password=password
-        )
-        new_portfolio = Portfolio(
-            username=username,
-            stocks=''
-        )
-        request.dbsession.add(new_portfolio)
-        request.dbsession.add(new_account)
-        headers = remember(request, username)
-        return HTTPFound(request.route_url('portfolio'), headers=headers)
+        try:
+            username = request.POST['username']
+            password = request.POST['password']
+            new_account = User(
+                username=username,
+                password=password
+            )
+            new_portfolio = Portfolio(
+                username=username,
+                stocks=''
+            )
+            request.dbsession.add(new_portfolio)
+            request.dbsession.add(new_account)
+            headers = remember(request, username)
+            return HTTPFound(request.route_url('portfolio'), headers=headers)
+        except IntegrityError:
+            return {"error": "This username/password combo already exists. Choose another option"}
     return {}
 
 
