@@ -1,14 +1,16 @@
 """Views for the Stock Analysis app."""
+from __future__ import division
 from pyramid.view import view_config
 from bokeh.plotting import figure
 import pandas_datareader.data as web
 from bokeh.embed import components
-from pyramid.httpexceptions import HTTPNotFound, HTTPFound
+from pyramid.httpexceptions import HTTPFound
 from pyramid.security import remember, forget, NO_PERMISSION_REQUIRED
+from pandas_datareader._utils import RemoteDataError
+from alpha_vantage.timeseries import TimeSeries
 from stock_analysis.security import is_authorized
 import datetime
-from stock_analysis.models.mymodel import User
-import pandas as pd
+from stock_analysis.models.mymodel import User, Portfolio
 import numpy as np
 from sklearn.svm import SVR
 from sklearn import linear_model
@@ -16,37 +18,17 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import Pipeline
 import requests
-import os
+
 
 @view_config(route_name='home', renderer='stock_analysis:templates/home.jinja2', permission=NO_PERMISSION_REQUIRED)
 def home_view(request):
     """Home view for stock analysis app."""
-    if request.method == 'GET':
-        return {}
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        if 'login' in request.POST:
-            if is_authorized(request, username, password):
-                headers = remember(request, username)
-                return HTTPFound(request.route_url('portfolio'), headers=headers)
-            return {
-                'error': 'Username/password combination invalid.'
-            }
-        elif 'register' in request.POST:
-            new_account = User(
-                username=username,
-                password=password
-            )
-            request.dbsession.add(new_account)
-            headers = remember(request, username)
-            return HTTPFound(request.route_url('portfolio'), headers=headers)
-        return {}
+    return {}
 
 
 @view_config(route_name='detail', renderer='stock_analysis:templates/detail.jinja2')
 def detail_view(request):
-    """Home view for stock analysis app."""
+    """Detail stock view for stock analysis app."""
     if request.method == 'GET':
         return {}
     if request.method == 'POST':
@@ -83,7 +65,7 @@ def detail_view(request):
         # convert numpy dates into python datetime objects
         dates_python = []
         for date in dates:
-            dates_python.append(datetime.datetime.utcfromtimestamp(date.tolist()/1e9))
+            dates_python.append(datetime.datetime.utcfromtimestamp(date.tolist()))
 
         # convert dates to list of days ago
         last = dates_python[-1]
@@ -141,30 +123,59 @@ def detail_view(request):
             "script": script,
         }
 
-stock = "AMZN GOOG MSFT FB F"
+stockstr = "AMZN GOOG MSFT FB F"
+
 
 @view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2')
-def portfolio_view(request, stock):
-    """."""
-    stock_list = stock.split()
-    stock_detail = {}
+def portfolio_view(request):
+    """View for logged in portfolio."""
+    if request.method == 'GET':
+        username = request.authenticated_userid
+        stock_str = request.dbsession.query(Portfolio).get(username)
+        if stock_str.stocks:
+            stock_list = stock_str.stocks.split()
+            stock_detail = {}
 
-    def get_symbol(symbol):
-        """Get company name from stock ticker for graph title."""
-        url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(symbol)
-        result = requests.get(url).json()
-        for x in result['ResultSet']['Result']:
-            if x['symbol'] == symbol:
-                return x['name'], x['exchDisp']
+            def get_symbol(symbol):
+                """Get company name from stock ticker for graph title."""
+                url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(symbol)
+                result = requests.get(url).json()
+                for x in result['ResultSet']['Result']:
+                    if x['symbol'] == symbol:
+                        return x['name'], x['exchDisp']
 
-    for stock in stock_list:
-        company, exchange = get_symbol(stock)
-        stock_data = web.get_quote_yahoo(stock)
-        last = str(stock_data['last'].values)
-        pct = str(stock_data['change_pct'].values)
-        pe = str(stock_data['PE'].values)
-        stock_detail[stock] = {'last': last, 'pct': pct, 'pe': pe, 'ticker': stock}
-    return stock_detail
+            for stock in stock_list:
+                company, exchange = get_symbol(stock)
+                ts = TimeSeries(key='FVBLNTQMS4063FIN')
+                data, meta_data = ts.get_intraday(stock)
+                data = data[max(data)]
+                open_price = round(float(data['1. open']), 2)
+                high = round(float(data['2. high']), 2)
+                low = round(float(data['3. low']), 2)
+                current = round(float(data['4. close']), 2)
+                volume = data['5. volume'], 2
+                growth = (float(data['4. close']) - float(data['1. open'])) / float(data['1. open'])
+                print('growth:', growth)
+                if growth > 0:
+                    growth = '+' + "{:.2%}".format(growth)
+                else:
+                    "{:.1%}".format(growth)
+                stock_detail[stock] = {'growth': growth, 'company': company, 'volume': volume, 'open': open_price, 'high': high, 'low': low, 'ticker': stock, 'current': current}
+            return {'stock_detail': stock_detail}
+        return {}
+
+    if request.method == 'POST':
+        username = request.authenticated_userid
+        new_ticker = request.POST['new_ticker']
+        portfolio_stocks = request.dbsession.query(Portfolio).get(username)
+        if portfolio_stocks.stocks:
+            portfolio_stocks.stocks += (' ' + new_ticker)
+        else:
+            portfolio_stocks.stocks = new_ticker
+        request.dbsession.flush()
+        return HTTPFound(request.route_url('portfolio'))
+    return {}
+
 
 @view_config(route_name='logout')
 def logout(request):
@@ -175,15 +186,63 @@ def logout(request):
 
 @view_config(route_name='process_symbol')
 def process_symbol(request):
-    """Home view for stock analysis app."""
+    """Processing and loading symbol."""
     print('in process')
+
 
 @view_config(route_name='login', renderer='stock_analysis:templates/login.jinja2')
 def login_view(request):
     """Login view for stock analysis app."""
-    return {}
+    if request.method == 'GET':
+        return {}
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        if is_authorized(request, username, password):
+            headers = remember(request, username)
+            return HTTPFound(request.route_url('portfolio'), headers=headers)
+        return {
+            'error': 'Username/password combination invalid.'
+        }
+
 
 @view_config(route_name='register', renderer='stock_analysis:templates/register.jinja2')
 def register_view(request):
     """Register view for stock analysis app."""
+    if request.method == 'GET':
+        return {}
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        new_account = User(
+            username=username,
+            password=password
+        )
+        new_portfolio = Portfolio(
+            username=username,
+            stocks=''
+        )
+        request.dbsession.add(new_portfolio)
+        request.dbsession.add(new_account)
+        headers = remember(request, username)
+        return HTTPFound(request.route_url('portfolio'), headers=headers)
     return {}
+
+
+# @view_config(route_name='delete_stock')
+# def delete_stock(request):
+#     """Delete stock from portfolio."""
+#     username = request.authenticated_userid
+#     portfolio_stocks = request.dbsession.query(Portfolio).get(username)
+#     import pdb; pdb.set_trace()
+#     target = request.POST['name']
+#     # portfolio_stocks.stocks = [ tick for tick in portfolio_stocks.stocks.split() if tick is not target]
+#     username = request.authenticated_userid
+#     new_ticker = request.POST['new_ticker']
+#     portfolio_stocks = request.dbsession.query(Portfolio).get(username)
+#     if portfolio_stocks.stocks:
+#         portfolio_stocks.stocks += (' ' + new_ticker)
+#     else:
+#         portfolio_stocks.stocks = new_ticker
+#     request.dbsession.flush()
+#     return HTTPFound(request.route_url('portfolio'))
