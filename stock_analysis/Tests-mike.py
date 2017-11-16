@@ -442,21 +442,6 @@ def test_login_get_route_auth_has_302_status_code(testapp):
     assert response.status_code == 302
 
 
-# def test_login_get_route_auth_redirects_to_portfolio(testapp):
-#     """Test that GET to login route redirects to portfolio view."""
-#     response = testapp.get("/login_view")
-#     home = testapp.app.routes_mapper.get_route('home').path
-#     assert response.location.endswith(home)
-
-
-def test_login_get_route_auth_home_still_has_logout_tab(testapp):
-    """Test that GET to login route has home page with logout tab."""
-    response = testapp.get("/login_view")
-    next_page = response.follow()
-    assert len(next_page.html.find_all('li', 'nav-item')) == 3
-    assert 'Logout' in str(next_page.html.find_all('li', 'nav-item')[2])
-
-
 def test_login_get_route_auth_keeps_auth_tkt_cookie(testapp):
     """Test that GET to login route adds auth_tkt cookie."""
     assert 'auth_tkt' in testapp.cookies
@@ -470,23 +455,26 @@ def test_login_post_route_auth_has_302_status_code(testapp):
     assert response.status_code == 302
 
 
-def test_login_post_route_auth_redirects_to_home(testapp):
-    """Test that POST to login route redirects to home page."""
-    response = testapp.post("/login_view")
-    home = testapp.app.routes_mapper.get_route('home').path
-    assert response.location.endswith(home)
-
-
-def test_login_post_route_auth_home_still_has_logout_tab(testapp):
-    """Test that POST to login route has home page with logout tab."""
-    response = testapp.post("/login_view")
-    next_page = response.follow()
-    assert len(next_page.html.find_all('li', 'nav-item')) == 3
-    assert 'Logout' in str(next_page.html.find_all('li', 'nav-item')[2])
-
-
 def test_login_post_route_auth_keeps_auth_tkt_cookie(testapp):
     """Test that POST to login route adds auth_tkt cookie."""
     assert 'auth_tkt' in testapp.cookies
     testapp.post("/login_view")
     assert 'auth_tkt' in testapp.cookies
+
+
+def test_home_route_auth_gets_200_status_code(testapp):
+    """Test that the home route gets 200 status code."""
+    response = testapp.get("/")
+    assert response.status_code == 200
+
+
+def test_detail_route_auth_for_valid_id_gets_200_status_code(testapp):
+    """Test that the detail route of a valid gets 200 status code."""
+    response = testapp.get("/detail_view")
+    assert response.status_code == 200
+
+
+def test_logout_route_auth_removes_auth_tkt_cookie(testapp):
+    """Test that the logout route removes the auth_tkt cookie."""
+    testapp.get("/logout")
+    assert 'auth_tkt' not in testapp.cookies
