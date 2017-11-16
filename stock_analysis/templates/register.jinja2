@@ -2,8 +2,10 @@
 
 {% block head %}
 <link rel="stylesheet" type="text/css" href="{{ request.static_path('stock_analysis:static/src/style/main.css') }}">
+
+<link rel="stylesheet" type="text/css" href="{{ request.static_path('stock_analysis:static/src/style/link.css') }}">
 {% endblock head%}
-\
+
 {% block body %}
 <div class="form-header">
     <h1 class="form-title"><a href={{ request.route_url('home') }}>Stock Analysis</a></h1>
