@@ -1,48 +1,66 @@
 {% extends "user_layout.jinja2" %}
 
-{% block detail %}
-    <h2>Stock Portfolio</h2>
+{% block head%}
 
-<table style="width: 80%">
+<link rel="stylesheet" 
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" 
+          integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" 
+          crossorigin="anonymous">
+
+<link href="{{ request.static_path('stock_analysis:static/src/style/portfolio.css') }}" rel="stylesheet" />
+
+<link href="{{ request.static_path('stock_analysis:static/src/style/boot-header.css') }}" rel="stylesheet" />
+
+{% endblock %}
+
+
+{% block detail %}
+<h2>Stock Portfolio</h2>
+
+<table class="table table-responsive">
     <thead>
-        <td>Company</td>
-        <td>Ticker</td>
-        <td>Current Price</td>
-        <td>Change</td>
-        <td>Open</td>
-        <td>High</td>
-        <td>Low</td>
+        <tr>
+            <th scope="col">Company</th>
+            <th scope="col">Ticker</th>
+            <th scope="col">Current Price</th>
+            <th scope="col">Price Change</th>
+            <th scope="col">Open</th>
+            <th scope="col">P/E</th>
+        </tr>
     </thead>
     {% for ticker in stock_detail %}
-    <tr class='clickable-row'>
-        <td>{{ stock_detail[ticker].company }}</td>
-        <td>{{ stock_detail[ticker].ticker }}</td>
-        <td>${{ stock_detail[ticker].current }}</td>
-        <td>{{ stock_detail[ticker].growth }}</td>
-        <td>{{ stock_detail[ticker].open }}</td>
-        <td>{{ stock_detail[ticker].high }}</td>
-        <td>{{ stock_detail[ticker].low }}</td>
-        <td>
-          <form name="portfolio-form" method="POST">
-            <input name="{{ stock_detail[ticker].ticker }}" type="submit" value="delete">
-            <input type="hidden" name="delete">
-          </form>
-        </td>
-    </tr>
+    <tbody>
+        <tr class='clickable-row'>
+            <th{{ stock_detail[ticker].company }}</td>
+            <td>{{ stock_detail[ticker].ticker }}</td>
+            <td>${{ stock_detail[ticker].price }}</td>
+            <td>{{ stock_detail[ticker].dollar_change }} {{ stock_detail[ticker].pct_change }}</td>
+            <td>{{ stock_detail[ticker].open_price }}</td>
+            <td>{{ stock_detail[ticker].pe }}</td>
+            <td>
+                <form name="portfolio-form" method="POST">
+                    <input name="{{ stock_detail[ticker].ticker }}" type="submit" value="delete">
+                    <input type="hidden" name="delete">
+                </form>
+            </td>
+        </tr>
     {% endfor %}
+    </tbody>
 </table>
 
-    {% if error %}
-    <p style="color: red">{{ error }}</p>
-    {% endif %}
+{% if error %}
+<p style="color: red">{{ error }}</p>
+{% endif %}
     
-     <div class="form-group">
-        <form name="portfolio-form" method="POST">
-            <input name="new_ticker" type="text" class="form-input" placeholder="Stock Ticker" required>
-            <br>
-            <input name="addtoportfolio" type="submit" value="Add To My Portfolio">
-        </form>
-    </div>
+<div class="col-lg-6">
+    <form name="portfolio-form" method="POST">
+        <div class="input-group">
+            <input name="new_ticker" type="text" class="form-control" placeholder="Search for Stock Ticker">
+            <span class="input-group-btn">
+                <button class="btn btn-secondary" type="submit">Go!</button>
+            </span>
+        </div>
+    </form>
+</div>
 
-    
 {% endblock detail %}
