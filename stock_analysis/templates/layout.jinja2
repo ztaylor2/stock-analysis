@@ -21,10 +21,6 @@
 </head>
 
 <body>
-  <header>
-    <h1>Stock Analysis</h1>
-    <div class="icon-menu"></div>
-  </header>
     <div class="body-background">
       <div class="hidden">
           <nav>
@@ -34,7 +30,7 @@
               <li><a href={{ request.route_url('portfolio') }}>My Portfolio</a></li>
             </ul>
           </nav>
-        </div>
+      </div>
 
       <section id="content">
         {% block body %}{% endblock %}

@@ -21,6 +21,7 @@ requires = [
     'matplotlib',
     'bokeh',
     'scipy',
+    'passlib'
 ]
 
 tests_require = [

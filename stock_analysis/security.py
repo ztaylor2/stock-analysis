@@ -44,5 +44,4 @@ class SecRoot(object):
 def is_authorized(request, username, password):
     """Check user-provided credentials compared to users stored in the database."""
     result = request.dbsession.query(User).get(username)
-    print(result)
     return result
