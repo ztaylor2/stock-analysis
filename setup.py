@@ -14,7 +14,6 @@ requires = [
     'transaction',
     'zope.sqlalchemy',
     'waitress',
-    'ipython',
     'pandas',
     'numpy',
     'passlib',
@@ -23,15 +22,14 @@ requires = [
     'bokeh',
     'scipy',
     'pandas-datareader',
-    'passlib',
     'psycopg2',
     'alpha_vantage',
     'pytest',
+    'webtest',
 ]
 
 tests_require = [
     'WebTest >= 1.3.1',  # py3 compat
-    'pytest',
     'pytest-cov',
     'tox',
 ]

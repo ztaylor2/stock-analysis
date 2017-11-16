@@ -4,25 +4,64 @@
 {% block detail %}
 <form class="search-form" method="POST">
 
-  <div class="col-10">
-    <input class="form-control" id="example-text-input" name="stock_ticker" type="text" class="form-input" placeholder="Enter a stock:" required>
-  </div>
-
-<!--   <div class="btn-group" role="group" aria-label="...">
-    <button type="button" name="1_month" class="btn btn-default">1 Month</button>
-    <button type="button" name="3_months" class="btn btn-default">3 Months</button>
-    <button type="button" name="1_year" class="btn btn-default">1 Year</button>
-    <button type="button" name="5_years" class="btn btn-default">5 Years</button>
-  </div> -->
-
-  {% if error %} 
-    <div class="no_ticker_popup">
-      <p> {{ error }} </p>
+  <div class="container">
+    <div class="form-group row">
+      <label for="inputEmail3" class="col-sm-2 col-form-label">Stock Ticker</label>
+      <div class="col-sm-10">
+        <input name="stock_ticker" class="form-control" type="text" 
+                {% if stock %}
+                  value={{ stock }}
+                {% else %}
+                  value="MSFT"
+                {% endif %}
+                id="example-date-input" required>
+      </div>
     </div>
+    <div class="form-group row">
+      <label for="inputPassword3" class="col-sm-2 col-form-label">Start Date</label>
+      <div class="col-sm-10">
+        <input name="start_date" class="form-control" type="date"
+               {% if start %}
+                  value={{ start }}
+               {% else %}
+                  value="2016-08-19"
+               {% endif %}
+               id="example-date-input" required>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="inputPassword3" class="col-sm-2 col-form-label">End Date</label>
+      <div class="col-sm-10">
+        <input name="end_date" class="form-control" type="date" 
+               {% if end %}
+                  value={{ end }}
+               {% else %}
+                  value="2017-08-19"
+               {% endif %}
+                id="example-date-input" required>
+      </div>
+    </div>
+</div>
+
+
+  {% if error %}
+
+    <div class="alert alert-warning" role="alert">
+      <h4 class="alert-heading">Error</h4>
+      <hr>
+      <p class="mb-0">{{ error }}</p>
+    </div>
+
   {% endif %} 
 
-  <input class="btn btn-default btn-lg" name="search-button" type="submit" value="Search">
+
+  <div class="form-actions">
+    <input class="btn btn-default btn-lg" name="search-button" type="submit" value="Analyze Stock">
+  </div>
 </form>
+
+
+
 
 <div>
   {{ div|safe }}
@@ -32,3 +71,5 @@
 
 
 {% endblock %}
+
+
