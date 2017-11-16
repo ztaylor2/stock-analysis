@@ -133,17 +133,13 @@ def detail_view(request):
             "script": script,
         }
 
-stockstr = "AMZN GOOG MSFT FB F"
-
-
-
-@view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2')
+@view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2', permission='secret')
 def portfolio_view(request):
     """View for logged in portfolio."""
     if request.method == 'GET':
         username = request.authenticated_userid
         stock_str = request.dbsession.query(Portfolio).get(username)
-        if stock_str.stocks:
+        if stock_str.stocks != '':
             stock_list = stock_str.stocks.split()
             stock_detail = {}
 
@@ -166,11 +162,10 @@ def portfolio_view(request):
                 current = round(float(data['4. close']), 2)
                 volume = data['5. volume'], 2
                 growth = (float(data['4. close']) - float(data['1. open'])) / float(data['1. open'])
-                print('growth:', growth)
                 if growth > 0:
                     growth = '+' + "{:.2%}".format(growth)
                 else:
-                    "{:.1%}".format(growth)
+                    growth = "{:.1%}".format(growth)
                 stock_detail[stock] = {'growth': growth, 'company': company, 'volume': volume, 'open': open_price, 'high': high, 'low': low, 'ticker': stock, 'current': current}
             return {'stock_detail': stock_detail}
         return {}
@@ -178,6 +173,14 @@ def portfolio_view(request):
     if request.method == 'POST':
         username = request.authenticated_userid
         new_ticker = request.POST['new_ticker']
+        url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(new_ticker)
+        response = requests.get(url).json()
+        if response['ResultSet']['Result'] == []:
+            return {"error": "Stock ticker invalid"}
+        port_stocks = request.dbsession.query(Portfolio).get(username)
+        # if new_ticker.upper() in port_stocks.split():
+        #     return {"error": "Stock ticker already in your portfolio"}
+        # else:
         portfolio_stocks = request.dbsession.query(Portfolio).get(username)
         if portfolio_stocks.stocks:
             portfolio_stocks.stocks += (' ' + new_ticker)
@@ -201,7 +204,7 @@ def process_symbol(request):
     print('in process')
 
 
-@view_config(route_name='login', renderer='stock_analysis:templates/login.jinja2')
+@view_config(route_name='login', renderer='stock_analysis:templates/login.jinja2', permission=NO_PERMISSION_REQUIRED)
 def login_view(request):
     """Login view for stock analysis app."""
     if request.method == 'GET':
@@ -226,6 +229,9 @@ def register_view(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
+        # if username in request.dbsession(User).all():
+        #     return {"error": "This username/password combo already exists. Choose another option"}
+
         new_account = User(
             username=username,
             password=password
@@ -241,7 +247,7 @@ def register_view(request):
     return {}
 
 
-# @view_config(route_name='delete_stock')
+# @view_config(route_name='delete_stock', permission='secret')
 # def delete_stock(request):
 #     """Delete stock from portfolio."""
 #     username = request.authenticated_userid

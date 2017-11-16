@@ -5,9 +5,11 @@
     <h1>Stock Analysis</h1>
     <div class="icon-menu"></div>
 </header>
-
-<form class="search-form" method="POST">
-  <input name="stock_ticker" type="text" class="form-input" placeholder="Enter a stock:" required>
+  <form method="POST">
+    <div class="form-group">
+      <label>Enter Stock Ticker:</label>
+      <input name="stock_ticker" required></input>
+    </div>
 
   {% if error %} 
     <div class="no_ticker_popup">
@@ -17,7 +19,6 @@
 
   <input name="search-button" type="submit" value="Search">
 </form>
-
 
 {{ div|safe }}
 {{ script|safe }}

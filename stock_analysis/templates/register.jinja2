@@ -8,6 +8,10 @@
 <div class="form-header">
     <h1 class="form-title">Stock Analysis</h1>
 
+    {% if error %}
+    <p style="color: red">{{ error }}</p>
+    {% endif %}
+    
     <div class="sign-up">
         <form name="signup" method="POST">
             <input name="username" type="text" class="form-input" placeholder="User Name" required>
