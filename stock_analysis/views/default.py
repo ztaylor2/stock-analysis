@@ -20,7 +20,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import classification_report,confusion_matrix
 import requests
-
+import os
 
 @view_config(route_name='home', renderer='stock_analysis:templates/home.jinja2', permission=NO_PERMISSION_REQUIRED)
 def home_view(request):
@@ -28,24 +28,24 @@ def home_view(request):
     if request.method == 'GET':
         return {}
     if request.method == 'POST':
-        #  ALSO CHECK THAT IT'S A LOGIN POST REQUEST
         username = request.POST['username']
         password = request.POST['password']
-        if is_authorized(request, username, password):
+        if 'login' in request.POST:
+            if is_authorized(request, username, password):
+                headers = remember(request, username)
+                return HTTPFound(request.route_url('portfolio'), headers=headers)
+            return {
+                'error': 'Username/password combination invalid.'
+            }
+        elif 'register' in request.POST:
+            new_account = User(
+                username=username,
+                password=password
+            )
+            request.dbsession.add(new_account)
             headers = remember(request, username)
             return HTTPFound(request.route_url('portfolio'), headers=headers)
-        return {
-            'error': 'Username/password combination invalid.'
-        }
-    if request.method == 'POST':
-        #  ALSO CHECK THAT IT'S A REGISTER ACCOUNT POST REQUEST
-        new_username = request.POST['username']
-        new_password = request.POST['password']
-        new_account = User(
-            username=new_username,
-            password=new_password
-        )
-        request.dbsession.add(new_account)
+        return {}
 
 
 @view_config(route_name='detail', renderer='stock_analysis:templates/detail.jinja2')
@@ -151,12 +151,30 @@ def detail_view(request):
             "script": script,
         }
 
+stock = "AMZN GOOG MSFT FB F"
 
 @view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2')
-def portfolio_view(request):
-    """Portfolio view for stock analysis app."""
-    return {}
+def portfolio_view(request, stock):
+    """."""
+    stock_list = stock.split()
+    stock_detail = {}
 
+    def get_symbol(symbol):
+        """Get company name from stock ticker for graph title."""
+        url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(symbol)
+        result = requests.get(url).json()
+        for x in result['ResultSet']['Result']:
+            if x['symbol'] == symbol:
+                return x['name'], x['exchDisp']
+
+    for stock in stock_list:
+        company, exchange = get_symbol(stock)
+        stock_data = web.get_quote_yahoo(stock)
+        last = str(stock_data['last'].values)
+        pct = str(stock_data['change_pct'].values)
+        pe = str(stock_data['PE'].values)
+        stock_detail[stock] = {'last': last, 'pct': pct, 'pe': pe, 'ticker': stock}
+    return stock_detail
 
 @view_config(route_name='logout')
 def logout(request):
@@ -164,7 +182,18 @@ def logout(request):
     headers = forget(request)
     return HTTPFound(request.route_url('home'), headers=headers)
 
+
 @view_config(route_name='process_symbol')
 def process_symbol(request):
     """Home view for stock analysis app."""
     print('in process')
+
+@view_config(route_name='login', renderer='stock_analysis:templates/login.jinja2')
+def login_view(request):
+    """Login view for stock analysis app."""
+    return {}
+
+@view_config(route_name='register', renderer='stock_analysis:templates/register.jinja2')
+def register_view(request):
+    """Register view for stock analysis app."""
+    return {}
