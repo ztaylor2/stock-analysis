@@ -190,7 +190,7 @@ def portfolio_view(request):
         return HTTPFound(request.route_url('portfolio'))
     return {}
 
-  
+
 @view_config(route_name='logout')
 def logout(request):
     """Logout of stock account."""
