@@ -1,80 +1,8 @@
-{% extends "layout.jinja2" %}
+{% extends "user_layout.jinja2" %}
 
 
-{% block head %}
-    <link rel="stylesheet" 
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" 
-          integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" 
-          crossorigin="anonymous">
-{% endblock head %}
-
-
-{% block body %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-  <a class="navbar-brand">Stock Analysis</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href={{ request.route_url('home') }}>Home <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item" class="user_nav">
-        <a class="nav-link">Login</a>
-      </li>
-      <li class="nav-item" class="user_nav">
-        <a class="nav-link">Logout</a>
-      </li>
-      <li class="nav-item" class="user_nav">
-        <a class="nav-link" href={{ request.route_url('detail') }}>Stock Analysis</a>
-      </li>
-      <li class="nav-item" class="user_nav">
-        <a class="nav-link" href={{ request.route_url('portfolio') }}>Portfolio</a>
-      </li>
-    </ul>
-
-<!--           <li class="nav-item active">
-        <a class="nav-link" href="{{ request.route_url('home') }}">Home <span class="sr-only">(current)</span></a>
-      </li> -->
-    <!-- <ul class="nav navbar-nav" style="float: right"> -->
-      <!-- {% if not request.authenticated_userid %} -->
-<!--         <li class="nav-item" class="user_nav">
-          <a class="nav-link">Login</a>
-        </li> -->
-<!--       {% endif %}   
-      {% if request.authenticated_userid %} -->
-
-<!--         <li class="nav-item" class="user_nav">
-          <a class="nav-link">New Post</a>
-        </li>
-        <li class="nav-item" class="user_nav">
-          <a class="nav-link">Logout</a>
-        </li> -->
-
-
-<!--         <li class="nav-item" class="user_nav">
-          <a class="nav-link" href="{{ request.route_url('create') }}">New Post</a>
-        </li>
-        <li class="nav-item" class="user_nav">
-          <a class="nav-link" href="{{ request.route_url('logout') }}">Logout</a> -->
-        <!-- </li> -->
-      <!-- {% endif %} -->
-    </ul>
-  </div>
-</nav>
-
-
-
-<!-- <header>
-    <h1>Stock Analysis</h1>
-    <div class="icon-menu"></div>
-</header> -->
-
+{% block detail %}
 <form class="search-form" method="POST">
-  <!-- <input name="stock_ticker" type="text" class="form-input" placeholder="Enter a stock:" required> -->
-
 
   <div class="col-10">
     <input class="form-control" id="example-text-input" name="stock_ticker" type="text" class="form-input" placeholder="Enter a stock:" required>
@@ -93,11 +21,14 @@
     </div>
   {% endif %} 
 
-  <input type="button" class="btn btn-default btn-lg" name="search-button" type="submit" value="Search">
+  <input class="btn btn-default btn-lg" name="search-button" type="submit" value="Search">
 </form>
 
 <div>
   {{ div|safe }}
   {{ script|safe }}
 </div>
-{% endblock body %}
+
+
+
+{% endblock %}

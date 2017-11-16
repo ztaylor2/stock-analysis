@@ -1,29 +1,7 @@
-{% extends "layout.jinja2" %}
+{% extends "user_layout.jinja2" %}
 
-{% block head %}
-    <link rel="stylesheet" 
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" 
-          integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" 
-          crossorigin="anonymous">
-
-{% endblock head %}
-
-{% block body %}
-<header>
-    <h1>Stock Analysis</h1>
-    
-    <a href="{{ request.route_url('home') }}">Home</a>
-    <a href="{{ request.route_url('detail') }}">View Stock Analytics</a>
-    <a href="{{ request.route_url('process_symbol') }}">symbol</a>  {# # To process the symbol request #}
-  </header>
-
-<h2>Stock Portfolio</h2>
-{#    <div>
-    <form name="portfolio-form" method="POST">
-        <input name="new_ticker" type="text" class="form-input" placeholder="Stock Ticker" required>
-        <input name="addtoportfolio" type="submit" value="Add To My Portfolio">
-    </form>
-</div> #}
+{% block detail %}
+    <h2>Stock Portfolio</h2>
 
 <table style="width: 80%">
     <thead>
@@ -45,14 +23,19 @@
         <td>{{ stock_detail[ticker].high }}</td>
         <td>{{ stock_detail[ticker].low }}</td>
         <td>
-            <form name="portfolio-form" method="POST">
-                <a href="{{ request.route_url('delete_stock') }}"><input name="{{ stock_detail[ticker].ticker }}" type="submit" value="Delete"></a>
-            </form>
+          <form name="portfolio-form" method="POST">
+            <input name="{{ stock_detail[ticker].ticker }}" type="submit" value="delete">
+            <input type="hidden" name="delete">
+          </form>
         </td>
     </tr>
     {% endfor %}
 </table>
 
+    {% if error %}
+    <p style="color: red">{{ error }}</p>
+    {% endif %}
+    
      <div class="form-group">
         <form name="portfolio-form" method="POST">
             <input name="new_ticker" type="text" class="form-input" placeholder="Stock Ticker" required>
@@ -62,4 +45,4 @@
     </div>
 
     
-{% endblock body %}
+{% endblock detail %}

@@ -10,12 +10,6 @@
 
     <link href="{{ request.static_path('stock_analysis:static/src/style/detail.css') }}" rel="stylesheet" />
 
-    <!-- bootstrap  -->
-<!--     <link rel="stylesheet" 
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" 
-          integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" 
-          crossorigin="anonymous"> -->
-
     <!-- bokeh styling -->
     <link
         href="https://cdn.pydata.org/bokeh/release/bokeh-0.12.9.min.css"
@@ -29,21 +23,11 @@
 </head>
 
 <body>
-  <div class="body-background">
-    <div class="hidden">
-        <nav>
-          <ul>
-            <li><a href={{ request.route_url('home') }}>Home</a></li>
-            <li><a href={{ request.route_url('detail') }}>View Stock Analytics</a></li>
-            <li><a href={{ request.route_url('portfolio') }}>My Portfolio</a></li>
-          </ul>
-        </nav>
-    </div>
 
     <section id="content">
       {% block body %}{% endblock %}
-      </section>
-    </div>
+    </section>
+  </div>
   <footer>&copy Stock Analysis 2017</footer>
 
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" 

@@ -7,15 +7,8 @@
 
 {% block body %}
 
-{# The stuff below should probably go into layout.jinja2, once it has a working hamburger menu. These options should probably only pop up once the user is authenticated. (AKA, "if request.authenticated_userid.") #}
-{% if request.authenticated_userid %}
-<a href="{{ request.route_url('detail') }}">View Stock Analytics</a>
-<a href="{{ request.route_url('portfolio') }}">View Portfolio</a>
-<a href="{{ request.route_url('logout') }}">Logout</a>
-{% endif %}
-
 <div class="form-header">
-    <h1 class="form-title">Stock Analysis</h1>
+    <h1 class="form-title"><a href={{ request.route_url('home') }}>Stock Analysis</a></h1>
 
     <div class="landing-form">
         <a href={{ request.route_url('detail') }}><button class="get-started" type="button">Get Started</button></a>
