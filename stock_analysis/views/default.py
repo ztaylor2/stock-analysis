@@ -39,7 +39,7 @@ def detail_view(request):
 
         stock = request.POST['stock_ticker'].upper()
 
-        def get_symbol(symbol):
+        def _get_symbol(symbol):
             """Get company name from stock ticker for graph title."""
             url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(symbol)
             result = requests.get(url).json()
@@ -48,7 +48,7 @@ def detail_view(request):
                     return x['name'], x['exchDisp']
 
         try:
-            company, exchange = get_symbol(stock)
+            company, exchange = _get_symbol(stock)
         except TypeError:
             return {
                 "error": "No data on {}".format(stock)
@@ -136,6 +136,7 @@ def detail_view(request):
 stockstr = "AMZN GOOG MSFT FB F"
 
 
+
 @view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2')
 def portfolio_view(request):
     """View for logged in portfolio."""
@@ -186,7 +187,7 @@ def portfolio_view(request):
         return HTTPFound(request.route_url('portfolio'))
     return {}
 
-
+  
 @view_config(route_name='logout')
 def logout(request):
     """Logout of stock account."""
@@ -214,6 +215,7 @@ def login_view(request):
         return {
             'error': 'Username/password combination invalid.'
         }
+
 
 
 @view_config(route_name='register', renderer='stock_analysis:templates/register.jinja2')
