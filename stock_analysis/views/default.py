@@ -60,7 +60,7 @@ def detail_view(request):
                     "filled_ticker": request.GET['ticker']
                 }
             return {
-                "error": "Error retrieving {}'s data, try again.".format(stock),
+                "error": "No data on {}".format(stock)
             }
 
         try:
@@ -72,7 +72,7 @@ def detail_view(request):
                     "filled_ticker": request.GET['ticker']
                 }
             return {
-                "error": "Error retrieving {}'s data, try again.".format(stock),
+                "error": "Error retrieving {}'s data, try again.".format(stock)
             }
 
         dates = stock_data.index.values
@@ -207,8 +207,9 @@ def detail_view(request):
         }
 
         if "ticker" in request.GET:
-            analyzed_dict['filled_ticker'] = request.GET['ticker']
+            analyzed_dict['filled_ticker'] = request.GET
         return analyzed_dict
+
 
 @view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2', permission='secret')
 def portfolio_view(request):
@@ -220,7 +221,13 @@ def portfolio_view(request):
             stock_list = stock_str.stocks.split()
             stock_detail = {}
             for tick in stock_list:
-                stock_detail[tick] = scrape_stock_data(tick)
+                try:
+                    stock_detail[tick] = scrape_stock_data(tick)
+                except AttributeError:
+                    return {
+                        "stock_detail": stock_detail,
+                        "error": "Stock ticker invalid"
+                    }
             return {'stock_detail': stock_detail}
         return {}
 
@@ -239,7 +246,9 @@ def portfolio_view(request):
         url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(new_ticker)
         response = requests.get(url).json()
         if response['ResultSet']['Result'] == []:
-            return {"error": "Stock ticker invalid"}
+            return {
+                "error": "Stock ticker invalid",
+                "stock_detail": stock_detail}
         if portfolio_stocks.stocks:
             if new_ticker not in portfolio_stocks.stocks.split():
                 portfolio_stocks.stocks += (' ' + new_ticker)
