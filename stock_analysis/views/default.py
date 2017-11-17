@@ -203,11 +203,12 @@ def detail_view(request):
             "script3": script3,
             "start": request.POST['start_date'],
             "end": request.POST['end_date'],
-            "stock": request.POST['stock_ticker'].upper(),
+            "filled_ticker": request.POST['stock_ticker'].upper(),
         }
 
-        if "ticker" in request.GET:
-            analyzed_dict['filled_ticker'] = request.GET
+        if "ticker" in request.GET and request.GET['ticker'] == request.POST['stock_ticker'].upper():
+            # import pdb; pdb.set_trace()
+            analyzed_dict['filled_ticker'] = request.GET['ticker']
         return analyzed_dict
 
 
