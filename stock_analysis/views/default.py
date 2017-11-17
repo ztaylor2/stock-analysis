@@ -34,9 +34,12 @@ def home_view(request):
 def detail_view(request):
     """Detail stock view for stock analysis app."""
     if request.method == 'GET':
+        if 'ticker' in request.GET:
+            return {
+                'filled_ticker': request.GET['ticker']
+            }
         return {}
     if request.method == 'POST':
-
         stock = request.POST['stock_ticker'].upper()
         start = datetime.datetime.strptime(request.POST['start_date'], "%Y-%m-%d")
         end = datetime.datetime.strptime(request.POST['end_date'], "%Y-%m-%d")
@@ -52,15 +55,25 @@ def detail_view(request):
         try:
             company, exchange = _get_symbol(stock)
         except TypeError:
+            if "ticker" in request.GET:
+                return {
+                    "error": "Error retrieving {}'s data, try again.".format(stock),
+                    "filled_ticker": request.GET['ticker']
+                }
             return {
-                "error": "No data on {}".format(stock)
+                "error": "Error retrieving {}'s data, try again.".format(stock),
             }
 
         try:
             stock_data = web.DataReader(stock, 'yahoo', start, end)
         except RemoteDataError:
+            if "ticker" in request.GET:
+                return {
+                    "error": "Error retrieving {}'s data, try again.".format(stock),
+                    "filled_ticker": request.GET['ticker']
+                }
             return {
-                "error": "Error retrieving {} data, try again.".format(stock)
+                "error": "Error retrieving {}'s data, try again.".format(stock),
             }
 
         # import pdb; pdb.set_trace()
@@ -153,7 +166,31 @@ def detail_view(request):
         candle.title.text_font_size = "1em"
         script1, div1 = components(candle)
 
-        return {
+
+
+
+
+
+        # increase plot 
+
+        # import numpy as np
+        # stock_change = price_close.apply(lambda x: np.log(x) - np.log(x.shift(1))) # shift moves dates back by 1.
+        # stock_change.head()
+
+
+        # # create a new plot with a title and axis labels
+        # gains = figure(title="{}  -  {}: {}".format(company, exchange, stock), x_axis_label='Date',
+        #            y_axis_label='Price', width=800, height=800,
+        #            x_axis_type="datetime", sizing_mode='stretch_both')
+        # gains.circle(dates, price_close, legend="Historical Data", line_color="black", fill_color="white", size=6)
+        # gains.line(dates, lin_regr_prediction, legend="Linear Regression",
+        #        line_color="orange", line_width=2)
+
+
+
+
+
+        analyzed_dict = {
             "div": div,
             "script": script,
             "div1": div1,
@@ -163,6 +200,9 @@ def detail_view(request):
             "stock": request.POST['stock_ticker'].upper(),
         }
 
+        if "ticker" in request.GET:
+            analyzed_dict['filled_ticker'] = request.GET['ticker']
+        return analyzed_dict
 
 @view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2', permission='secret')
 def portfolio_view(request):
