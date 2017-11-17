@@ -65,17 +65,17 @@ def dummy_request(db_session):
 
 
 @pytest.fixture
-def add_stock(dummy_request, test_stock):  # FORMERLY add_entry
+def add_stock(dummy_request, test_entry):  # FORMERLY add_entry
     """Add the first Stock to database."""
-    dummy_request.dbsession.add(test_stock)
-    return test_stock
+    dummy_request.dbsession.add(test_entry)
+    return test_entry
 
 
 @pytest.fixture
-def add_stocks(dummy_request, test_stock):  # FORMERLY add_entries
+def add_stocks(dummy_request, test_entry):  # FORMERLY add_entries
     """Add a Stock to an existing table in the database."""
-    dummy_request.dbsession.add_all(test_stocks)
-    return test_stocks
+    dummy_request.dbsession.add_all(test_entry)
+    return test_entry
 
 
 @pytest.fixture(scope="session")
@@ -111,7 +111,7 @@ def testapp(request):
 
 
 @pytest.fixture(scope='session')
-def test_stock_session():
+def test_entry_session():
     """Create a list of Stocks to be added to the database."""
     stock_sample = {'username': 'shinners',
                     'stocks': 'YHOO'
@@ -120,10 +120,10 @@ def test_stock_session():
 
 
 @pytest.fixture(scope='session')
-def fill_the_db(testapp, test_stock_session):
+def fill_the_db(testapp, test_entry_session):
     """Fill the test database with dummy stocks."""
     SessionFactory = testapp.app.registry['dbsession_factory']
-    portfolio = Portfolio(username=test_stock_session['username'], stocks=test_stock_session['stocks'])
+    portfolio = Portfolio(username=test_entry_session['username'], stocks=test_entry_session['stocks'])
     with transaction.manager:
         dbsession = get_tm_session(SessionFactory, transaction.manager)
         dbsession.add(portfolio)
@@ -166,3 +166,4 @@ def password():
     """Set the password for testing purposes."""
     os.environ['AUTH_PASSWORD'] = pwd_context.hash('password')
     return 'password'
+
