@@ -27,24 +27,28 @@ We finally have something we are happy with. How we want to mock this up is the 
 
 Coming to a road block with rendering graphs and for User Experience/User Interface(UX/UI), we decided to condense two of our view into one. We got this :
 ![Refactored Detail Frame](https://github.com/ztaylor2/stock-analysis/blob/jake-template-design/stock_analysis/static/wire_frames/refactored_detail_frame.jpg)
+
+The rest of the design choices were just made on the fly as we tweaked and figured out what was working and what wasn't. An example of this is when we were pressed for our deadline time we decided to scrap SCSS for our *DETAIL* and *PORTFOLIO* views. Using SCSS with the Pyramid template was not very promising so we improvised and used BootStrap.
 ## Influences and Attributions
 This project would not be possible without the inspiration from these individuals and the help of some awesome libraries.
 ### People
 -----------
-* [Siraj Reval](https://twitter.com/sirajraval) (https://github.com/llSourcell)
-* []()
-* []()
-* []()
-
+* Siraj Reval[Twitter](https://twitter.com/sirajraval) [GitHub](https://github.com/llSourcell)
 ### Libraries
 --------------
+#### Machine Learning
+* [SciKit](http://scikit-learn.org/stable/)
 #### Data Management
 * [Pandas](https://pandas-datareader.readthedocs.io/en/latest/remote_data.html#yahoo-finance)
+* [BeatifulSoup](https://www.crummy.com/software/BeautifulSoup/)
+* [Tree Interpreter](https://github.com/andosa/treeinterpreter)
+* [NumPy](http://www.numpy.org/)
 #### Templating
 * [Pyramid](https://trypyramid.com/)
 * [Jinja](http://jinja.pocoo.org/)
-* [Yahoo Finance API]
 
+#### API
+* [Yahoo Finance API](https://www.npmjs.com/package/yahoo-finance)
 #### Design
 * [Bokeh](https://bokeh.pydata.org/en/latest/)
     * ```Graph and Charting```
@@ -52,12 +56,13 @@ This project would not be possible without the inspiration from these individual
     * ```Functional Designing```
 * [Icomoon](https://icomoon.io/)
     * ```SVG and Icons```
+* [BootStrap](https://getbootstrap.com/)
+    * ```Front-End Development```
 ## License
 Stock Analysis is offered under the [MIT license](https://opensource.org/licenses/MIT) and shown in the LICENSE file.
 ## Authors
 Stock Analysis is possible by the following [contributors](https://github.com/ztaylor2/stock-analysis/graphs/contributors):
 * [Zach Taylor](https://github.com/ztaylor2)
-* [Kinley Ramson](https://github.com/nothingnessbird)
 * [Michael Shinners](https://github.com/mshinners)
 * [Chelsea Dole](https://github.com/chelseadole)
 * [Jacob Carstens](https://github.com/Loaye)

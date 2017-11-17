@@ -24,6 +24,7 @@ requires = [
     'pandas-datareader',
     'psycopg2',
     'alpha_vantage',
+    'treeinterpreter',
     'pytest',
     'webtest',
 ]

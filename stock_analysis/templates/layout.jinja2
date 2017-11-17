@@ -6,9 +6,11 @@
     <title>{{ title }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    {% block head %}{% endblock head %}
+    {% block head %}
 
     <link href="{{ request.static_path('stock_analysis:static/src/style/detail.css') }}" rel="stylesheet" />
+
+    {% endblock head %}
 
     <!-- bokeh styling -->
     <link
