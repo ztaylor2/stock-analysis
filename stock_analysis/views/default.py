@@ -33,9 +33,12 @@ def home_view(request):
 def detail_view(request):
     """Detail stock view for stock analysis app."""
     if request.method == 'GET':
+        if 'ticker' in request.GET:
+            return {
+                'filled_ticker': request.GET['ticker']
+            }
         return {}
     if request.method == 'POST':
-
         stock = request.POST['stock_ticker'].upper()
         start = datetime.datetime.strptime(request.POST['start_date'], "%Y-%m-%d")
         end = datetime.datetime.strptime(request.POST['end_date'], "%Y-%m-%d")
@@ -52,14 +55,16 @@ def detail_view(request):
             company, exchange = _get_symbol(stock)
         except TypeError:
             return {
-                "error": "No data on {}".format(stock)
+                "error": "No data on {}".format(stock),
+                "filled_ticker": request.GET['ticker']
             }
 
         try:
             stock_data = web.DataReader(stock, 'yahoo', start, end)
         except RemoteDataError:
             return {
-                "error": "Error retrieving {} data, try again.".format(stock)
+                "error": "Error retrieving {}'s data, try again.".format(stock),
+                "filled_ticker": request.GET['ticker']
             }
 
         dates = stock_data.index.values
@@ -127,7 +132,7 @@ def detail_view(request):
         # save script and div components to put in html
         script, div = components(p)
 
-        return {
+        analyzed_dict = {
             "div": div,
             "script": script,
             "start": request.POST['start_date'],
@@ -135,6 +140,9 @@ def detail_view(request):
             "stock": request.POST['stock_ticker'].upper(),
         }
 
+        if "ticker" in request.GET:
+            analyzed_dict['filled_ticker'] = request.GET['ticker']
+        return analyzed_dict
 
 @view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2', permission='secret')
 def portfolio_view(request):
@@ -190,12 +198,6 @@ def logout(request):
     """Logout of stock account."""
     headers = forget(request)
     return HTTPFound(request.route_url('home'), headers=headers)
-
-
-@view_config(route_name='process_symbol')
-def process_symbol(request):
-    """Processing and loading symbol."""
-    print('in process')
 
 
 @view_config(route_name='login', renderer='stock_analysis:templates/login.jinja2', permission=NO_PERMISSION_REQUIRED)
