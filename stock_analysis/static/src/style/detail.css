@@ -10,7 +10,7 @@
 }
 
 .alert-warning {
-    width: 90%;
+    width: 60%;
     margin: auto;
     display: block;
     text-align: center;
@@ -38,6 +38,13 @@ footer {
     font-family: 'Ubuntu', sans-serif;
 }
 
+.error404 {
+    color: black;
+    text-align: center;
+    font-family: 'Quicksand', sans-serif;
+    margin: 2em;
+}
+
 @media screen and (max-width: 992px) {
     .hamberger-links {
         float: none;
@@ -49,6 +56,6 @@ footer {
     }
 
     .graph_container {
-        height: 200px;
+        height: 500px;
     }
 }

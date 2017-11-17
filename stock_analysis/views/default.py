@@ -112,7 +112,7 @@ def detail_view(request):
 
         # create a new plot with a title and axis labels
         p = figure(title="{}  -  {}: {}".format(company, exchange, stock), x_axis_label='Date',
-                   y_axis_label='Price', width=800, height=350,
+                   y_axis_label='Price', width=800, height=800,
                    x_axis_type="datetime", sizing_mode='stretch_both')
         p.circle(dates, prices, legend="Historical Data", line_color="black", fill_color="white", size=6)
         p.line(dates, lin_regr_prediction, legend="Linear Regression",
@@ -127,7 +127,6 @@ def detail_view(request):
                line_color="black", line_width=2)
         p.legend.location = "top_left"
         p.title.text_font_size = "1em"
-        p.background_fill_color = "gray"
 
         # save script and div components to put in html
         script, div = components(p)
