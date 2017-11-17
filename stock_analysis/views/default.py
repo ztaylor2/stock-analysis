@@ -40,8 +40,6 @@ def detail_view(request):
         start = datetime.datetime.strptime(request.POST['start_date'], "%Y-%m-%d")
         end = datetime.datetime.strptime(request.POST['end_date'], "%Y-%m-%d")
 
-        # import pdb; pdb.set_trace()
-
         def _get_symbol(symbol):
             """Get company name from stock ticker for graph title."""
             url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(symbol)
@@ -57,8 +55,6 @@ def detail_view(request):
                 "error": "No data on {}".format(stock)
             }
 
-        # start = datetime.datetime(2015, 8, 1)
-        # end = datetime.datetime(2017, 11, 1)
         try:
             stock_data = web.DataReader(stock, 'yahoo', start, end)
         except RemoteDataError:
@@ -188,6 +184,7 @@ def portfolio_view(request):
         return HTTPFound(request.route_url('portfolio'))
     return {}
 
+
 @view_config(route_name='logout')
 def logout(request):
     """Logout of stock account."""
@@ -258,53 +255,13 @@ def get_symbol(symbol):
 
 
 def scrape_stock_data(symbol):
-    """."""
+    """Scrape stock data from google."""
     company, exchange = get_symbol(symbol)
     r = requests.get('https://finance.google.com/finance?q={}:{}'.format(exchange, symbol))
     parsed = Soup(r.text, 'html.parser')
     price = parsed.find('div', {'id': 'price-panel'}).find_all('span')[1].text
     dollar_change = parsed.find('div', {'id': 'price-panel'}).find_all('span')[3].text
     pct_change = parsed.find('div', {'id': 'price-panel'}).find_all('span')[4].text
-    open_price = parsed.find('table', {'class': 'snap-data'}).find_all('td')[5].text  # regex \n
-    pe = parsed.find('table', {'class': 'snap-data'}).find_all('td')[11].text  # regex \n
+    open_price = parsed.find('table', {'class': 'snap-data'}).find_all('td')[5].text
+    pe = parsed.find('table', {'class': 'snap-data'}).find_all('td')[11].text
     return {'company': company, 'ticker': symbol, 'price': price, 'dollar_change': dollar_change, 'pct_change': pct_change, 'open_price': open_price, 'pe': pe}
-
-
-@view_config(route_name='delete_stock', permission='secret')
-def delete_stock(request):
-    """Delete stock from portfolio."""
-    username = request.authenticated_userid
-    import pdb; pdb.set_trace()
-    # to_delete = request.POST['name'].upper()
-    portfolio_stocks = request.dbsession.query(Portfolio).get(username).stocks
-    import pdb; pdb.set_trace()
-    temp_stock = portfolio_stocks.split()
-    temp_stock.remove(to_delete)
-    portfolio_stocks = ' '.join(temp_stock)
-    import pdb; pdb.set_trace()
-    new_ticker = request.POST['name'].upper()
-    # portfolio_stocks.stocks = [ tick for tick in portfolio_stocks.stocks.split() if tick is not target]
-    portfolio_stocks += (' ' + new_ticker)
-    request.dbsession.flush()
-    return HTTPFound(request.route_url('portfolio'))
-
-
-    portfolio_stocks = request.dbsession.query(Portfolio).get(username)
-    if portfolio_stocks.stocks:
-        if new_ticker not in portfolio_stocks.stocks.split():
-            portfolio_stocks.stocks += (' ' + new_ticker)
-        else:
-            stock_list = portfolio_stocks.stocks.split()
-            stock_detail = {}
-            for tick in stock_list:
-                stock_detail[tick] = scrape_stock_data(tick)
-            return {
-                "stock_detail": stock_detail,
-                "error": "This stock is already in your portfolio"
-            }
-    else:
-        portfolio_stocks.stocks = new_ticker
-    request.dbsession.flush()
-    return HTTPFound(request.route_url('portfolio'))
-    return {}
-
