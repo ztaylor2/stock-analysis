@@ -149,29 +149,8 @@ def portfolio_view(request):
         if stock_str.stocks != '':
             stock_list = stock_str.stocks.split()
             stock_detail = {}
-
-            def get_symbol(symbol):
-                """Get company name from stock ticker for graph title."""
-                url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(symbol)
-                result = requests.get(url).json()
-                for x in result['ResultSet']['Result']:
-                    if x['symbol'] == symbol:
-                        return x['name'], x['exchDisp']
-
-            def scrape_stock_data(symbol):
-                company, exchange = get_symbol(symbol)
-                r = requests.get('https://finance.google.com/finance?q={}:{}'.format(exchange, symbol))
-                parsed = Soup(r.text, 'html.parser')
-                price = parsed.find('div', {'id': 'price-panel'}).find_all('span')[1].text
-                dollar_change = parsed.find('div', {'id': 'price-panel'}).find_all('span')[3].text
-                pct_change = parsed.find('div', {'id': 'price-panel'}).find_all('span')[4].text
-                open_price = parsed.find('table', {'class': 'snap-data'}).find_all('td')[5].text  # regex \n
-                pe = parsed.find('table', {'class': 'snap-data'}).find_all('td')[11].text  # regex \n
-                return {'company': company, 'ticker': symbol, 'price': price, 'dollar_change': dollar_change, 'pct_change': pct_change, 'open_price': open_price, 'pe': pe}
-
             for tick in stock_list:
                 stock_detail[tick] = scrape_stock_data(tick)
-
             return {'stock_detail': stock_detail}
         return {}
 
@@ -182,13 +161,19 @@ def portfolio_view(request):
         response = requests.get(url).json()
         if response['ResultSet']['Result'] == []:
             return {"error": "Stock ticker invalid"}
-        port_stocks = request.dbsession.query(Portfolio).get(username)
-        # if new_ticker in port_stocks.split():
-        #     return {"error": "Stock ticker already in your portfolio"}
-        # else:
         portfolio_stocks = request.dbsession.query(Portfolio).get(username)
         if portfolio_stocks.stocks:
-            portfolio_stocks.stocks += (' ' + new_ticker)
+            if new_ticker not in portfolio_stocks.stocks.split():
+                portfolio_stocks.stocks += (' ' + new_ticker)
+            else:
+                stock_list = portfolio_stocks.stocks.split()
+                stock_detail = {}
+                for tick in stock_list:
+                    stock_detail[tick] = scrape_stock_data(tick)
+                return {
+                    'stock_detail': stock_detail,
+                    "error": "This stock is already in your portfolio"
+                }
         else:
             portfolio_stocks.stocks = new_ticker
         request.dbsession.flush()
@@ -232,9 +217,10 @@ def register_view(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        # if username in request.dbsession(User).all():
-        #     return {"error": "This username/password combo already exists. Choose another option"}
-
+        all_users = request.dbsession.query(User).all()
+        for i in range(len(all_users)):
+            if all_users[i].username == username:
+                return {"error": "This username/password combo already exists"}
         new_account = User(
             username=username,
             password=password
@@ -249,6 +235,27 @@ def register_view(request):
         return HTTPFound(request.route_url('portfolio'), headers=headers)
     return {}
 
+
+def get_symbol(symbol):
+    """Get company name from stock ticker for graph title."""
+    url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(symbol)
+    result = requests.get(url).json()
+    for x in result['ResultSet']['Result']:
+        if x['symbol'] == symbol:
+            return x['name'], x['exchDisp']
+
+
+def scrape_stock_data(symbol):
+    """."""
+    company, exchange = get_symbol(symbol)
+    r = requests.get('https://finance.google.com/finance?q={}:{}'.format(exchange, symbol))
+    parsed = Soup(r.text, 'html.parser')
+    price = parsed.find('div', {'id': 'price-panel'}).find_all('span')[1].text
+    dollar_change = parsed.find('div', {'id': 'price-panel'}).find_all('span')[3].text
+    pct_change = parsed.find('div', {'id': 'price-panel'}).find_all('span')[4].text
+    open_price = parsed.find('table', {'class': 'snap-data'}).find_all('td')[5].text  # regex \n
+    pe = parsed.find('table', {'class': 'snap-data'}).find_all('td')[11].text  # regex \n
+    return {'company': company, 'ticker': symbol, 'price': price, 'dollar_change': dollar_change, 'pct_change': pct_change, 'open_price': open_price, 'pe': pe}
 
 # @view_config(route_name='delete_stock', permission='secret')
 # def delete_stock(request):
