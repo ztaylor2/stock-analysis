@@ -20,6 +20,7 @@ from treeinterpreter import treeinterpreter as ti
 from sklearn.ensemble import RandomForestRegressor
 import requests
 from bs4 import BeautifulSoup as Soup
+from passlib.apps import custom_app_context as context
 
 
 @view_config(route_name='home', renderer='stock_analysis:templates/home.jinja2', permission=NO_PERMISSION_REQUIRED)
@@ -221,9 +222,10 @@ def register_view(request):
         for i in range(len(all_users)):
             if all_users[i].username == username:
                 return {"error": "This username/password combo already exists"}
+
         new_account = User(
             username=username,
-            password=password
+            password=context.hash(password)
         )
         new_portfolio = Portfolio(
             username=username,
