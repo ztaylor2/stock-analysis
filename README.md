@@ -36,13 +36,19 @@ This project would not be possible without the inspiration from these individual
 * Siraj Reval[Twitter](https://twitter.com/sirajraval) [GitHub](https://github.com/llSourcell)
 ### Libraries
 --------------
+#### Machine Learning
+* [SciKit](http://scikit-learn.org/stable/)
 #### Data Management
 * [Pandas](https://pandas-datareader.readthedocs.io/en/latest/remote_data.html#yahoo-finance)
+* [BeatifulSoup](https://www.crummy.com/software/BeautifulSoup/)
+* [Tree Interpreter](https://github.com/andosa/treeinterpreter)
+* [NumPy](http://www.numpy.org/)
 #### Templating
 * [Pyramid](https://trypyramid.com/)
 * [Jinja](http://jinja.pocoo.org/)
-* [Yahoo Finance API]
 
+#### API
+* [Yahoo Finance API](https://www.npmjs.com/package/yahoo-finance)
 #### Design
 * [Bokeh](https://bokeh.pydata.org/en/latest/)
     * ```Graph and Charting```
