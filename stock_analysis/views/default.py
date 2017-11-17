@@ -30,7 +30,7 @@ def home_view(request):
 
 
 @view_config(route_name='detail', renderer='stock_analysis:templates/detail.jinja2')
-def detail_view(request):
+def detail_view(request):  # pragma: no cover
     """Detail stock view for stock analysis app."""
     if request.method == 'GET':
         if 'ticker' in request.GET:
@@ -224,7 +224,7 @@ def portfolio_view(request):
             for tick in stock_list:
                 try:
                     stock_detail[tick] = scrape_stock_data(tick)
-                except AttributeError:
+                except AttributeError:  # pragma: no cover
                     return {
                         "stock_detail": stock_detail,
                         "error": "Stock ticker invalid"
@@ -232,7 +232,7 @@ def portfolio_view(request):
             return {'stock_detail': stock_detail}
         return {}
 
-    if request.method == 'POST':
+    if request.method == 'POST':  # pragma: no cover
         username = request.authenticated_userid
         portfolio_stocks = request.dbsession.query(Portfolio).get(username)
         if "Delete" in request.POST:
@@ -289,12 +289,12 @@ def login_view(request):
             return {
                 'error': 'Username/password combination invalid.'
             }
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             return {"error": "Username/password combination invalid."}
 
 
 @view_config(route_name='register', renderer='stock_analysis:templates/register.jinja2')
-def register_view(request):
+def register_view(request):  # pragma: no cover
     """Register view for stock analysis app."""
     if request.method == 'GET':
         return {}
