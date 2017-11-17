@@ -63,7 +63,6 @@ Stock Analysis is offered under the [MIT license](https://opensource.org/license
 ## Authors
 Stock Analysis is possible by the following [contributors](https://github.com/ztaylor2/stock-analysis/graphs/contributors):
 * [Zach Taylor](https://github.com/ztaylor2)
-* [Kinley Ramson](https://github.com/nothingnessbird)
 * [Michael Shinners](https://github.com/mshinners)
 * [Chelsea Dole](https://github.com/chelseadole)
 * [Jacob Carstens](https://github.com/Loaye)
