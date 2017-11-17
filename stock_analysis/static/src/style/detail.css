@@ -30,6 +30,12 @@
     margin-top: 2em;
 }
 
+footer {
+    margin: 15% auto;
+    text-align: center;
+    font-family: 'Ubuntu', sans-serif;
+}
+
 @media screen and (max-width: 480px) {
     .detail-input-form {
         display: block;
