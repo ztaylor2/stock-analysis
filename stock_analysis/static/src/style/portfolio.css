@@ -1,7 +1,10 @@
 h2 {
     text-align: center;
-    font-family: 'Berkshire Swash', cursive;
     margin: 5% auto;
+}
+
+.portfolio_header {
+    font-family: 'Quicksand', sans-serif;
 }
 
 .table-responsive {
