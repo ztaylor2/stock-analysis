@@ -213,7 +213,7 @@ def register_view(request):
         all_users = request.dbsession.query(User).all()
         for i in range(len(all_users)):
             if all_users[i].username == username:
-                return {"error": "This username/password combo already exists. Choose another option"}
+                return {"error": "This username/password combo already exists"}
         new_account = User(
             username=username,
             password=password
