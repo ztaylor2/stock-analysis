@@ -27,15 +27,13 @@ We finally have something we are happy with. How we want to mock this up is the 
 
 Coming to a road block with rendering graphs and for User Experience/User Interface(UX/UI), we decided to condense two of our view into one. We got this :
 ![Refactored Detail Frame](https://github.com/ztaylor2/stock-analysis/blob/jake-template-design/stock_analysis/static/wire_frames/refactored_detail_frame.jpg)
+
+The rest of the design choices were just made on the fly as we tweaked and figured out what was working and what wasn't.
 ## Influences and Attributions
 This project would not be possible without the inspiration from these individuals and the help of some awesome libraries.
 ### People
 -----------
-* [Siraj Reval](https://twitter.com/sirajraval) (https://github.com/llSourcell)
-* []()
-* []()
-* []()
-
+* Siraj Reval[Twitter](https://twitter.com/sirajraval) [GitHub](https://github.com/llSourcell)
 ### Libraries
 --------------
 #### Data Management
@@ -52,6 +50,8 @@ This project would not be possible without the inspiration from these individual
     * ```Functional Designing```
 * [Icomoon](https://icomoon.io/)
     * ```SVG and Icons```
+* [BootStrap](https://getbootstrap.com/)
+    * ```Front-End Development```
 ## License
 Stock Analysis is offered under the [MIT license](https://opensource.org/licenses/MIT) and shown in the LICENSE file.
 ## Authors
