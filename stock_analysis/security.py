@@ -1,16 +1,11 @@
 """Security settings to configure login, logout, and user registration."""
 
 import os
+from passlib.apps import custom_app_context as context
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.security import Everyone, Authenticated
 from pyramid.security import Allow
-from .models import (
-    get_engine,
-    get_session_factory,
-    get_tm_session,
-)
-
 from stock_analysis.models.mymodel import User
 
 
@@ -44,4 +39,4 @@ class SecRoot(object):
 def is_authorized(request, username, password):
     """Check user-provided credentials compared to users stored in the database."""
     result = request.dbsession.query(User).get(username)
-    return result.password == password
+    return context.verify(password, result.password)

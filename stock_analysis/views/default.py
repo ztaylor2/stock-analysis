@@ -172,7 +172,7 @@ def portfolio_view(request):
                 for tick in stock_list:
                     stock_detail[tick] = scrape_stock_data(tick)
                 return {
-                    'stock_detail': stock_detail,
+                    "stock_detail": stock_detail,
                     "error": "This stock is already in your portfolio"
                 }
         else:
