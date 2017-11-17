@@ -114,7 +114,8 @@ def testapp(request):
 def test_entry_session():
     """Create a list of Stocks to be added to the database."""
     stock_sample = {'username': 'shinners',
-                    'stocks': 'YHOO'
+                    'password': pwd_context.hash('chris'),
+                    'stocks': 'GOOG'
                     }
     return stock_sample
 
@@ -123,9 +124,11 @@ def test_entry_session():
 def fill_the_db(testapp, test_entry_session):
     """Fill the test database with dummy stocks."""
     SessionFactory = testapp.app.registry['dbsession_factory']
+    user = User(username=test_entry_session['username'], password=test_entry_session['password'])
     portfolio = Portfolio(username=test_entry_session['username'], stocks=test_entry_session['stocks'])
     with transaction.manager:
         dbsession = get_tm_session(SessionFactory, transaction.manager)
+        dbsession.add(user)
         dbsession.add(portfolio)
 
     return dbsession
