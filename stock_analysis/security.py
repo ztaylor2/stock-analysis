@@ -12,8 +12,6 @@ from .models import (
 )
 
 from stock_analysis.models.mymodel import User
-from passlib.apps import custom_app_context as context
-
 
 
 def includeme(config):
@@ -46,4 +44,4 @@ class SecRoot(object):
 def is_authorized(request, username, password):
     """Check user-provided credentials compared to users stored in the database."""
     result = request.dbsession.query(User).get(username)
-    return context.verify(password, result.password)
+    return result.password == password

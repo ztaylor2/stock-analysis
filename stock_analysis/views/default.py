@@ -202,12 +202,15 @@ def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        if is_authorized(request, username, password):
-            headers = remember(request, username)
-            return HTTPFound(request.route_url('portfolio'), headers=headers)
-        return {
-            'error': 'Username/password combination invalid.'
-        }
+        try:
+            if is_authorized(request, username, password):
+                headers = remember(request, username)
+                return HTTPFound(request.route_url('portfolio'), headers=headers)
+            return {
+                'error': 'Username/password combination invalid.'
+            }
+        except AttributeError:
+            return {"error": "Username/password combination invalid."}
 
 
 @view_config(route_name='register', renderer='stock_analysis:templates/register.jinja2')
