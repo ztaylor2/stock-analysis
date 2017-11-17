@@ -11,7 +11,6 @@ from stock_analysis.security import is_authorized
 import datetime
 from stock_analysis.models.mymodel import User, Portfolio
 import numpy as np
-from math import pi
 from sklearn.svm import SVR
 from sklearn import linear_model
 from sklearn.preprocessing import PolynomialFeatures
@@ -61,7 +60,7 @@ def detail_view(request):
                     "filled_ticker": request.GET['ticker']
                 }
             return {
-                "error": "Error retrieving {}'s data, try again.".format(stock),
+                "error": "No data on {}".format(stock)
             }
 
         try:
@@ -73,10 +72,8 @@ def detail_view(request):
                     "filled_ticker": request.GET['ticker']
                 }
             return {
-                "error": "Error retrieving {}'s data, try again.".format(stock),
+                "error": "Error retrieving {}'s data, try again.".format(stock)
             }
-
-        # import pdb; pdb.set_trace()
 
         dates = stock_data.index.values
         price_open = stock_data['Open'].values
@@ -126,25 +123,25 @@ def detail_view(request):
         rf_prediction, bias, contributions = ti.predict(rf, dates_reshape)
 
         # create a new plot with a title and axis labels
-        p = figure(title="{}  -  {}: {}".format(company, exchange, stock), x_axis_label='Date',
-                   y_axis_label='Price', width=800, height=800,
-                   x_axis_type="datetime", sizing_mode='stretch_both')
-        p.circle(dates, price_close, legend="Historical Data", line_color="black", fill_color="white", size=6)
-        p.line(dates, lin_regr_prediction, legend="Linear Regression",
-               line_color="orange", line_width=2)
-        p.line(dates, poly_prediction, legend="Polynomial Regression",
-               line_color="green", line_width=2)
-        p.line(dates, svr_rbf_prediction, legend="Support Vector Machine",
-               line_color="blue", line_width=2)
-        p.line(dates, mean_p, legend="Mean(L, P, SVM)",
-               line_color="gray", line_width=2)
-        p.line(dates, rf_prediction, legend="Random Forest Regression",
-               line_color="black", line_width=2)
-        p.legend.location = "top_left"
-        p.title.text_font_size = "1em"
+        price_date_plot = figure(title="{}  -  {}: {}".format(company, exchange, stock), x_axis_label='Date',
+                                 y_axis_label='Price', width=800, height=800,
+                                 x_axis_type="datetime", sizing_mode='stretch_both')
+        price_date_plot.circle(dates, price_close, legend="Historical Data", line_color="black", fill_color="white", size=6)
+        price_date_plot.line(dates, lin_regr_prediction, legend="Linear Regression",
+                             line_color="orange", line_width=2)
+        price_date_plot.line(dates, poly_prediction, legend="Polynomial Regression",
+                             line_color="green", line_width=2)
+        price_date_plot.line(dates, svr_rbf_prediction, legend="Support Vector Machine",
+                             line_color="blue", line_width=2)
+        price_date_plot.line(dates, mean_p, legend="Mean(L, P, SVM)",
+                             line_color="gray", line_width=2)
+        price_date_plot.line(dates, rf_prediction, legend="Random Forest Regression",
+                             line_color="black", line_width=2)
+        price_date_plot.legend.location = "top_left"
+        price_date_plot.title.text_font_size = "1em"
 
         # save script and div components to put in html
-        script, div = components(p)
+        script, div = components(price_date_plot)
 
         # candle stick plot
         inc = price_close > price_open
@@ -166,43 +163,53 @@ def detail_view(request):
         candle.title.text_font_size = "1em"
         script1, div1 = components(candle)
 
+        # return since beginning of time period
+        price_close_list = price_close.tolist()
+        stock_change = []
+        for x in range(len(price_close_list)):
+            stock_change.append(price_close_list[x] / price_close_list[0])
 
+        # create a new plot with a title and axis labels
+        returns_beginning = figure(title="{}  -  Return".format(stock),
+                                   x_axis_label='Date', y_axis_label='Return',
+                                   width=800, height=800, x_axis_type="datetime",
+                                   sizing_mode='stretch_both')
+        returns_beginning.line(dates[1:], stock_change[1:],
+                               line_color="orange", line_width=2)
+        script2, div2 = components(returns_beginning)
 
+        # percent change day to day plot
+        stock_change = []
+        for x in range(len(price_close_list)):
+            stock_change.append(np.log(price_close_list[x]) - np.log(price_close_list[x - 1]))
 
-
-
-        # increase plot 
-
-        # import numpy as np
-        # stock_change = price_close.apply(lambda x: np.log(x) - np.log(x.shift(1))) # shift moves dates back by 1.
-        # stock_change.head()
-
-
-        # # create a new plot with a title and axis labels
-        # gains = figure(title="{}  -  {}: {}".format(company, exchange, stock), x_axis_label='Date',
-        #            y_axis_label='Price', width=800, height=800,
-        #            x_axis_type="datetime", sizing_mode='stretch_both')
-        # gains.circle(dates, price_close, legend="Historical Data", line_color="black", fill_color="white", size=6)
-        # gains.line(dates, lin_regr_prediction, legend="Linear Regression",
-        #        line_color="orange", line_width=2)
-
-
-
-
+        # create a new plot with a title and axis labels
+        percent_change_day = figure(title="{}  -  Day to Day Percentage Change".format(stock),
+                                    x_axis_label='Date', y_axis_label='Percent Change',
+                                    width=800, height=800, x_axis_type="datetime",
+                                    sizing_mode='stretch_both')
+        percent_change_day.line(dates[1:], stock_change[1:],
+                                line_color="orange", line_width=2)
+        script3, div3 = components(percent_change_day)
 
         analyzed_dict = {
             "div": div,
             "script": script,
             "div1": div1,
             "script1": script1,
+            "div2": div2,
+            "script2": script2,
+            "div3": div3,
+            "script3": script3,
             "start": request.POST['start_date'],
             "end": request.POST['end_date'],
             "stock": request.POST['stock_ticker'].upper(),
         }
 
         if "ticker" in request.GET:
-            analyzed_dict['filled_ticker'] = request.GET['ticker']
+            analyzed_dict['filled_ticker'] = request.GET
         return analyzed_dict
+
 
 @view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2', permission='secret')
 def portfolio_view(request):
@@ -214,7 +221,13 @@ def portfolio_view(request):
             stock_list = stock_str.stocks.split()
             stock_detail = {}
             for tick in stock_list:
-                stock_detail[tick] = scrape_stock_data(tick)
+                try:
+                    stock_detail[tick] = scrape_stock_data(tick)
+                except AttributeError:
+                    return {
+                        "stock_detail": stock_detail,
+                        "error": "Stock ticker invalid"
+                    }
             return {'stock_detail': stock_detail}
         return {}
 
@@ -233,7 +246,7 @@ def portfolio_view(request):
         url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(new_ticker)
         response = requests.get(url).json()
         if response['ResultSet']['Result'] == []:
-            return {"error": "Stock ticker invalid"}
+            return HTTPFound(request.route_url('portfolio'))
         if portfolio_stocks.stocks:
             if new_ticker not in portfolio_stocks.stocks.split():
                 portfolio_stocks.stocks += (' ' + new_ticker)

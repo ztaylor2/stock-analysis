@@ -10,20 +10,24 @@ import os
 import pytest
 
 
+class Stock(object):
+
+
+    def __init__(self, company, exchange, ticker, current, growth, open_price, high, low):
+        self.company = company
+        self.exchange = exchange
+        self.ticker = ticker
+        self.current = current
+        self.growth = growth
+        self.open = open_price
+        self.high = high
+        self.low = low
+
+
 @pytest.fixture
 def test_entry():
     """Create a new Entry."""
-    stock_sample = {
-        'company': 'Yahoo',
-        'exchange': 'NYSE',
-        'ticker': 'YHOO',
-        'current': '18.55',
-        'growth': '.50',
-        'open': '18.05',
-        'high': '18.95',
-        'low': '18.05'
-    }
-    return stock_sample  # FORMERLY == Entry
+    return Stock('Yahoo', 'NYSE', 'YHOO', '18.55', '.50', '18.05', '18.95', '18.05')
 
 
 @pytest.fixture(scope='session')
@@ -71,11 +75,11 @@ def add_stock(dummy_request, test_entry):  # FORMERLY add_entry
     return test_entry
 
 
-@pytest.fixture
-def add_stocks(dummy_request, test_entry):  # FORMERLY add_entries
-    """Add a Stock to an existing table in the database."""
-    dummy_request.dbsession.add_all(test_entry)
-    return test_entry
+# @pytest.fixture
+# def add_stocks(dummy_request, test_entry):  # FORMERLY add_entries
+#     """Add a Stock to an existing table in the database."""
+#     dummy_request.dbsession.add_all(test_entry)
+#     return test_entry
 
 
 @pytest.fixture(scope="session")
@@ -114,7 +118,8 @@ def testapp(request):
 def test_entry_session():
     """Create a list of Stocks to be added to the database."""
     stock_sample = {'username': 'shinners',
-                    'stocks': 'YHOO'
+                    'password': pwd_context.hash('chris'),
+                    'stocks': 'GOOG'
                     }
     return stock_sample
 
@@ -123,9 +128,11 @@ def test_entry_session():
 def fill_the_db(testapp, test_entry_session):
     """Fill the test database with dummy stocks."""
     SessionFactory = testapp.app.registry['dbsession_factory']
+    user = User(username=test_entry_session['username'], password=test_entry_session['password'])
     portfolio = Portfolio(username=test_entry_session['username'], stocks=test_entry_session['stocks'])
     with transaction.manager:
         dbsession = get_tm_session(SessionFactory, transaction.manager)
+        dbsession.add(user)
         dbsession.add(portfolio)
 
     return dbsession
@@ -166,4 +173,3 @@ def password():
     """Set the password for testing purposes."""
     os.environ['AUTH_PASSWORD'] = pwd_context.hash('password')
     return 'password'
-
