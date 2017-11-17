@@ -21,7 +21,10 @@
 }
 
 .graph_container {
-
+    display: block;
+    margin: auto;
+    height: 500px;
+    max-width: 1200px;
 }
 
 .table_container {
@@ -46,6 +49,6 @@ footer {
     }
 
     .graph_container {
-    
+        height: 200px;
     }
 }
