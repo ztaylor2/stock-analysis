@@ -246,9 +246,7 @@ def portfolio_view(request):
         url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(new_ticker)
         response = requests.get(url).json()
         if response['ResultSet']['Result'] == []:
-            return {
-                "error": "Stock ticker invalid",
-                "stock_detail": stock_detail}
+            return HTTPFound(request.route_url('portfolio'))
         if portfolio_stocks.stocks:
             if new_ticker not in portfolio_stocks.stocks.split():
                 portfolio_stocks.stocks += (' ' + new_ticker)
