@@ -28,7 +28,7 @@ We finally have something we are happy with. How we want to mock this up is the 
 Coming to a road block with rendering graphs and for User Experience/User Interface(UX/UI), we decided to condense two of our view into one. We got this :
 ![Refactored Detail Frame](https://github.com/ztaylor2/stock-analysis/blob/jake-template-design/stock_analysis/static/wire_frames/refactored_detail_frame.jpg)
 
-The rest of the design choices were just made on the fly as we tweaked and figured out what was working and what wasn't.
+The rest of the design choices were just made on the fly as we tweaked and figured out what was working and what wasn't. An example of this is when we were pressed for our deadline time we decided to scrap SCSS for our *DETAIL* and *PORTFOLIO* views. Using SCSS with the Pyramid template was not very promising so we improvised and used BootStrap.
 ## Influences and Attributions
 This project would not be possible without the inspiration from these individuals and the help of some awesome libraries.
 ### People
