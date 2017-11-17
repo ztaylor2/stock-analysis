@@ -192,12 +192,6 @@ def logout(request):
     return HTTPFound(request.route_url('home'), headers=headers)
 
 
-@view_config(route_name='process_symbol')
-def process_symbol(request):
-    """Processing and loading symbol."""
-    print('in process')
-
-
 @view_config(route_name='login', renderer='stock_analysis:templates/login.jinja2', permission=NO_PERMISSION_REQUIRED)
 def login_view(request):
     """Login view for stock analysis app."""
