@@ -1,0 +1,73 @@
+{% extends "layout.jinja2" %}
+
+
+{% endblock body %}
+
+
+
+
+
+
+
+
+need to build a get method for the below items:
+
+<table style="width: 80%">
+    <tr class='clickable-row' data-href="{{ ('portfolio') }}" method = POST>
+        <td class="c1"><SPAN>{{ stock.name }}</SPAN></td>
+        <td class="c2"><SPAN>{{ stock.symbol }}</SPAN></td>
+        <td class="c3"><SPAN>{{ stock.price }}</SPAN></td>
+        <td class="c4"><SPAN>{{ stock.growth }}</SPAN></td>
+        <td class="c5"><SPAN>{{ stock.percent }}</SPAN></td>
+
+
+
+
+
+
+import urllib.request as request
+import urllib.parse as parse
+import csv
+import codecs
+import pprint
+
+def printdata(stks):
+    params = parse.urlencode((('s', '+'.join(stks)), ('f', 'sl1rvwb4j4r5')))
+    url = 'http://finance.yahoo.com/d/quotes.csv'
+    url = '?'.join((url, params))
+    req = request.urlopen(url)
+    f = codecs.getreader('utf8')(req)
+    fields = '''Ticker Price PE_Ratio Volume Year_Range Book_Value_per_Share
+              EBITDA PEG_Ratio'''.split()
+    for row in csv.reader(f):
+        stkdata = dict(zip(fields, row))        
+        pprint.pprint(stkdata)
+
+printdata('YHOO GOOG MSFT'.split())
+
+
+
+{'Book_Value_per_Share': '10.051',
+ 'EBITDA': '1.406B',
+ 'PEG_Ratio': '1.47',
+ 'PE_Ratio': '18.56',
+ 'Price': '14.96',
+ 'Ticker': 'YHOO',
+ 'Volume': '32625192',
+ 'Year_Range': '11.09 - 18.84'}
+{'Book_Value_per_Share': '169.355',
+ 'EBITDA': '13.446B',
+ 'PEG_Ratio': '0.89',
+ 'PE_Ratio': '21.12',
+ 'Price': '625.96',
+ 'Ticker': 'GOOG',
+ 'Volume': '4459782',
+ 'Year_Range': '473.02 - 642.96'}
+{'Book_Value_per_Share': '7.062',
+ 'EBITDA': '30.146B',
+ 'PEG_Ratio': '0.98',
+ 'PE_Ratio': '9.29',
+ 'Price': '26.00',
+ 'Ticker': 'MSFT',
+ 'Volume': '101410080',
+ 'Year_Range': '23.65 - 29.46'}

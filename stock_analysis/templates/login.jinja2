@@ -4,19 +4,22 @@
 <link rel="stylesheet" type="text/css" href="{{ request.static_path('stock_analysis:static/src/style/main.css') }}">
 
 <link rel="stylesheet" type="text/css" href="{{ request.static_path('stock_analysis:static/src/style/link.css') }}">
-
 {% endblock head%}
 
 {% block body %}
-
 <div class="form-header">
     <h1 class="form-title"><a href={{ request.route_url('home') }}>Stock Analysis</a></h1>
 
-    <div class="landing-form">
-        <a href={{ request.route_url('detail') }}><button class="get-started" type="button">Get Started</button></a>
-        <a href={{ request.route_url('login') }}><button class="login-button" type="button">Login</button></a>
-        <a href={{ request.route_url('register') }}><button class="sign-up-buttom" type="button">Register</button></a>
-    <div>
-</div>
+    {% if error %}
+    <p style="color: red">{{ error }}</p>
+    {% endif %}
 
+    <div class="login">
+        <form name="login" method="POST">
+            <input name="username" type="text" class="form-input" placeholder="User Name" required>
+            <input name="password" type="password" class="form-input" placeholder="Password" required>
+            <input name="login" type="submit" value="LOGIN">
+        </form>
+    </div>
+</div>
 {% endblock body %}

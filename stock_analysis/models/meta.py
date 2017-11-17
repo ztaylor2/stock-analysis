@@ -1,3 +1,5 @@
+"""Base for DB of users and passwords."""
+
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import MetaData
 
