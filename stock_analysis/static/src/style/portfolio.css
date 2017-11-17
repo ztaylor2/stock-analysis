@@ -19,7 +19,14 @@ h2 {
 
 .col-lg-6 {
     margin: 10% auto;
-} 
+}
+
+.alert-warning-custom-style {
+    width: 60%;
+    margin: auto;
+    display: block;
+    text-align: center;
+}
 
 footer {
     margin: 15% auto;
