@@ -46,4 +46,5 @@ class SecRoot(object):
 def is_authorized(request, username, password):
     """Check user-provided credentials compared to users stored in the database."""
     result = request.dbsession.query(User).get(username)
+    import pdb; pdb.set_trace()
     return context.verify(password, result.password)
