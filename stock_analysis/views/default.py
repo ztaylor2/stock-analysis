@@ -156,12 +156,20 @@ def portfolio_view(request):
 
     if request.method == 'POST':
         username = request.authenticated_userid
+        portfolio_stocks = request.dbsession.query(Portfolio).get(username)
+        if "Delete" in request.POST:
+            to_delete = request.POST.keys()
+            to_delete = to_delete.__next__()
+            temp_stock = portfolio_stocks.stocks.split()
+            temp_stock.remove(to_delete)
+            portfolio_stocks.stocks = ' '.join(temp_stock)
+            request.dbsession.flush()
+            return HTTPFound(request.route_url('portfolio'))
         new_ticker = request.POST['new_ticker'].upper()
         url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(new_ticker)
         response = requests.get(url).json()
         if response['ResultSet']['Result'] == []:
             return {"error": "Stock ticker invalid"}
-        portfolio_stocks = request.dbsession.query(Portfolio).get(username)
         if portfolio_stocks.stocks:
             if new_ticker not in portfolio_stocks.stocks.split():
                 portfolio_stocks.stocks += (' ' + new_ticker)
@@ -171,7 +179,7 @@ def portfolio_view(request):
                 for tick in stock_list:
                     stock_detail[tick] = scrape_stock_data(tick)
                 return {
-                    'stock_detail': stock_detail,
+                    "stock_detail": stock_detail,
                     "error": "This stock is already in your portfolio"
                 }
         else:
@@ -201,12 +209,15 @@ def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        if is_authorized(request, username, password):
-            headers = remember(request, username)
-            return HTTPFound(request.route_url('portfolio'), headers=headers)
-        return {
-            'error': 'Username/password combination invalid.'
-        }
+        try:
+            if is_authorized(request, username, password):
+                headers = remember(request, username)
+                return HTTPFound(request.route_url('portfolio'), headers=headers)
+            return {
+                'error': 'Username/password combination invalid.'
+            }
+        except AttributeError:
+            return {"error": "Username/password combination invalid."}
 
 
 @view_config(route_name='register', renderer='stock_analysis:templates/register.jinja2')
@@ -258,20 +269,42 @@ def scrape_stock_data(symbol):
     pe = parsed.find('table', {'class': 'snap-data'}).find_all('td')[11].text  # regex \n
     return {'company': company, 'ticker': symbol, 'price': price, 'dollar_change': dollar_change, 'pct_change': pct_change, 'open_price': open_price, 'pe': pe}
 
-# @view_config(route_name='delete_stock', permission='secret')
-# def delete_stock(request):
-#     """Delete stock from portfolio."""
-#     username = request.authenticated_userid
-#     portfolio_stocks = request.dbsession.query(Portfolio).get(username)
-#     import pdb; pdb.set_trace()
-#     target = request.POST['name']
-#     # portfolio_stocks.stocks = [ tick for tick in portfolio_stocks.stocks.split() if tick is not target]
-#     username = request.authenticated_userid
-#     new_ticker = request.POST['new_ticker']
-#     portfolio_stocks = request.dbsession.query(Portfolio).get(username)
-#     if portfolio_stocks.stocks:
-#         portfolio_stocks.stocks += (' ' + new_ticker)
-#     else:
-#         portfolio_stocks.stocks = new_ticker
-#     request.dbsession.flush()
-#     return HTTPFound(request.route_url('portfolio'))
+
+@view_config(route_name='delete_stock', permission='secret')
+def delete_stock(request):
+    """Delete stock from portfolio."""
+    username = request.authenticated_userid
+    import pdb; pdb.set_trace()
+    # to_delete = request.POST['name'].upper()
+    portfolio_stocks = request.dbsession.query(Portfolio).get(username).stocks
+    import pdb; pdb.set_trace()
+    temp_stock = portfolio_stocks.split()
+    temp_stock.remove(to_delete)
+    portfolio_stocks = ' '.join(temp_stock)
+    import pdb; pdb.set_trace()
+    new_ticker = request.POST['name'].upper()
+    # portfolio_stocks.stocks = [ tick for tick in portfolio_stocks.stocks.split() if tick is not target]
+    portfolio_stocks += (' ' + new_ticker)
+    request.dbsession.flush()
+    return HTTPFound(request.route_url('portfolio'))
+
+
+    portfolio_stocks = request.dbsession.query(Portfolio).get(username)
+    if portfolio_stocks.stocks:
+        if new_ticker not in portfolio_stocks.stocks.split():
+            portfolio_stocks.stocks += (' ' + new_ticker)
+        else:
+            stock_list = portfolio_stocks.stocks.split()
+            stock_detail = {}
+            for tick in stock_list:
+                stock_detail[tick] = scrape_stock_data(tick)
+            return {
+                "stock_detail": stock_detail,
+                "error": "This stock is already in your portfolio"
+            }
+    else:
+        portfolio_stocks.stocks = new_ticker
+    request.dbsession.flush()
+    return HTTPFound(request.route_url('portfolio'))
+    return {}
+
