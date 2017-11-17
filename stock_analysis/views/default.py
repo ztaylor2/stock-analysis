@@ -11,6 +11,7 @@ from stock_analysis.security import is_authorized
 import datetime
 from stock_analysis.models.mymodel import User, Portfolio
 import numpy as np
+from math import pi
 from sklearn.svm import SVR
 from sklearn import linear_model
 from sklearn.preprocessing import PolynomialFeatures
@@ -62,8 +63,13 @@ def detail_view(request):
                 "error": "Error retrieving {} data, try again.".format(stock)
             }
 
+        # import pdb; pdb.set_trace()
+
         dates = stock_data.index.values
-        prices = stock_data['Close'].values
+        price_open = stock_data['Open'].values
+        price_close = stock_data['Close'].values
+        price_high = stock_data['High'].values
+        price_low = stock_data['Low'].values
 
         # convert numpy dates into python datetime objects
         dates_python = []
@@ -86,31 +92,31 @@ def detail_view(request):
 
         # Linear Regression
         lin_regr = linear_model.LinearRegression()
-        lin_regr.fit(eighty_dates_reshape, prices[:len(eighty_dates_reshape)])
+        lin_regr.fit(eighty_dates_reshape, price_close[:len(eighty_dates_reshape)])
         lin_regr_prediction = lin_regr.predict(dates_reshape)
 
         # Polynomial Regression
         model = Pipeline([('poly', PolynomialFeatures(degree=3)),
                           ('linear', LinearRegression(fit_intercept=False))])
-        model = model.fit(eighty_dates_reshape, prices[:len(eighty_dates_reshape)])
+        model = model.fit(eighty_dates_reshape, price_close[:len(eighty_dates_reshape)])
         poly_prediction = model.predict(dates_reshape)
 
         # Support Vector Machine
         svr_rbf = SVR(kernel='rbf', C=1, gamma=1E-3)
-        svr_rbf.fit(eighty_dates_reshape, prices[:len(eighty_dates_reshape)])
+        svr_rbf.fit(eighty_dates_reshape, price_close[:len(eighty_dates_reshape)])
         svr_rbf_prediction = svr_rbf.predict(dates_reshape)
 
         mean_p = np.mean([lin_regr_prediction, poly_prediction, svr_rbf_prediction], axis=0)
 
         rf = RandomForestRegressor()
-        rf.fit(eighty_dates_reshape, prices[:len(eighty_dates_reshape)])
+        rf.fit(eighty_dates_reshape, price_close[:len(eighty_dates_reshape)])
         rf_prediction, bias, contributions = ti.predict(rf, dates_reshape)
 
         # create a new plot with a title and axis labels
         p = figure(title="{}  -  {}: {}".format(company, exchange, stock), x_axis_label='Date',
                    y_axis_label='Price', width=800, height=800,
                    x_axis_type="datetime", sizing_mode='stretch_both')
-        p.circle(dates, prices, legend="Historical Data", line_color="black", fill_color="white", size=6)
+        p.circle(dates, price_close, legend="Historical Data", line_color="black", fill_color="white", size=6)
         p.line(dates, lin_regr_prediction, legend="Linear Regression",
                line_color="orange", line_width=2)
         p.line(dates, poly_prediction, legend="Polynomial Regression",
@@ -127,9 +133,31 @@ def detail_view(request):
         # save script and div components to put in html
         script, div = components(p)
 
+        # candle stick plot
+        inc = price_close > price_open
+        dec = price_open > price_close
+        w = 12 * 60 * 60 * 1000 # half day in ms
+
+        TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
+
+        candle = figure(x_axis_type="datetime", x_axis_label='Date', tools=TOOLS,
+                        width=800, height=800, sizing_mode='stretch_both',
+                        y_axis_label='Price',
+                        title="{} - Intraday Price Change".format(stock))
+
+        candle.segment(dates, price_high, dates, price_low, color="black")
+        candle.vbar(dates[inc], w, price_open[inc], price_close[inc],
+                    fill_color="#D5E1DD", line_color="black")
+        candle.vbar(dates[dec], w, price_open[dec], price_close[dec],
+                    fill_color="#F2583E", line_color="black")
+        candle.title.text_font_size = "1em"
+        script1, div1 = components(candle)
+
         return {
             "div": div,
             "script": script,
+            "div1": div1,
+            "script1": script1,
             "start": request.POST['start_date'],
             "end": request.POST['end_date'],
             "stock": request.POST['stock_ticker'].upper(),

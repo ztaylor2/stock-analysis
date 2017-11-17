@@ -25,6 +25,8 @@
     margin: auto;
     height: 500px;
     max-width: 1200px;
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
 
 .table_container {
