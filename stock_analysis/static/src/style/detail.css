@@ -51,6 +51,10 @@ footer {
     font-family: 'Quicksand', sans-serif;
 }
 
+.portfolio-font {
+    font-family: 'Quicksand', sans-serif;
+}
+
 @media screen and (max-width: 992px) {
     .hamberger-links {
         float: none;
