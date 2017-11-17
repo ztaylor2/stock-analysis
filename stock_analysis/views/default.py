@@ -210,21 +210,21 @@ def register_view(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        # if username in request.dbsession(User).all():
-        #     return {"error": "This username/password combo already exists. Choose another option"}
-
-        new_account = User(
-            username=username,
-            password=password
-        )
-        new_portfolio = Portfolio(
-            username=username,
-            stocks=''
-        )
-        request.dbsession.add(new_portfolio)
-        request.dbsession.add(new_account)
-        headers = remember(request, username)
-        return HTTPFound(request.route_url('portfolio'), headers=headers)
+        all_users = request.dbsession.query(User).get(username)
+        if username not in all_users.username.split():
+            new_account = User(
+                username=username,
+                password=password
+            )
+            new_portfolio = Portfolio(
+                username=username,
+                stocks=''
+            )
+            request.dbsession.add(new_portfolio)
+            request.dbsession.add(new_account)
+            headers = remember(request, username)
+            return HTTPFound(request.route_url('portfolio'), headers=headers)
+        return {"error": "This username/password combo already exists. Choose another option"}
     return {}
 
 
