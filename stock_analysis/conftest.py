@@ -10,19 +10,20 @@ import os
 import pytest
 
 
-# @pytest.fixture
-# def test_entry():
-#     """Create a new Entry."""
-#     return Sample_stock(  # FORMERLY == Entry
-#         company='Yahoo',
-#         exchange='NYSE',
-#         ticker='YHOO',
-#         current='18.55',
-#         growth='.50',
-#         open='18.05',
-#         high='18.95',
-#         low='18.05'
-#     )
+@pytest.fixture
+def test_entry():
+    """Create a new Entry."""
+    stock_sample = {
+        'company': 'Yahoo',
+        'exchange': 'NYSE',
+        'ticker': 'YHOO',
+        'current': '18.55',
+        'growth': '.50',
+        'open': '18.05',
+        'high': '18.95',
+        'low': '18.05'
+    }
+    return stock_sample  # FORMERLY == Entry
 
 
 @pytest.fixture(scope='session')
@@ -110,29 +111,24 @@ def testapp(request):
 
 
 @pytest.fixture(scope='session')
-def test_stocks():
+def test_stock_session():
     """Create a list of Stocks to be added to the database."""
-    return [
-        Sample_stock(
-            company='{} Inc.'.format(i),
-            exchange='NYSE',
-            ticker='{}'.format(i),
-            current='18.55',
-            growth='.50',
-            open='18.05',
-            high='18.95',
-            low='18.05'
-        ) for i in range(8)
-    ]
+    stock_sample = {'username': 'shinners',
+                    'stocks': 'YHOO'
+                    }
+    return stock_sample
 
 
 @pytest.fixture(scope='session')
-def fill_the_db(testapp, test_entries):
+def fill_the_db(testapp, test_stock_session):
     """Fill the test database with dummy stocks."""
     SessionFactory = testapp.app.registry['dbsession_factory']
+    portfolio = Portfolio(username=test_stock_session['username'], stocks=test_stock_session['stocks'])
     with transaction.manager:
         dbsession = get_tm_session(SessionFactory, transaction.manager)
-        dbsession.add_all(test_entries)
+        dbsession.add(portfolio)
+
+    return dbsession
 
 
 @pytest.fixture
