@@ -1,13 +1,3 @@
-.stock-ticker-input {
-    display: block;
-    margin: 1em;
-}
-
-.detail-input-form {
-    display: block;
-    margin: 3em;
-}
-
 .hamberger-links {
     float: right;
 }
@@ -30,15 +20,26 @@
     margin-top: 2em;
 }
 
-@media screen and (max-width: 480px) {
-    .detail-input-form {
-        display: block;
-        margin: 1em;
-    }
+.graph_container {
+
+}
+
+.table_container {
+    display: block;
+    margin: 0em, 1em, 0em, 1em;
 }
 
 @media screen and (max-width: 992px) {
     .hamberger-links {
         float: none;
+    }
+
+    .table_container {
+        display: block;
+        margin: 0px;
+    }
+
+    .graph_container {
+    
     }
 }

@@ -17,37 +17,39 @@
 {% block detail %}
 <h2>Stock Portfolio</h2>
 
-<table class="table table-responsive">
-    <thead>
-        <tr>
-            <th scope="col">Company</th>
-            <th scope="col">Ticker</th>
-            <th scope="col">Current Price</th>
-            <th scope="col">Price Change</th>
-            <th scope="col">Open</th>
-            <th scope="col">P/E</th>
-        </tr>
-    </thead>
-    {% for ticker in stock_detail %}
-    <tbody>
-        <tr class='clickable-row'>
-            <th{{ stock_detail[ticker].company }}</td>
-            <td>{{ stock_detail[ticker].ticker }}</td>
-            <td>${{ stock_detail[ticker].price }}</td>
-            <td>{{ stock_detail[ticker].dollar_change }} {{ stock_detail[ticker].pct_change }}</td>
-            <td>{{ stock_detail[ticker].open_price }}</td>
-            <td>{{ stock_detail[ticker].pe }}</td>
-            <td>
-                <form name="portfolio-form" method="POST">
-                    <input name="{{ stock_detail[ticker].ticker }}" type="submit" value="delete">
-                    <input type="hidden" name="delete">
-                </form>
-            </td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
-
+<div class="container">
+    <table class="table table-striped table-responsive-sm">
+        <thead>
+            <tr>
+                <th scope="col">Company</th>
+                <th scope="col">Ticker</th>
+                <th scope="col">Price</th>
+                <th scope="col">Today's Change</th>
+                <th scope="col">Open</th>
+                <th scope="col">P/E Ratio</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        {% for ticker in stock_detail %}
+        <tbody>
+            <tr class='clickable-row'>
+                <td>{{ stock_detail[ticker].company }}</td>
+                <td>{{ stock_detail[ticker].ticker }}</td>
+                <td>${{ stock_detail[ticker].price }}</td>
+                <td>{{ stock_detail[ticker].dollar_change }} {{ stock_detail[ticker].pct_change }}</td>
+                <td>${{ stock_detail[ticker].open_price }}</td>
+                <td>{{ stock_detail[ticker].pe }}</td>
+                <td>
+                    <form name="portfolio-form" method="POST">
+                        <input name="{{ stock_detail[ticker].ticker }}" type="submit" value="delete" class="btn btn-danger">
+                        <input type="hidden" name="delete">
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% if error %}
 <p style="color: red">{{ error }}</p>
 {% endif %}
@@ -55,7 +57,7 @@
 <div class="col-lg-6">
     <form name="portfolio-form" method="POST">
         <div class="input-group">
-            <input name="new_ticker" type="text" class="form-control" placeholder="Search for Stock Ticker">
+            <input name="new_ticker" type="text" class="form-control" placeholder="Add Stock to Portfolio">
             <span class="input-group-btn">
                 <button class="btn btn-secondary" type="submit">Go!</button>
             </span>
