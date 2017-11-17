@@ -1,0 +1,50 @@
+.hamberger-links {
+    float: right;
+}
+
+.form-actions {
+    display: block;
+    margin: 1em;
+    background-color: transparent;
+    text-align: center;
+}
+
+.alert-warning {
+    width: 90%;
+    margin: auto;
+    display: block;
+    text-align: center;
+}
+
+.container {
+    margin-top: 2em;
+}
+
+.graph_container {
+
+}
+
+.table_container {
+    display: block;
+    margin: 0em, 1em, 0em, 1em;
+
+footer {
+    margin: 15% auto;
+    text-align: center;
+    font-family: 'Ubuntu', sans-serif;
+}
+
+@media screen and (max-width: 992px) {
+    .hamberger-links {
+        float: none;
+    }
+
+    .table_container {
+        display: block;
+        margin: 0px;
+    }
+
+    .graph_container {
+    
+    }
+}

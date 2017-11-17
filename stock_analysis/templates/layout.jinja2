@@ -6,9 +6,11 @@
     <title>{{ title }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    {% block head %}{% endblock head %}
+    {% block head %}
 
     <link href="{{ request.static_path('stock_analysis:static/src/style/detail.css') }}" rel="stylesheet" />
+
+    {% endblock head %}
 
     <!-- bokeh styling -->
     <link
@@ -28,7 +30,7 @@
       {% block body %}{% endblock %}
     </section>
   </div>
-  <footer>&copy Stock Analysis 2017</footer>
+  <footer>&copy Zephyr Stock Analysis 2017</footer>
 
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" 
           integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" 
