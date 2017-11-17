@@ -54,6 +54,11 @@ def detail_view(request):
         try:
             company, exchange = _get_symbol(stock)
         except TypeError:
+            if "ticker" in request.GET:
+                return {
+                    "error": "Error retrieving {}'s data, try again.".format(stock),
+                    "filled_ticker": request.GET['ticker']
+                }
             return {
                 "error": "No data on {}".format(stock)
             }
@@ -61,12 +66,20 @@ def detail_view(request):
         try:
             stock_data = web.DataReader(stock, 'yahoo', start, end)
         except RemoteDataError:
+            if "ticker" in request.GET:
+                return {
+                    "error": "Error retrieving {}'s data, try again.".format(stock),
+                    "filled_ticker": request.GET['ticker']
+                }
             return {
-                "error": "Error retrieving {} data, try again.".format(stock)
+                "error": "Error retrieving {}'s data, try again.".format(stock)
             }
 
         dates = stock_data.index.values
-        prices = stock_data['Close'].values
+        price_open = stock_data['Open'].values
+        price_close = stock_data['Close'].values
+        price_high = stock_data['High'].values
+        price_low = stock_data['Low'].values
 
         # convert numpy dates into python datetime objects
         dates_python = []
@@ -89,50 +102,105 @@ def detail_view(request):
 
         # Linear Regression
         lin_regr = linear_model.LinearRegression()
-        lin_regr.fit(eighty_dates_reshape, prices[:len(eighty_dates_reshape)])
+        lin_regr.fit(eighty_dates_reshape, price_close[:len(eighty_dates_reshape)])
         lin_regr_prediction = lin_regr.predict(dates_reshape)
 
         # Polynomial Regression
         model = Pipeline([('poly', PolynomialFeatures(degree=3)),
                           ('linear', LinearRegression(fit_intercept=False))])
-        model = model.fit(eighty_dates_reshape, prices[:len(eighty_dates_reshape)])
+        model = model.fit(eighty_dates_reshape, price_close[:len(eighty_dates_reshape)])
         poly_prediction = model.predict(dates_reshape)
 
         # Support Vector Machine
         svr_rbf = SVR(kernel='rbf', C=1, gamma=1E-3)
-        svr_rbf.fit(eighty_dates_reshape, prices[:len(eighty_dates_reshape)])
+        svr_rbf.fit(eighty_dates_reshape, price_close[:len(eighty_dates_reshape)])
         svr_rbf_prediction = svr_rbf.predict(dates_reshape)
 
         mean_p = np.mean([lin_regr_prediction, poly_prediction, svr_rbf_prediction], axis=0)
 
         rf = RandomForestRegressor()
-        rf.fit(eighty_dates_reshape, prices[:len(eighty_dates_reshape)])
+        rf.fit(eighty_dates_reshape, price_close[:len(eighty_dates_reshape)])
         rf_prediction, bias, contributions = ti.predict(rf, dates_reshape)
 
         # create a new plot with a title and axis labels
-        p = figure(title="{}  -  {}: {}".format(company, exchange, stock), x_axis_label='Date',
-                   y_axis_label='Price', width=800, height=800,
-                   x_axis_type="datetime", sizing_mode='stretch_both')
-        p.circle(dates, prices, legend="Historical Data", line_color="black", fill_color="white", size=6)
-        p.line(dates, lin_regr_prediction, legend="Linear Regression",
-               line_color="orange", line_width=2)
-        p.line(dates, poly_prediction, legend="Polynomial Regression",
-               line_color="green", line_width=2)
-        p.line(dates, svr_rbf_prediction, legend="Support Vector Machine",
-               line_color="blue", line_width=2)
-        p.line(dates, mean_p, legend="Mean(L, P, SVM)",
-               line_color="gray", line_width=2)
-        p.line(dates, rf_prediction, legend="Random Forest Regression",
-               line_color="black", line_width=2)
-        p.legend.location = "top_left"
-        p.title.text_font_size = "1em"
+        price_date_plot = figure(title="{}  -  {}: {}".format(company, exchange, stock), x_axis_label='Date',
+                                 y_axis_label='Price', width=800, height=800,
+                                 x_axis_type="datetime", sizing_mode='stretch_both')
+        price_date_plot.circle(dates, price_close, legend="Historical Data", line_color="black", fill_color="white", size=6)
+        price_date_plot.line(dates, lin_regr_prediction, legend="Linear Regression",
+                             line_color="orange", line_width=2)
+        price_date_plot.line(dates, poly_prediction, legend="Polynomial Regression",
+                             line_color="green", line_width=2)
+        price_date_plot.line(dates, svr_rbf_prediction, legend="Support Vector Machine",
+                             line_color="blue", line_width=2)
+        price_date_plot.line(dates, mean_p, legend="Mean(L, P, SVM)",
+                             line_color="gray", line_width=2)
+        price_date_plot.line(dates, rf_prediction, legend="Random Forest Regression",
+                             line_color="black", line_width=2)
+        price_date_plot.legend.location = "top_left"
+        price_date_plot.title.text_font_size = "1em"
 
         # save script and div components to put in html
-        script, div = components(p)
+        script, div = components(price_date_plot)
+
+        # candle stick plot
+        inc = price_close > price_open
+        dec = price_open > price_close
+        w = 12 * 60 * 60 * 1000 # half day in ms
+
+        TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
+
+        candle = figure(x_axis_type="datetime", x_axis_label='Date', tools=TOOLS,
+                        width=800, height=800, sizing_mode='stretch_both',
+                        y_axis_label='Price',
+                        title="{} - Intraday Price Change".format(stock))
+
+        candle.segment(dates, price_high, dates, price_low, color="black")
+        candle.vbar(dates[inc], w, price_open[inc], price_close[inc],
+                    fill_color="#D5E1DD", line_color="black")
+        candle.vbar(dates[dec], w, price_open[dec], price_close[dec],
+                    fill_color="#F2583E", line_color="black")
+        candle.title.text_font_size = "1em"
+        script1, div1 = components(candle)
+
+        # return since beginning of time period
+        price_close_list = price_close.tolist()
+        stock_change = []
+        for x in range(len(price_close_list)):
+            stock_change.append(price_close_list[x] / price_close_list[0])
+
+        # create a new plot with a title and axis labels
+        returns_beginning = figure(title="{}  -  Return".format(stock),
+                                   x_axis_label='Date', y_axis_label='Return',
+                                   width=800, height=800, x_axis_type="datetime",
+                                   sizing_mode='stretch_both')
+        returns_beginning.line(dates[1:], stock_change[1:],
+                               line_color="orange", line_width=2)
+        script2, div2 = components(returns_beginning)
+
+        # percent change day to day plot
+        stock_change = []
+        for x in range(len(price_close_list)):
+            stock_change.append(np.log(price_close_list[x]) - np.log(price_close_list[x - 1]))
+
+        # create a new plot with a title and axis labels
+        percent_change_day = figure(title="{}  -  Day to Day Percentage Change".format(stock),
+                                    x_axis_label='Date', y_axis_label='Percent Change',
+                                    width=800, height=800, x_axis_type="datetime",
+                                    sizing_mode='stretch_both')
+        percent_change_day.line(dates[1:], stock_change[1:],
+                                line_color="orange", line_width=2)
+        script3, div3 = components(percent_change_day)
 
         analyzed_dict = {
             "div": div,
             "script": script,
+            "div1": div1,
+            "script1": script1,
+            "div2": div2,
+            "script2": script2,
+            "div3": div3,
+            "script3": script3,
             "start": request.POST['start_date'],
             "end": request.POST['end_date'],
             "stock": request.POST['stock_ticker'].upper(),

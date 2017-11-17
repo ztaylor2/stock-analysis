@@ -25,6 +25,8 @@
     margin: auto;
     height: 500px;
     max-width: 1200px;
+    margin-top: 2em;
+    margin-bottom: 2em;
 }
 
 .table_container {
@@ -43,6 +45,10 @@ footer {
     text-align: center;
     font-family: 'Quicksand', sans-serif;
     margin: 2em;
+}
+
+.navbar-brand {
+    font-family: 'Quicksand', sans-serif;
 }
 
 @media screen and (max-width: 992px) {
