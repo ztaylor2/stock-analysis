@@ -126,7 +126,7 @@ def detail_view(request):
                line_color="black", line_width=2)
         p.legend.location = "top_left"
         p.title.text_font_size = "1em"
-        p.background_fill_color = "light-gray"
+        p.background_fill_color = "gray"
 
         # save script and div components to put in html
         script, div = components(p)
