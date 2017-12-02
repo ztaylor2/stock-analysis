@@ -9,6 +9,33 @@
     text-align: center;
 }
 
+.analyze_button {
+    border: #00B25E solid 2px;
+    border-radius: 3px;
+    padding: 1.25vw 2.5vw;
+    background: #fbfbfb;
+    color: #00B25E;
+    outline: none;
+    margin: 2.5vw;
+    font-weight: 500;
+    font-size: 18px;
+    border-radius: 3px;
+    line-height: 22px;
+    padding: 15px;
+    margin: 15px 0px;
+    width: 80%;
+    box-sizing: border-box;
+    outline: 0;
+    max-width: 420px;
+    text-align: center; 
+}
+
+.analyze_button:hover {
+    background: #00B25E;
+    color: #fbfbfb;
+    transition: all 1s; 
+}
+
 .alert-warning {
     width: 60%;
     margin: auto;

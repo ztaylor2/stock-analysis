@@ -23,13 +23,16 @@ from bs4 import BeautifulSoup as Soup
 from passlib.apps import custom_app_context as context
 
 
-@view_config(route_name='home', renderer='stock_analysis:templates/home.jinja2', permission=NO_PERMISSION_REQUIRED)
+@view_config(route_name='home',
+             renderer='stock_analysis:templates/home.jinja2',
+             permission=NO_PERMISSION_REQUIRED)
 def home_view(request):
     """Home view for stock analysis app."""
     return {}
 
 
-@view_config(route_name='detail', renderer='stock_analysis:templates/detail.jinja2')
+@view_config(route_name='detail',
+             renderer='stock_analysis:templates/detail.jinja2')
 def detail_view(request):  # pragma: no cover
     """Detail stock view for stock analysis app."""
     if request.method == 'GET':
@@ -96,72 +99,103 @@ def detail_view(request):  # pragma: no cover
             days_from_beginning.append(total_diff.days - diff.days)
 
         eighty_percent_of_dates = days_from_beginning[:(len(days_from_beginning) - int(round(len(days_from_beginning) * .2)))]
-        eighty_dates_reshape = np.reshape(eighty_percent_of_dates, (len(eighty_percent_of_dates), 1))
+        eighty_dates_reshape = np.reshape(eighty_percent_of_dates,
+                                          (len(eighty_percent_of_dates), 1))
 
-        dates_reshape = np.reshape(days_from_beginning, (len(days_from_beginning), 1))
+        dates_reshape = np.reshape(days_from_beginning,
+                                   (len(days_from_beginning), 1))
 
         # Linear Regression
         lin_regr = linear_model.LinearRegression()
-        lin_regr.fit(eighty_dates_reshape, price_close[:len(eighty_dates_reshape)])
+        lin_regr.fit(eighty_dates_reshape,
+                     price_close[:len(eighty_dates_reshape)])
         lin_regr_prediction = lin_regr.predict(dates_reshape)
 
         # Polynomial Regression
         model = Pipeline([('poly', PolynomialFeatures(degree=3)),
                           ('linear', LinearRegression(fit_intercept=False))])
-        model = model.fit(eighty_dates_reshape, price_close[:len(eighty_dates_reshape)])
+        model = model.fit(eighty_dates_reshape,
+                          price_close[:len(eighty_dates_reshape)])
         poly_prediction = model.predict(dates_reshape)
 
         # Support Vector Machine
         svr_rbf = SVR(kernel='rbf', C=1, gamma=1E-3)
-        svr_rbf.fit(eighty_dates_reshape, price_close[:len(eighty_dates_reshape)])
+        svr_rbf.fit(eighty_dates_reshape,
+                    price_close[:len(eighty_dates_reshape)])
         svr_rbf_prediction = svr_rbf.predict(dates_reshape)
 
-        mean_p = np.mean([lin_regr_prediction, poly_prediction, svr_rbf_prediction], axis=0)
+        mean_p = np.mean([lin_regr_prediction,
+                          poly_prediction,
+                          svr_rbf_prediction], axis=0)
 
         rf = RandomForestRegressor()
         rf.fit(eighty_dates_reshape, price_close[:len(eighty_dates_reshape)])
         rf_prediction, bias, contributions = ti.predict(rf, dates_reshape)
 
         # create a new plot with a title and axis labels
-        price_date_plot = figure(title="{}  -  {}: {}".format(company, exchange, stock), x_axis_label='Date',
-                                 y_axis_label='Price', width=800, height=800,
-                                 x_axis_type="datetime", sizing_mode='stretch_both')
-        price_date_plot.circle(dates, price_close, legend="Historical Data", line_color="black", fill_color="white", size=6)
-        price_date_plot.line(dates, lin_regr_prediction, legend="Linear Regression",
-                             line_color="orange", line_width=2)
-        price_date_plot.line(dates, poly_prediction, legend="Polynomial Regression",
-                             line_color="green", line_width=2)
-        price_date_plot.line(dates, svr_rbf_prediction, legend="Support Vector Machine",
-                             line_color="blue", line_width=2)
-        price_date_plot.line(dates, mean_p, legend="Mean(L, P, SVM)",
-                             line_color="gray", line_width=2)
-        price_date_plot.line(dates, rf_prediction, legend="Random Forest Regression",
-                             line_color="black", line_width=2)
+        price_date_plot = figure(title="{}  -  {}: {}".format(company, exchange, stock),
+                                 x_axis_label='Date',
+                                 y_axis_label='Price',
+                                 width=800,
+                                 height=800,
+                                 x_axis_type="datetime",
+                                 sizing_mode='stretch_both')
+        price_date_plot.circle(dates, price_close,
+                               legend="Historical Data",
+                               line_color="black",
+                               fill_color="white",
+                               size=6)
+        price_date_plot.line(dates, lin_regr_prediction,
+                             legend="Linear Regression",
+                             line_color="orange",
+                             line_width=2)
+        price_date_plot.line(dates, poly_prediction,
+                             legend="Polynomial Regression",
+                             line_color="green",
+                             line_width=2)
+        price_date_plot.line(dates, svr_rbf_prediction,
+                             legend="Support Vector Machine",
+                             line_color="blue",
+                             line_width=2)
+        price_date_plot.line(dates, mean_p,
+                             legend="Mean(L, P, SVM)",
+                             line_color="gray",
+                             line_width=2)
+        price_date_plot.line(dates, rf_prediction,
+                             legend="Random Forest Regression",
+                             line_color="black",
+                             line_width=2)
         price_date_plot.legend.location = "top_left"
         price_date_plot.title.text_font_size = "1em"
 
         # save script and div components to put in html
-        script, div = components(price_date_plot)
+        price_script, price_div = components(price_date_plot)
 
         # candle stick plot
         inc = price_close > price_open
         dec = price_open > price_close
         w = 12 * 60 * 60 * 1000 # half day in ms
 
-        TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
+        tools_for_graph = "pan,wheel_zoom,box_zoom,reset,save"
 
-        candle = figure(x_axis_type="datetime", x_axis_label='Date', tools=TOOLS,
-                        width=800, height=800, sizing_mode='stretch_both',
+        candle = figure(x_axis_type="datetime",
+                        x_axis_label='Date',
+                        tools=tools_for_graph,
+                        width=800,
+                        height=800,
+                        sizing_mode='stretch_both',
                         y_axis_label='Price',
                         title="{} - Intraday Price Change".format(stock))
 
         candle.segment(dates, price_high, dates, price_low, color="black")
         candle.vbar(dates[inc], w, price_open[inc], price_close[inc],
-                    fill_color="#D5E1DD", line_color="black")
+                    fill_color="#D5E1DD",
+                    line_color="black")
         candle.vbar(dates[dec], w, price_open[dec], price_close[dec],
-                    fill_color="#F2583E", line_color="black")
+                    fill_color="#F2583E",
+                    line_color="black")
         candle.title.text_font_size = "1em"
-        script1, div1 = components(candle)
+        candle_script, candle_div = components(candle)
 
         # return since beginning of time period
         price_close_list = price_close.tolist()
@@ -171,12 +205,16 @@ def detail_view(request):  # pragma: no cover
 
         # create a new plot with a title and axis labels
         returns_beginning = figure(title="{}  -  Return".format(stock),
-                                   x_axis_label='Date', y_axis_label='Return',
-                                   width=800, height=800, x_axis_type="datetime",
+                                   x_axis_label='Date',
+                                   y_axis_label='Return',
+                                   width=800,
+                                   height=800,
+                                   x_axis_type="datetime",
                                    sizing_mode='stretch_both')
         returns_beginning.line(dates[1:], stock_change[1:],
-                               line_color="orange", line_width=2)
-        script2, div2 = components(returns_beginning)
+                               line_color="orange",
+                               line_width=2)
+        returns_script, returns_div = components(returns_beginning)
 
         # percent change day to day plot
         stock_change = []
@@ -185,34 +223,38 @@ def detail_view(request):  # pragma: no cover
 
         # create a new plot with a title and axis labels
         percent_change_day = figure(title="{}  -  Day to Day Percentage Change".format(stock),
-                                    x_axis_label='Date', y_axis_label='Percent Change',
-                                    width=800, height=800, x_axis_type="datetime",
+                                    x_axis_label='Date',
+                                    y_axis_label='Percent Change',
+                                    width=800,
+                                    height=800,
+                                    x_axis_type="datetime",
                                     sizing_mode='stretch_both')
         percent_change_day.line(dates[1:], stock_change[1:],
                                 line_color="orange", line_width=2)
-        script3, div3 = components(percent_change_day)
+        percent_script, percent_div = components(percent_change_day)
 
         analyzed_dict = {
-            "div": div,
-            "script": script,
-            "div1": div1,
-            "script1": script1,
-            "div2": div2,
-            "script2": script2,
-            "div3": div3,
-            "script3": script3,
+            "price_div": price_div,
+            "price_script": price_script,
+            "candle_div": candle_div,
+            "candle_script": candle_script,
+            "returns_div": returns_div,
+            "returns_script": returns_script,
+            "percent_div": percent_div,
+            "percent_script": percent_script,
             "start": request.POST['start_date'],
             "end": request.POST['end_date'],
             "filled_ticker": request.POST['stock_ticker'].upper(),
         }
 
         if "ticker" in request.GET and request.GET['ticker'] == request.POST['stock_ticker'].upper():
-            # import pdb; pdb.set_trace()
             analyzed_dict['filled_ticker'] = request.GET['ticker']
         return analyzed_dict
 
 
-@view_config(route_name='portfolio', renderer='stock_analysis:templates/portfolio.jinja2', permission='secret')
+@view_config(route_name='portfolio',
+             renderer='stock_analysis:templates/portfolio.jinja2',
+             permission='secret')
 def portfolio_view(request):
     """View for logged in portfolio."""
     if request.method == 'GET':
@@ -274,7 +316,9 @@ def logout(request):
     return HTTPFound(request.route_url('home'), headers=headers)
 
 
-@view_config(route_name='login', renderer='stock_analysis:templates/login.jinja2', permission=NO_PERMISSION_REQUIRED)
+@view_config(route_name='login',
+             renderer='stock_analysis:templates/login.jinja2',
+             permission=NO_PERMISSION_REQUIRED)
 def login_view(request):
     """Login view for stock analysis app."""
     if request.method == 'GET':
@@ -285,7 +329,8 @@ def login_view(request):
         try:
             if is_authorized(request, username, password):
                 headers = remember(request, username)
-                return HTTPFound(request.route_url('portfolio'), headers=headers)
+                return HTTPFound(request.route_url('portfolio'),
+                                 headers=headers)
             return {
                 'error': 'Username/password combination invalid.'
             }
@@ -293,7 +338,8 @@ def login_view(request):
             return {"error": "Username/password combination invalid."}
 
 
-@view_config(route_name='register', renderer='stock_analysis:templates/register.jinja2')
+@view_config(route_name='register',
+             renderer='stock_analysis:templates/register.jinja2')
 def register_view(request):  # pragma: no cover
     """Register view for stock analysis app."""
     if request.method == 'GET':
@@ -340,4 +386,10 @@ def scrape_stock_data(symbol):
     pct_change = parsed.find('div', {'id': 'price-panel'}).find_all('span')[4].text
     open_price = parsed.find('table', {'class': 'snap-data'}).find_all('td')[5].text
     pe = parsed.find('table', {'class': 'snap-data'}).find_all('td')[11].text
-    return {'company': company, 'ticker': symbol, 'price': price, 'dollar_change': dollar_change, 'pct_change': pct_change, 'open_price': open_price, 'pe': pe}
+    return {'company': company,
+            'ticker': symbol,
+            'price': price,
+            'dollar_change': dollar_change,
+            'pct_change': pct_change,
+            'open_price': open_price,
+            'pe': pe}
