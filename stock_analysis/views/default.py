@@ -34,7 +34,7 @@ def home_view(request):
 @view_config(route_name='detail',
              renderer='stock_analysis:templates/detail.jinja2')
 def detail_view(request):  # pragma: no cover
-    """Detail stock view for stock analysis app."""
+    """Retrieve and loads analysis for individual stock data on the Analysis page. With GET request, loads page. With POST request, retrieves stock data using entry ticker, then uses Bokeh, sklearn, numpy, and pandas to analyze and present data. Performs Polynomial, Logarithmic, Support Vector Machine, and Random Forest regressions. Loads multiple graphed visualizations of data."""
     if request.method == 'GET':
         if 'ticker' in request.GET:
             return {
@@ -174,7 +174,7 @@ def detail_view(request):  # pragma: no cover
         # candle stick plot
         inc = price_close > price_open
         dec = price_open > price_close
-        w = 12 * 60 * 60 * 1000 # half day in ms
+        w = 12 * 60 * 60 * 1000  # half day in ms
 
         tools_for_graph = "pan,wheel_zoom,box_zoom,reset,save"
 
@@ -256,22 +256,29 @@ def detail_view(request):  # pragma: no cover
              renderer='stock_analysis:templates/portfolio.jinja2',
              permission='secret')
 def portfolio_view(request):
-    """View for logged in portfolio."""
+    """
+    View for the user's stock portfolio. Responds to GET requests by loading the page with the appropriate stock ticker information. Reponds to POST requests by either: (1) Deleting the ticker if the request is to the delete method, (2) Adding a new ticker to the portfolio, or (3) Error handling with messages to the user.
+    """
     if request.method == 'GET':
+        print('back to get request')
         username = request.authenticated_userid
         stock_str = request.dbsession.query(Portfolio).get(username)
         if stock_str.stocks != '':
-            stock_list = stock_str.stocks.split()
+            stock_list = stock_str.stocks.split('~')
             stock_detail = {}
+            error_present = False
             for tick in stock_list:
                 try:
                     stock_detail[tick] = scrape_stock_data(tick)
-                except AttributeError:  # pragma: no cover
-                    return {
-                        "stock_detail": stock_detail,
-                        "error": "Stock ticker invalid"
-                    }
-            return {'stock_detail': stock_detail}
+                except (AttributeError, TypeError) as error:  # pragma: no cover
+                    error_present = True
+                    continue
+            get_response = {
+                "stock_detail": stock_detail
+            }
+            if error_present is True:
+                get_response['error'] = 'Stock ticker'
+            return get_response
         return {}
 
     if request.method == 'POST':  # pragma: no cover
@@ -280,7 +287,7 @@ def portfolio_view(request):
         if "Delete" in request.POST:
             to_delete = request.POST.keys()
             to_delete = to_delete.__next__()
-            temp_stock = portfolio_stocks.stocks.split()
+            temp_stock = portfolio_stocks.stocks.split('~')
             temp_stock.remove(to_delete)
             portfolio_stocks.stocks = ' '.join(temp_stock)
             request.dbsession.flush()
@@ -289,12 +296,22 @@ def portfolio_view(request):
         url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(new_ticker)
         response = requests.get(url).json()
         if response['ResultSet']['Result'] == []:
-            return HTTPFound(request.route_url('portfolio'))
+            if portfolio_stocks.stocks:
+                stock_list = portfolio_stocks.stocks.split('~')
+                stock_detail = {}
+                for tick in stock_list:
+                    stock_detail[tick] = scrape_stock_data(tick)
+                return {
+                    "stock_detail": stock_detail,
+                    "error": "Invalid stock ticker."
+                }
+            return {"error": "Invalid stock ticker."}
+        new_ticker = response['ResultSet']['Result'][0]['symbol']
         if portfolio_stocks.stocks:
-            if new_ticker not in portfolio_stocks.stocks.split():
-                portfolio_stocks.stocks += (' ' + new_ticker)
+            if new_ticker not in portfolio_stocks.stocks.split('~'):
+                portfolio_stocks.stocks += ('~' + new_ticker)
             else:
-                stock_list = portfolio_stocks.stocks.split()
+                stock_list = portfolio_stocks.stocks.split('~')
                 stock_detail = {}
                 for tick in stock_list:
                     stock_detail[tick] = scrape_stock_data(tick)
@@ -320,7 +337,7 @@ def logout(request):
              renderer='stock_analysis:templates/login.jinja2',
              permission=NO_PERMISSION_REQUIRED)
 def login_view(request):
-    """Login view for stock analysis app."""
+    """Login view: GET request loads the page. POST request logs the user in, and error handles for bad login input."""
     if request.method == 'GET':
         return {}
     if request.method == 'POST':
@@ -341,7 +358,7 @@ def login_view(request):
 @view_config(route_name='register',
              renderer='stock_analysis:templates/register.jinja2')
 def register_view(request):  # pragma: no cover
-    """Register view for stock analysis app."""
+    """Register view: GET request loads the page. POST request registers a new account, adding the user's info to the database."""
     if request.method == 'GET':
         return {}
     if request.method == 'POST':
@@ -350,7 +367,7 @@ def register_view(request):  # pragma: no cover
         all_users = request.dbsession.query(User).all()
         for i in range(len(all_users)):
             if all_users[i].username == username:
-                return {"error": "This username/password combo already exists"}
+                return {"error": "This username already exists"}
 
         new_account = User(
             username=username,
@@ -368,7 +385,7 @@ def register_view(request):  # pragma: no cover
 
 
 def get_symbol(symbol):
-    """Get company name from stock ticker for graph title."""
+    """Take user input as the symbol variable, and returns the ticker symbol associated with that input."""
     url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(symbol)
     result = requests.get(url).json()
     for x in result['ResultSet']['Result']:
@@ -377,7 +394,7 @@ def get_symbol(symbol):
 
 
 def scrape_stock_data(symbol):
-    """Scrape stock data from google."""
+    """Utilize BeautifulSoup to scrap GoogleFinance for stock data, returning the user's real-time stock data to the page."""
     company, exchange = get_symbol(symbol)
     r = requests.get('https://finance.google.com/finance?q={}:{}'.format(exchange, symbol))
     parsed = Soup(r.text, 'html.parser')
