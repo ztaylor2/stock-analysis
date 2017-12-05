@@ -260,7 +260,6 @@ def portfolio_view(request):
     View for the user's stock portfolio. Responds to GET requests by loading the page with the appropriate stock ticker information. Reponds to POST requests by either: (1) Deleting the ticker if the request is to the delete method, (2) Adding a new ticker to the portfolio, or (3) Error handling with messages to the user.
     """
     if request.method == 'GET':
-        print('back to get request')
         username = request.authenticated_userid
         stock_str = request.dbsession.query(Portfolio).get(username)
         if stock_str.stocks != '':
@@ -277,7 +276,7 @@ def portfolio_view(request):
                 "stock_detail": stock_detail
             }
             if error_present is True:
-                get_response['error'] = 'Stock ticker'
+                get_response['error'] = 'Stock ticker invalid.'
             return get_response
         return {}
 
@@ -289,7 +288,7 @@ def portfolio_view(request):
             to_delete = to_delete.__next__()
             temp_stock = portfolio_stocks.stocks.split('~')
             temp_stock.remove(to_delete)
-            portfolio_stocks.stocks = ' '.join(temp_stock)
+            portfolio_stocks.stocks = '~'.join(temp_stock)
             request.dbsession.flush()
             return HTTPFound(request.route_url('portfolio'))
         new_ticker = request.POST['new_ticker'].upper()
