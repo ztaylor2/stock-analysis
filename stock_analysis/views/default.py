@@ -284,7 +284,6 @@ def portfolio_view(request):
     if request.method == 'POST':  # pragma: no cover
         username = request.authenticated_userid
         portfolio_stocks = request.dbsession.query(Portfolio).get(username)
-        import pdb; pdb.set_trace()
         if "Delete" in request.POST:
             to_delete = request.POST.keys()
             to_delete = to_delete.__next__()
@@ -292,7 +291,6 @@ def portfolio_view(request):
             temp_stock.remove(to_delete)
             portfolio_stocks.stocks = ' '.join(temp_stock)
             request.dbsession.flush()
-            import pdb; pdb.set_trace()
             return HTTPFound(request.route_url('portfolio'))
         new_ticker = request.POST['new_ticker'].upper()
         url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(new_ticker)
@@ -303,7 +301,6 @@ def portfolio_view(request):
                 stock_detail = {}
                 for tick in stock_list:
                     stock_detail[tick] = scrape_stock_data(tick)
-                    import pdb; pdb.set_trace()
                 return {
                     "stock_detail": stock_detail,
                     "error": "Invalid stock ticker."
