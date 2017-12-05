@@ -291,14 +291,16 @@ def portfolio_view(request):
         url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(new_ticker)
         response = requests.get(url).json()
         if response['ResultSet']['Result'] == []:
-            stock_list = portfolio_stocks.stocks.split('~')
-            stock_detail = {}
-            for tick in stock_list:
-                stock_detail[tick] = scrape_stock_data(tick)
-            return {
-                "stock_detail": stock_detail,
-                "error": "Invalid stock ticker."
-            }
+            if portfolio_stocks.stocks:
+                stock_list = portfolio_stocks.stocks.split('~')
+                stock_detail = {}
+                for tick in stock_list:
+                    stock_detail[tick] = scrape_stock_data(tick)
+                return {
+                    "stock_detail": stock_detail,
+                    "error": "Invalid stock ticker."
+                }
+            return {"error": "Invalid stock ticker."}
         new_ticker = response['ResultSet']['Result'][0]['symbol']
         if portfolio_stocks.stocks:
             if new_ticker not in portfolio_stocks.stocks.split('~'):
