@@ -260,25 +260,31 @@ def portfolio_view(request):
     View for the user's stock portfolio. Responds to GET requests by loading the page with the appropriate stock ticker information. Reponds to POST requests by either: (1) Deleting the ticker if the request is to the delete method, (2) Adding a new ticker to the portfolio, or (3) Error handling with messages to the user.
     """
     if request.method == 'GET':
+        print('back to get request')
         username = request.authenticated_userid
         stock_str = request.dbsession.query(Portfolio).get(username)
         if stock_str.stocks != '':
             stock_list = stock_str.stocks.split('~')
             stock_detail = {}
+            error_present = False
             for tick in stock_list:
                 try:
                     stock_detail[tick] = scrape_stock_data(tick)
-                except AttributeError:  # pragma: no cover
-                    return {
-                        "stock_detail": stock_detail,
-                        "error": "Stock ticker invalid"
-                    }
-            return {'stock_detail': stock_detail}
+                except (AttributeError, TypeError) as error:  # pragma: no cover
+                    error_present = True
+                    continue
+            get_response = {
+                "stock_detail": stock_detail
+            }
+            if error_present is True:
+                get_response['error'] = 'Stock ticker'
+            return get_response
         return {}
 
     if request.method == 'POST':  # pragma: no cover
         username = request.authenticated_userid
         portfolio_stocks = request.dbsession.query(Portfolio).get(username)
+        import pdb; pdb.set_trace()
         if "Delete" in request.POST:
             to_delete = request.POST.keys()
             to_delete = to_delete.__next__()
@@ -286,6 +292,7 @@ def portfolio_view(request):
             temp_stock.remove(to_delete)
             portfolio_stocks.stocks = ' '.join(temp_stock)
             request.dbsession.flush()
+            import pdb; pdb.set_trace()
             return HTTPFound(request.route_url('portfolio'))
         new_ticker = request.POST['new_ticker'].upper()
         url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(new_ticker)
@@ -296,6 +303,7 @@ def portfolio_view(request):
                 stock_detail = {}
                 for tick in stock_list:
                     stock_detail[tick] = scrape_stock_data(tick)
+                    import pdb; pdb.set_trace()
                 return {
                     "stock_detail": stock_detail,
                     "error": "Invalid stock ticker."
