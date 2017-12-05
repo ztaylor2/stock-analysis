@@ -38,7 +38,7 @@
                 <td>{{ stock_detail[ticker].company }}</td>
                 <td><a href="{{ request.route_url('detail') }}?ticker={{ stock_detail[ticker].ticker }}">{{ stock_detail[ticker].ticker }}</td>
                 <td>${{ stock_detail[ticker].price }}</td>
-                <td style="color: red;">{{ stock_detail[ticker].dollar_change }} {{ stock_detail[ticker].pct_change }}</td>
+                <td>{{ stock_detail[ticker].dollar_change }} {{ stock_detail[ticker].pct_change }}</td>
                 <td>${{ stock_detail[ticker].open_price }}</td>
                 <td>{{ stock_detail[ticker].pe }}</td>
                 <td>
