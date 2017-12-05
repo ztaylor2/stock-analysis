@@ -263,7 +263,7 @@ def portfolio_view(request):
         username = request.authenticated_userid
         stock_str = request.dbsession.query(Portfolio).get(username)
         if stock_str.stocks != '':
-            stock_list = stock_str.stocks.split('+')
+            stock_list = stock_str.stocks.split('~')
             stock_detail = {}
             for tick in stock_list:
                 try:
@@ -282,17 +282,16 @@ def portfolio_view(request):
         if "Delete" in request.POST:
             to_delete = request.POST.keys()
             to_delete = to_delete.__next__()
-            temp_stock = portfolio_stocks.stocks.split('+')
+            temp_stock = portfolio_stocks.stocks.split('~')
             temp_stock.remove(to_delete)
             portfolio_stocks.stocks = ' '.join(temp_stock)
             request.dbsession.flush()
             return HTTPFound(request.route_url('portfolio'))
         new_ticker = request.POST['new_ticker'].upper()
-        import pdb; pdb.set_trace()
         url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(new_ticker)
         response = requests.get(url).json()
         if response['ResultSet']['Result'] == []:
-            stock_list = portfolio_stocks.stocks.split('+')
+            stock_list = portfolio_stocks.stocks.split('~')
             stock_detail = {}
             for tick in stock_list:
                 stock_detail[tick] = scrape_stock_data(tick)
@@ -302,10 +301,10 @@ def portfolio_view(request):
             }
         new_ticker = response['ResultSet']['Result'][0]['symbol']
         if portfolio_stocks.stocks:
-            if new_ticker not in portfolio_stocks.stocks.split('+'):
-                portfolio_stocks.stocks += ('+' + new_ticker)
+            if new_ticker not in portfolio_stocks.stocks.split('~'):
+                portfolio_stocks.stocks += ('~' + new_ticker)
             else:
-                stock_list = portfolio_stocks.stocks.split('+')
+                stock_list = portfolio_stocks.stocks.split('~')
                 stock_detail = {}
                 for tick in stock_list:
                     stock_detail[tick] = scrape_stock_data(tick)
