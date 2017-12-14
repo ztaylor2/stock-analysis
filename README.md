@@ -1,5 +1,7 @@
-# Stock Analysis 
-Utitlizing Python's strong suits to pair with Machine Learning, Stock Analysis will predict the possible life for a given stock.
+# Stock Analysis
+
+Zephyr Stock Analysis is a python web application that allows the user to track a portfolio of stocks and perform data analysis on any given stock ticker. The analytical and machine learning regressions train on the first 80% of the data and then attempt to predict the last 20%. 
+
 ## Getting Started
 * Clone project into local file system. 
     * ```git clone https://github.com/ztaylor2/stock-analysis.git```
