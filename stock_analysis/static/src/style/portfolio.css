@@ -1,0 +1,35 @@
+h2 {
+    text-align: center;
+    margin: 5% auto;
+}
+
+.portfolio-font {
+    font-family: 'Quicksand', sans-serif;
+}
+
+.portfolio_header {
+    font-family: 'Quicksand', sans-serif;
+}
+
+.table-responsive {
+    width: 50%;
+    text-align: center;
+    margin: 0% auto;
+}
+
+.col-lg-6 {
+    margin: 10% auto;
+}
+
+.alert-warning-custom-style {
+    width: 60%;
+    margin: auto;
+    display: block;
+    text-align: center;
+}
+
+footer {
+    margin: 15% auto;
+    text-align: center;
+    font-family: 'Ubuntu', sans-serif;
+}

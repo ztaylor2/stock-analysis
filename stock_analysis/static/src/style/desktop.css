@@ -1,0 +1,36 @@
+.form-title a {
+    font-family: 'Quicksand', sans-serif;
+}
+
+@media screen and (min-width: 992px) {
+    .landing-form {
+        margin: 5% auto;
+    }
+
+    body {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    .alert-warning {
+        font-size: 16px;
+        padding-top: none;
+        width: 60%;
+        margin: auto;
+        margin-top: 0px;
+        text-align: center;
+    }
+
+    .form-title {
+        margin: 1.5em;
+    }
+
+
+    .desktop-footer {
+        font-size: 16px;
+    }
+
+    form {
+        margin: 5% auto;
+    }
+}

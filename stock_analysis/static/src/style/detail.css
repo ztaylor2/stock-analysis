@@ -1,0 +1,98 @@
+.hamberger-links {
+    float: right;
+}
+
+.form-actions {
+    display: block;
+    margin: 1em;
+    background-color: transparent;
+    text-align: center;
+}
+
+.analyze_button {
+    border: #00B25E solid 2px;
+    border-radius: 3px;
+    padding: 1.25vw 2.5vw;
+    background: #fbfbfb;
+    color: #00B25E;
+    outline: none;
+    margin: 2.5vw;
+    font-weight: 500;
+    font-size: 18px;
+    border-radius: 3px;
+    line-height: 22px;
+    padding: 15px;
+    margin: 15px 0px;
+    width: 80%;
+    box-sizing: border-box;
+    outline: 0;
+    max-width: 420px;
+    text-align: center; 
+}
+
+.analyze_button:hover {
+    background: #00B25E;
+    color: #fbfbfb;
+    transition: all 1s; 
+}
+
+.alert-warning {
+    width: 60%;
+    margin: auto;
+    display: block;
+    text-align: center;
+}
+
+.container {
+    margin-top: 2em;
+}
+
+.graph_container {
+    display: block;
+    margin: auto;
+    height: 500px;
+    max-width: 1200px;
+    margin-top: 2em;
+    margin-bottom: 2em;
+}
+
+.table_container {
+    display: block;
+    margin: 0em, 1em, 0em, 1em;
+}
+
+footer {
+    margin: 15% auto;
+    text-align: center;
+    font-family: 'Ubuntu', sans-serif;
+}
+
+.error404 {
+    color: black;
+    text-align: center;
+    font-family: 'Quicksand', sans-serif;
+    margin: 2em;
+}
+
+.navbar-brand {
+    font-family: 'Quicksand', sans-serif;
+}
+
+.portfolio-font {
+    font-family: 'Quicksand', sans-serif;
+}
+
+@media screen and (max-width: 992px) {
+    .hamberger-links {
+        float: none;
+    }
+
+    .table_container {
+        display: block;
+        margin: 0px;
+    }
+
+    .graph_container {
+        height: 500px;
+    }
+}

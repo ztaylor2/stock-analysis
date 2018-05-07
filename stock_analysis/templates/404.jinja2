@@ -1,8 +1,7 @@
-{% extends "layout.jinja2" %}
+{% extends "user_layout.jinja2" %}
 
-{% block content %}
-<div class="content">
-  <h1><span class="font-semi-bold">Pyramid</span> <span class="smaller">Alchemy scaffold</span></h1>
-  <p class="lead"><span class="font-semi-bold">404</span> Page Not Found</p>
-</div>
-{% endblock content %}
+{% block detail %}
+    <div class="content">
+      <h1 class="error404">404: Page Not Found</h1>
+    </div>
+{% endblock detail %}

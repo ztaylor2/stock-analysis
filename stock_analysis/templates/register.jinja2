@@ -1,0 +1,32 @@
+{% extends "layout.jinja2" %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{{ request.static_path('stock_analysis:static/src/style/main.css') }}">
+
+<link rel="stylesheet" type="text/css" href="{{ request.static_path('stock_analysis:static/src/style/link.css') }}">
+
+
+<link rel="stylesheet" type="text/css" href="{{ request.static_path('stock_analysis:static/src/style/desktop.css') }}">
+{% endblock head%}
+
+{% block body %}
+<div class="form-header">
+    <h1 class="form-title"><a href={{ request.route_url('home') }}>Zephyr Stock Analysis</a></h1>
+
+    {% if error %}
+        <div class="alert alert-warning" role="alert">
+          <h4 class="alert-heading">Error</h4>
+          <hr>
+          <p class="mb-0">{{ error }}</p>
+        </div>
+    {% endif %}
+    
+    <div class="sign-up">
+        <form name="signup" method="POST">
+            <input name="username" type="text" class="form-input" placeholder="User Name" required>
+            <input name="password" type="password" class="form-input" placeholder="Password" required>
+            <input name="register" type="submit" value="SIGN UP">
+        </form>
+    </div>
+</div>
+{% endblock %}
