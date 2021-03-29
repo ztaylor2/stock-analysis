@@ -36,7 +36,7 @@ prompt-toolkit==1.0.15
 psycopg2==2.7.3.2
 ptyprocess==0.5.2
 py==1.5.2
-Pygments==2.2.0
+Pygments==2.7.4
 pyparsing==2.2.0
 pyramid==1.9.1
 pyramid-debugtoolbar==4.3
