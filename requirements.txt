@@ -3,7 +3,7 @@ appnope==0.1.0
 arrow==0.10.0
 binaryornot==0.4.4
 bokeh==0.12.10
-certifi==2017.11.5
+certifi==2022.12.7
 chardet==3.0.4
 click==6.7
 cookiecutter==1.6.0
